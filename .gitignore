@@ -1,0 +1,14 @@
+# FOLDERS
+/node_modules
+/old-typer
+
+# FILES
+.DS_Store
+/demo.css
+/gulpfile.js
+/typer-dev.css
+/package.json
+/typer.md
+/code.psd
+
+/demo/app.js
