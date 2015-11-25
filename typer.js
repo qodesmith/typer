@@ -4,7 +4,7 @@ function typer(el, speed) {
   var queue = [];
   parentDataNum(); // Assign a random # to the parent el's data attribute.
 
-  // List of HTML void elements (http://goo.gl/SWmyS5)
+  // List of HTML void elements (http://goo.gl/SWmyS5).
   // used in 'processMsg' & 'processBack'.
   queue.voids = ['area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
 
@@ -12,7 +12,7 @@ function typer(el, speed) {
   // Public methods.
   var typerObj = {
     cursor: function(cursorObj) {
-      // Prevent cursor from being run multiple times
+      // Prevent cursor from being run multiple times.
       if(queue.cursorRan) {
         console.log('You can only call .cursor once.');
         return this;
@@ -131,6 +131,9 @@ function typer(el, speed) {
         line: function() {
           return message();
         },
+        continue: function() {
+          return message();
+        },
         pause: function() {
           return message();
         },
@@ -140,19 +143,19 @@ function typer(el, speed) {
         listen: function() {
           return message();
         },
-        empty: function() {
-          return message();
-        },
         back: function() {
           return message();
         },
-        continue: function() {
+        empty: function() {
+          return message();
+        },
+        run: function() {
           return message();
         },
         end: function() {
           return message();
-        },
-      }
+        }
+      };
 
       // Message used by the 'catchAll' object.
       function message() {
@@ -162,7 +165,7 @@ function typer(el, speed) {
 
       return catchAll;
     }
-  }
+  };
 
   // Private functions.
   function parentDataNum() {
@@ -265,7 +268,7 @@ function typer(el, speed) {
 
       // NO HTML
       if(!item.html) {
-        queue.newDiv.innerHTML += piece
+        queue.newDiv.innerHTML += piece;
 
       // HTML
       } else {
@@ -316,7 +319,7 @@ function typer(el, speed) {
             if(msg[i] === ';') break;
           }
 
-          // 2. Test the unicode character
+          // 2. Test the unicode character.
           var div = document.createElement('div');
           div.innerHTML = char;
           if(div.innerText.length === 1) {
@@ -379,7 +382,7 @@ function typer(el, speed) {
     setTimeout(function() {
       queue.item++; // Increment our main item counter.
       processQueue(); // Restart the main iterator.
-    }, item.pause)
+    }, item.pause);
   }
   function processEmit(item) {
     clearInterval(queue.type); // Stop the main iterator.
@@ -473,7 +476,7 @@ function typer(el, speed) {
     processLine({line: 1}); // This will stop the main iterator & run 'processQueue'.
   }
   function processRun(item) {
-    clearInterval(queue.type);
+    clearInterval(queue.type); // Stop the main iterator.
 
     item.run();
     queue.item++;
