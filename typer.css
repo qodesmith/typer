@@ -1,4 +1,4 @@
-.typer:after {
+.typer::after {
   content:'.';
   position: relative;
   display: inline-block;
@@ -10,18 +10,22 @@
   vertical-align: middle;
 }
 
-.cursor-block:after {
+.cursor-block::after {
   width: 0.9ex;
 }
 
-.cursor-soft:after {
+.cursor-soft::after {
   -webkit-animation: softBlink 0.7s infinite;
           animation: softBlink 0.7s infinite;
 }
 
-.cursor-hard:after {
+.cursor-hard::after {
   -webkit-animation: hardBlink 0.7s infinite;
           animation: hardBlink 0.7s infinite;
+}
+
+.no-cursor::after {
+  content: none;
 }
 
 @-webkit-keyframes softBlink {

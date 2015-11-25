@@ -12,6 +12,9 @@ function typer(el, speed) {
   // Public methods.
   var typerObj = {
     cursor: function(cursorObj) {
+      // Prevent errors from no arguments.
+      if(cursorObj === undefined) cursorObj = true;
+
       // Prevent cursor from being run multiple times.
       if(queue.cursorRan) {
         console.log('You can only call .cursor once.');
@@ -19,8 +22,16 @@ function typer(el, speed) {
       }
 
       queue.cursorRan = true;
+
+      // No cursor.
+      if(cursorObj === false) {
+        queue.cursor = 'no-cursor';
+        return this;
+      }
+
       var cursor = [];
       var data = '[data-typer="' + queue.dataNum + '"]';
+
 
       // Optional cursor color - https://goo.gl/8k2mqL
       if(cursorObj.color) {
@@ -40,7 +51,6 @@ function typer(el, speed) {
       }
 
       queue.cursor = cursor.join(' ');
-      queue.push({cursor: true});
 
       return this;
     },
@@ -235,19 +245,16 @@ function typer(el, speed) {
       // If we arrive here and we've exausted the queue...
       if(queue.item === queue.length) return clearInterval(queue.type); // Stop the main iterator.
 
-      currentItem.cursor ? queue.item++ : findProperty();
-
-      function findProperty() {
-        if(currentItem.line) processLine(currentItem);
-        if(currentItem.continue) processContinue(currentItem);
-        if(currentItem.pause) processPause(currentItem);
-        if(currentItem.emit) processEmit(currentItem);
-        if(currentItem.listen) processListen(currentItem);
-        if(currentItem.back) processBack(currentItem);
-        if(currentItem.empty) processEmpty();
-        if(currentItem.run) processRun(currentItem);
-        if(currentItem.end) processEnd(currentItem);
-      }
+      // Various processing functions.
+      if(currentItem.line) processLine(currentItem);
+      if(currentItem.continue) processContinue(currentItem);
+      if(currentItem.pause) processPause(currentItem);
+      if(currentItem.emit) processEmit(currentItem);
+      if(currentItem.listen) processListen(currentItem);
+      if(currentItem.back) processBack(currentItem);
+      if(currentItem.empty) processEmpty();
+      if(currentItem.run) processRun(currentItem);
+      if(currentItem.end) processEnd(currentItem);
     }, 0);
   }
   function processMsg(item) {
