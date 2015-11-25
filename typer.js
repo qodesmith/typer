@@ -32,7 +32,6 @@ function typer(el, speed) {
       var cursor = [];
       var data = '[data-typer="' + queue.dataNum + '"]';
 
-
       // Optional cursor color - https://goo.gl/8k2mqL
       if(cursorObj.color) {
         document.styleSheets[0].addRule(data + ' .typer:after', 'background-color:' + cursorObj.color + ';');
@@ -275,6 +274,14 @@ function typer(el, speed) {
 
       // NO HTML
       if(!item.html) {
+
+        // Avoid HTML parsing on supplied arrays.
+        if(typeof msg !== 'string') {
+          var div = document.createElement('div');
+          div.innerText = piece;
+          piece = div.innerHTML;
+        }
+
         queue.newDiv.innerHTML += piece;
 
       // HTML
