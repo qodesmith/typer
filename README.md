@@ -8,7 +8,7 @@ In short... Typer.js can type individual characters, unicode, whole words, half 
 
 ## Installation
 
-Simply include `typer.css` in the head...
+Simply include `typer.css` in the `<head>`...
 ```html
 <head>
   ...
@@ -65,7 +65,16 @@ typer(document.body)
   .continue('Angular')
   .pause(1000)
   .back(7)
-  .continue('Ember')
+  .continue('Ember');
+```
+
+#### Multi-line typing:
+
+```javascript
+typer(document.body)
+  .line('How cool is this?')
+  .line('So very cool.')
+  .line('Agreed!');
 ```
 
 * * *
