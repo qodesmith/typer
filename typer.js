@@ -205,7 +205,6 @@ function typer(el, speed) {
     //  8. msg = div, html
     //  9. msg = div, spd, html
     // 10. msg = div, html, spd
-
     if(typeof msg === 'string' || msg.constructor.name === 'Array') {
       item[choice] = msg; // 1
     } else {
