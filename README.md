@@ -293,3 +293,12 @@ The `.end` method always removes the cursor, can optionally execute a callback f
 ## Showcase
 
 Have you done something cool with Typer.js? Have an awesome site / use-case you'd like to share? [Contact me!](https://twitter.com/Qodesmith) I'd love to show off your awesomeness with a link here.
+
+* * *
+
+## Feature Requests
+
+> I think I thought of everything, but I thought wrong once, even though I think I'm right.
+
+O.o  
+If you think of a feature you feel would be an awesome addition to Typer, make a comment in the [issue](https://github.com/qodesmith/typer/issues) section or create a [pull request](https://github.com/qodesmith/typer/pulls). I'm all ears.
