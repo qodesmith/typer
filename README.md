@@ -213,8 +213,8 @@ Emits an event on a specified DOM element or defaults to `document.body`. This i
 ## LISTEN
 
 ```javascript
-listen(document.querySelector('.someClass'), 'boom');
-listen('boom');
+.listen(document.querySelector('.someClass'), 'boom');
+.listen('boom');
 ```
 
 Typer has the ability (super-power) to listen for events as well. The `.listen` method will stop Typer in its tracks until the specified event is fired. Once fired, Typer will proceed from where it last left off. More automation goodness.
@@ -254,7 +254,7 @@ The 1st argument is mandatory and has two options. The 2nd argument is optional.
 ## EMPTY
 
 ```javascript
-empty();
+.empty();
 ```
 
 The `.empty` method empties the parent element (specified as an argument to `typer`) and starts over with a fresh line. The parent element could contain multiple lines and HTML elements, the likes of which cannot be undone with a simple `.back('all')`. Also, `.empty` will instantaneously empty the parent element as opposed to backspacing it into oblivion.
@@ -287,3 +287,8 @@ The `.end` method always removes the cursor, can optionally execute a callback f
 *   `true` - Indicates you want the `typerFinished` event fired once Typer is finished. This event is fired from `document.body`. The default (if left unspecified) is false.
 
 * * *
+* * *
+
+## Showcase
+
+Have you done something cool with Typer.js? Have an awesome site / use-case you'd like to share? [Contact me!](https://twitter.com/Qodesmith) I'd love to show off your awesomeness with a link here.
