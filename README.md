@@ -1,5 +1,5 @@
 # Typer.js
-Typer.js is an easy to use, choc-full-of-options, robust automated typing solution. There are a number of methods with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
+Typer.js is an easy to use, choc-full-of-options, robust automated typing solution. There are a number of [methods](https://github.com/qodesmith/typer#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
 
 Typer.js has *no library dependencies* so just slap it on your page and go.
 (We still love you, [jQuery](https://cdnjs.com/libraries/jquery/).)
@@ -35,7 +35,7 @@ The Typer function itself takes two arguments:
 *  `el` - a DOM element, such as `document.body` or `document.querySelector('.someClass')`.
 *  `speed` - a number (milliseconds) representing how fast each character should be typed out. If no number is given, Typer will default to 70.
 
-Now you begin calling Typer's various methods (below) via simple & sexy dot-notation...
+Now you begin calling Typer's various [methods](https://github.com/qodesmith/typer#methods) via simple & sexy dot-notation...
 
 ## Simple Code Examples
 
@@ -162,7 +162,7 @@ _* TIP: If you supply no arguments, you will create a blank line._
 
 ### HTML
 
-_Go nuts_. You can include `<div>`'s, `<span>`'s, elements with styles (i.e. `<span style="color: red;">I'm red!</span>`), `<em>`'s, `<strong>`'s, etc. You also can include HTML void elements (self-closing tags) such as `<br>` and `<hr>`. It's even possible to go crazy and include elements such as `<textarea>` and `<input>`.
+_Go nuts_. You can include `<div>`'s, `<span>`'s, elements with styles (i.e. `<span style="color: red;">I'm red!</span>`), `<em>`'s, `<strong>`'s, etc. You can also include [HTML void elements](http://www.w3.org/TR/html-markup/syntax.html#syntax-elements) (self-closing tags) such as `<br>` and `<hr>`. It's even possible to go crazy and include elements such as `<textarea>` and `<input>`.
 
 * * *
 
@@ -177,7 +177,7 @@ The `.continue` method works just like `.line` in that it accepts the same argum
 
 ### Arguments
 
-Same as those for `.line` (above).
+Same as those for `.line` ([above](https://github.com/qodesmith/typer#line)).
 
 * * *
 
@@ -199,7 +199,7 @@ Pause takes a single argument, a number in milliseconds. Typer will wait that lo
 .emit('boom');
 ```
 
-Emits an event on a specified DOM element or defaults to `document.body`. This is useful for setting up complex automation where multiple Typer functions (or other functions on your page) are time-dependant on eachother. DOM event explosions causing mass automated awesomeness. What could be better?
+Emits an event on a specified DOM element or defaults to `document.body`. This is useful for setting up complex automation scenarios where multiple Typer functions (or other functions on your page) are time-dependant on eachother. DOM event explosions causing mass automated awesomeness. What could be better?
 
 ### Arguments
 
@@ -217,7 +217,7 @@ Emits an event on a specified DOM element or defaults to `document.body`. This i
 .listen('boom');
 ```
 
-Typer has the ability (super-power) to listen for events as well. The `.listen` method will stop Typer in its tracks until the specified event is fired. Once fired, Typer will proceed from where it last left off. More automation goodness.
+Typer has the ability (read: super-power) to listen for events as well. The `.listen` method will stop Typer in its tracks until the specified event is fired. Once fired, Typer will proceed from where it last left off. More automation goodness.
 
 ### Arguments
 
@@ -238,7 +238,7 @@ _* NOTE: Typer uses one-time event listeners. When the event is fired, the liste
 .back('all');
 ```
 
-Erase stuff!
+:back: Erase stuff!
 
 ### Arguments
 
@@ -274,7 +274,7 @@ To round out our automation tools, the `.run` method will do just that: run a fu
 ## END
 
 ```javascript
-.end()
+.end();
 .end(function(){console.log('fin!')});
 .end(function(){console.log('fin!')}, true);
 ```
@@ -286,6 +286,7 @@ The `.end` method always removes the cursor, can optionally execute a callback f
 *   callback - A function you want executed when `typer` is finished.
 *   `true` - Indicates you want the `typerFinished` event fired once Typer is finished. This event is fired from `document.body`. The default (if left unspecified) is false.
 
+* * *
 * * *
 * * *
 
