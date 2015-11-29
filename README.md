@@ -160,9 +160,36 @@ You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or a DOM e
 
 _* TIP: If you supply no arguments, you will create a blank line._
 
-### HTML
+#### HTML / Unicode
 
 _Go nuts_. You can include `<div>`'s, `<span>`'s, elements with styles (i.e. `<span style="color: red;">I'm red!</span>`), `<em>`'s, `<strong>`'s, etc. You can also include [HTML void elements](http://www.w3.org/TR/html-markup/syntax.html#syntax-elements) (self-closing tags) such as `<br>` and `<hr>`. It's even possible to go crazy and include elements such as `<textarea>` and `<input>`.
+
+When using [unicode characters](http://dev.w3.org/html5/html-author/charref), you *must* begin with `&` and end with `;`.
+
+| Character  | Code     | Character  | Code      | Character  | Code      |
+| :--------: | -------- | :--------: | --------- | :--------: | --------- |
+| &#169;     | `&#169;` | &#8594;    | `&#8594;` | &#9742;    | `&#9742;` |
+| &reg;      | `&reg;`  | &#8600;    | `&#8600;` | &#9834;    | `&#9834;` |
+| &#188;     | `&#188;` | &#8595;    | `&#8595;` | &#9829;    | `&#9829;` |
+
+##### HTML / Unicode examples:
+
+The following code...
+```javascript
+typer(document.body)
+  .line('<em>How will I look?</em>')
+  .line('<em>How will I look?</em>', {html: false})
+  .line('Cookies & milk')
+  .line('Cookies &amp; milk')
+  .line('Cookies &amp; milk', {html: false});
+```
+
+will result in this output on the screen:
+> *How will I look?*  
+> &lt;em&gt;How will I look?&lt;/em&gt;  
+> Cookies & milk  
+> Cookies & milk  
+> Cookies &amp;amp; milk
 
 * * *
 
@@ -173,7 +200,7 @@ _Go nuts_. You can include `<div>`'s, `<span>`'s, elements with styles (i.e. `<s
 .continue('Same line, emphasis on <em>sloooow</em>.', 500, {html: true});
 ```
 
-The `.continue` method works just like `.line` in that it accepts the same arguments but it _continues_ typing on the same line, whereas `.line` creates new lines. In conjunction with the `.pause` and `.line` methods, you can create eloborate schemes.
+The `.continue` method works just like `.line` in that it accepts the same arguments but it _continues_ typing on the same line, whereas `.line` creates new lines. In conjunction with the `.pause` and `.line` methods, you can create eloborate schemes. You can feed `.continue` the same content (HTML, unicode, etc.) as `.line`.
 
 ### Arguments
 
@@ -286,8 +313,6 @@ The `.end` method always removes the cursor, can optionally execute a callback f
 *   callback - A function you want executed when `typer` is finished.
 *   `true` - Indicates you want the `typerFinished` event fired once Typer is finished. This event is fired from `document.body`. The default (if left unspecified) is false.
 
-* * *
-* * *
 * * *
 
 ## Showcase
