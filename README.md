@@ -292,9 +292,13 @@ The `.empty` method empties the parent element (specified as an argument to `typ
 
 ```javascript
 .run(function() { /* do stuff */ });
+.run(function(el) { /* do stuff with access to parent element */ });
 ```
 
 To round out our automation tools, the `.run` method will do just that: run a function before proceeding with any additional methods. Feed it a function and let it fly.
+
+#### Access to the parent element
+The `.run` method exposes the parent element that Typer is currently typing in through the first argument in the function you pass to `.run`. Be aware that if your function uses multiple arguments, the first argument will always represent the parent element that Typer is currently typing in.
 
 * * *
 
@@ -302,8 +306,9 @@ To round out our automation tools, the `.run` method will do just that: run a fu
 
 ```javascript
 .end();
-.end(function(){console.log('fin!')});
-.end(function(){console.log('fin!')}, true);
+.end(function() { /* do something */ });
+.end(function() { /* do something */ }, true);
+.end(function(el) { /* do something with access to parent element */ }, true);
 ```
 
 ### Arguments
@@ -312,6 +317,9 @@ The `.end` method always removes the cursor, can optionally execute a callback f
 
 *   callback - A function you want executed when `typer` is finished.
 *   `true` - Indicates you want the `typerFinished` event fired once Typer is finished. This event is fired from `document.body`. The default (if left unspecified) is false.
+
+#### Access to the parent element
+As with the `.run` method above, `.end` exposes the parent element that Typer is currently typing in through the first argument in the function you pass to to `.end`. Be aware that if your function uses multiple arguments, the first argument will always represent the parent element that Typer is currently typing in.
 
 * * *
 
