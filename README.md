@@ -4,7 +4,7 @@ Typer.js is an easy to use, choc-full-of-options, robust automated typing soluti
 Typer.js has *no library dependencies* so just slap it on your page and go.
 (We still love you, [jQuery](https://cdnjs.com/libraries/jquery/).)
 
-In short... Typer.js can type individual characters, unicode, whole words, half words, HTML elements, erase stuff, go fast, go slow, make new lines, fire events, listen to events, and make julienne fries in minutes.
+In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/), whole words, half words, HTML elements, erase stuff, go fast, go slow, make new lines, fire events, listen to events, run functions, and make julienne fries in minutes.
 
 ## Installation
 
@@ -164,7 +164,7 @@ _* TIP: If you supply no arguments, you will create a blank line._
 
 _Go nuts_. You can include `<div>`'s, `<span>`'s, elements with styles (i.e. `<span style="color: red;">I'm red!</span>`), `<em>`'s, `<strong>`'s, etc. You can also include [HTML void elements](http://www.w3.org/TR/html-markup/syntax.html#syntax-elements) (self-closing tags) such as `<br>` and `<hr>`. It's even possible to go crazy and include elements such as `<textarea>` and `<input>`.
 
-When using [unicode characters](http://dev.w3.org/html5/html-author/charref), you *must* begin with `&` and end with `;`.
+When using [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/), you *must* begin with `&` and end with `;`.
 
 | Character  | Code     | Character  | Code      | Character  | Code      |
 | :--------: | -------- | :--------: | --------- | :--------: | --------- |
