@@ -1,4 +1,6 @@
 function typer(el, speed) {
+  if(!window.jQuery) var jQuery = function(){}; // jQuery check.
+  if(el.length) el = el[0]; // Test for jQuery objects.
   if(!speed) speed = 70; // Default speed.
 
   var queue = [];
@@ -80,6 +82,8 @@ function typer(el, speed) {
       return this;
     },
     emit: function(el, event) {
+      if(el instanceof jQuery) el = el[0]; // Test for jQuery objects.
+
       if(typeof el === 'string') {
         // If no el is given, default to the body.
         queue.push({emit: el, el: document.body});
@@ -92,6 +96,8 @@ function typer(el, speed) {
       return this;
     },
     listen: function(el, event) {
+      if(el instanceof jQuery) el = el[0]; // Test for jQuery objects.
+
       if(typeof el === 'string') {
         // If no el is given, default to the body.
         queue.push({listen: el, el: document.body});
@@ -184,7 +190,6 @@ function typer(el, speed) {
     // function randomNum(min, max) {
     //   return Math.floor(Math.random() * (max - min + 1) + min);
     // }
-
     queue.dataNum = Math.floor(Math.random() * (999999999) + 1);
     el.dataset.typer = queue.dataNum;
   }
@@ -210,6 +215,7 @@ function typer(el, speed) {
     if(typeof msg === 'string' || msg.constructor.name === 'Array') {
       item[choice] = msg; // 1
     } else {
+      if(msg.length) msg = msg[0]; // Test for jQuery objects.
       item[choice] = msg.innerHTML; // 6
     }
 
@@ -437,6 +443,12 @@ function typer(el, speed) {
       }
     }
 
+    // Prevent '0' from triggering Typer's default speed.
+    if(item.speed === 0) item.speed = 1;
+
+    // Prevent larger 'back' quantities from needlessly interrupting the flow.
+    if(item.back > queue.newDiv.innerHTML.length) item.back = 'all';
+
     // A simple way to erase the whole line without knowing the contents:
     // set the # of 'backspaces' to the content's length.
     if(item.back === 'all') item.back = queue.newDiv.innerText.length;
@@ -494,9 +506,7 @@ function typer(el, speed) {
       if(contents[index] === ';') {
         var uni = [];
 
-        // Unicode characters are at max
-        // represented by 7 characters: '&#9197;'
-        for(var j = index; j >= (index - 7); j--) {
+        for(var j = index; j >= 0; j--) {
           uni.unshift(contents[j]);
           if(contents[j] === '&') break;
         }
