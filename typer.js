@@ -4,7 +4,7 @@ function typer(el, speed) {
   var queue = [];
   parentDataNum(); // Assign a random # to the parent el's data attribute.
 
-  // List of HTML void elements (http://goo.gl/SWmyS5).
+  // List of HTML void elements (http://goo.gl/SWmyS5),
   // used in 'processMsg' & 'processBack'.
   queue.voids = ['area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
 
@@ -45,9 +45,7 @@ function typer(el, speed) {
       cursorObj.blink === 'hard' ? cursor.push('cursor-hard') : cursor.push('cursor-soft');
 
       // Cursor: block or line.
-      if(cursorObj.block === true) {
-        cursor.push('cursor-block');
-      }
+      if(cursorObj.block === true) cursor.push('cursor-block');
 
       queue.cursor = cursor.join(' ');
 
@@ -85,6 +83,8 @@ function typer(el, speed) {
       if(typeof el === 'string') {
         // If no el is given, default to the body.
         queue.push({emit: el, el: document.body});
+      } else if(!el.nodeType || el.nodeType !== 1) { // Check for valid element.
+        console.log('Invalid element provided. Skipping emitter.');
       } else {
         queue.push({emit: event, el: el});
       }
@@ -95,6 +95,8 @@ function typer(el, speed) {
       if(typeof el === 'string') {
         // If no el is given, default to the body.
         queue.push({listen: el, el: document.body});
+      } else if(!el.nodeType || el.nodeType !== 1) { // Check for valid element.
+        console.log('Invalid element provided. Skipping listener.');
       } else {
         queue.push({listen: event, el: el});
       }
@@ -120,12 +122,12 @@ function typer(el, speed) {
         // Finalize the the div class names before ending.
         queue.newDiv.className = 'white-space';
         var classes = queue.newDiv.dataset.class;
-        if(classes) queue.newDiv.className = classes;
+        if(classes) queue.newDiv.className += ' ' + classes;
         queue.newDiv = '';
 
-        if(typeof fxn === 'function') fxn();
-        if((typeof fxn === 'boolean' && fxn) || e) {
-          if(typeof e === 'function') e();
+        if(fxn && typeof fxn === 'function') fxn(el);
+        if((fxn && typeof fxn === 'boolean') || e) {
+          if(typeof e === 'function') e(el);
           var fin = new Event('typerFinished');
           document.body.dispatchEvent(fin);
         }
@@ -213,10 +215,10 @@ function typer(el, speed) {
 
     if(spd && typeof spd === 'number') {
       item.speed = spd; // 2, 7
-      if(html) htmlObj(html);
+      if(html) htmlObj(html); // 4, 9
     } else if(spd) {
-      htmlObj(spd);
-      if(html && typeof html === 'number') item.speed = html; // 5, 10
+      htmlObj(spd); // 3, 8
+      if(html) item.speed = html; // 5, 10
     }
 
     return item;
@@ -255,7 +257,7 @@ function typer(el, speed) {
       if(currentItem.end) processEnd(currentItem);
     }, 0);
   }
-  function processMsg(item) {
+  function processMsg(item) { // Used by 'processLine' & 'processContinue'.
     var msg;
     item.line ? msg = item.line : msg = item.continue;
 
@@ -295,7 +297,7 @@ function typer(el, speed) {
             if(msg[i] === '>') break;
           }
 
-          var isVoid = (function voidTest() {
+          var isVoid = (function() {
             for(i in queue.voids) if(queue.voids[i] === voidTag) return true;
             return false;
           })();
@@ -315,7 +317,6 @@ function typer(el, speed) {
             targetList[0].innerHTML += tag;
           }
 
-
           return counter += tag.length; // Move the counter passed the current tag.
 
         // Closing tags.
@@ -327,7 +328,7 @@ function typer(el, speed) {
         } else if(piece === '&') {
           // 1. Build the unicode character.
           var char = '';
-          for(var i = counter; i < counter + 7; i++) {
+          for(var i = counter; i < counter + 7; i++) { // Max length of unicode code.
             char += msg[i];
             if(msg[i] === ';') break;
           }
@@ -335,7 +336,7 @@ function typer(el, speed) {
           // 2. Test the unicode character.
           var div = document.createElement('div');
           div.innerHTML = char;
-          if(div.innerText.length === 1) {
+          if(div.innerText.length === 1) { // Unicode's will convert to HTML with a length of 1.
             targetList[0].innerHTML += char;
             counter = i; // Move the counter to the end of the unicode text.
           } else {
@@ -360,21 +361,22 @@ function typer(el, speed) {
       if(userClass) queue.newDiv.className = userClass;
 
       queue.newDiv.classList.add('white-space');
-      if(queue.newDiv.innerHTML === '') queue.newDiv.innerHTML = ' '; // Retain the height of a single line.
+      if(queue.newDiv.innerHTML === '') queue.newDiv.innerHTML = ' '; // Retains the height of a single line.
     }
 
     // Create new div.
-    queue.newDiv = document.createElement('div');
-    queue.newDiv.dataset.typerChild = queue.dataNum;
-    queue.newDiv.className = queue.cursor;
-    queue.newDiv.classList.add('typer', 'white-space');
+    var div = document.createElement('div');
+    div.dataset.typerChild = queue.dataNum;
+    div.className = queue.cursor;
+    div.classList.add('typer', 'white-space');
 
     if(item.class) { // User-provided additional classes.
-      queue.newDiv.className += (' ' + item.class);
-      queue.newDiv.dataset.class = item.class;
+      div.className += (' ' + item.class);
+      div.dataset.class = item.class;
     }
 
-    el.appendChild(queue.newDiv);
+    el.appendChild(div);
+    queue.newDiv = div;
 
     // If our line has no contents...
     if(item.line === 1) {
@@ -400,13 +402,8 @@ function typer(el, speed) {
   function processEmit(item) {
     clearInterval(queue.type); // Stop the main iterator.
 
-    // Check for a valid node.
-    if(!item.el.nodeType || item.el.nodeType !== 1) {
-      console.log('You need to provide a valid element. Skipping emitter.');
-    } else {
-      var e = new Event(item.emit);
-      item.el.dispatchEvent(e);
-    }
+    var e = new Event(item.emit);
+    item.el.dispatchEvent(e);
 
     queue.item++;
     processQueue();
@@ -433,38 +430,59 @@ function typer(el, speed) {
       return processQueue();
     }
 
-    // A simple way to erase the whole line without knowing the contents.
+    function removeEmptys() {
+      var kids = queue.newDiv.children;
+      for(var i = 0; i < kids.length; i++) {
+        if(!kids[i].innerText.length) kids[i].remove();
+      }
+    }
+
+    // A simple way to erase the whole line without knowing the contents:
+    // set the # of 'backspaces' to the content's length.
     if(item.back === 'all') item.back = queue.newDiv.innerText.length;
 
     var counter = 0;
     var contents = queue.newDiv.innerHTML.split('');
     var index = contents.length - 1;
 
-    // Back iterator.
     var goBack = setInterval(function() {
+      removeEmptys();
       counter++;
 
-      // Detect HTML tags.
+      // TAG DETECTION
       if(contents[index] === '>') {
-        var tag = []; // Holder for detecting void elements.
+        var tag = [];
 
         for(var i = index; i >= 0; i--) {
           tag.unshift(contents[i]);
 
-          if(contents[i] === '<') {
-            // HTML void element detection & removal.
-            tag.shift();
-            tag.pop();
-            tag = tag.join('');
-            for(j in queue.voids) {
-              if(queue.voids[j] === tag) contents.splice(index, tag.length + 2);
+          // Closing tag check.
+          if(contents[i] === '<' && contents[i + 1] === '/') {
+            tag.length = 0; // Clear the tag array.
+
+            // Back-to-back-tags logic.
+            if(contents[i - 1] === '>') {
+              continue;
+            } else {
+              index = i - 1;
+              break;
             }
 
+          // Void tag check.
+          } else if(contents[i] === '<') {
+            var vTag = tag.slice(1, tag.length - 1).join('');
+            var isVoid;
+
+            for(var j in queue.voids) if(queue.voids[j] === vTag) isVoid = true;
             index = i - 1;
 
-            // Detect consecutive tags.
+            // Remove void tag.
+            if(isVoid) contents.splice(i, tag.length);
+            tag.length = 0;
+
+            // Back-to-back-tags logic.
             if(contents[i - 1] === '>') {
-              i--;
+              continue;
             } else {
               break;
             }
@@ -472,15 +490,40 @@ function typer(el, speed) {
         }
       }
 
-      if(counter <= item.back) {
-        contents.splice(index, 1); // Remove a single character.
-        queue.newDiv.innerHTML = contents.join(''); // Reset the div contents.
-        index--; // Decrement our index tracker.
+      // UNICODE DETECTION
+      if(contents[index] === ';') {
+        var uni = [];
+
+        // Unicode characters are at max
+        // represented by 7 characters: '&#9197;'
+        for(var j = index; j >= (index - 7); j--) {
+          uni.unshift(contents[j]);
+          if(contents[j] === '&') break;
+        }
+
+        var div = document.createElement('div');
+        div.innerHTML = uni.join('');
+
+        if(div.innerText.length === 1) {
+          index = j - 1;
+          contents.splice(j, uni.length);
+          queue.newDiv.innerHTML = contents.join('');
+        }
+
+      // DEFAULT SINGLE-CHARACTER REMOVAL
       } else {
+        contents.splice(index, 1);
+        queue.newDiv.innerHTML = contents.join('');
+        index--;
+      }
+
+      // Exit.
+      if(counter === item.back) {
         clearInterval(goBack);
-        queue.item++; // Increment our main counter.
+        queue.item++;
         processQueue();
       }
+
     }, item.speed || speed);
   }
   function processEmpty() {
@@ -491,7 +534,7 @@ function typer(el, speed) {
   function processRun(item) {
     clearInterval(queue.type); // Stop the main iterator.
 
-    item.run();
+    item.run(el);
     queue.item++;
     processQueue();
   }
