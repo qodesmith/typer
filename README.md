@@ -1,5 +1,5 @@
 # Typer.js
-Typer.js is an easy to use, choc-full-of-options, robust automated typing solution. There are a number of [methods](https://github.com/qodesmith/typer#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
+Typer.js is an easy to use, choc-full-of-options, robust automated typing library. There are a number of [methods](https://github.com/qodesmith/typer#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
 
 Typer.js has **no library dependencies** so just slap it on your page and go.
 We still love you, [jQuery](https://cdnjs.com/libraries/jquery/). And to show that love, Typer and its various methods can be fed jQuery selectors along with good 'ol vanilla JS selectors (as you'll see in the examples in each section).
