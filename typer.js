@@ -516,9 +516,15 @@ function typer(el, speed) {
 
         if(div.innerText.length === 1) {
           index = j - 1;
+          // Remove the whole chunk.
           contents.splice(j, uni.length);
-          queue.newDiv.innerHTML = contents.join('');
+        } else {
+          // Remove a single character.
+          contents.splice(index, 1);
+          index--;
         }
+
+        queue.newDiv.innerHTML = contents.join('');
 
       // DEFAULT SINGLE-CHARACTER REMOVAL
       } else {
