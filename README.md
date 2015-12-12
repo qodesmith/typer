@@ -282,6 +282,7 @@ _* NOTE: Typer uses **one-time event** listeners. When the event is fired, the l
 ```javascript
 .back(5, 1); // Lightning fast erasing!
 .back('all');
+.back('empty');
 ```
 
 :back: Erase stuff!
@@ -293,6 +294,7 @@ The 1st argument is mandatory and has two options. The 2nd argument is optional.
 *   Argument 1:
   * Number - number of characters to be erased / how many times you want to "hit" the "backspace button".
   * `'all'` - this will "backspace" the entire line, character by character, without you having to give a number. Useful for longer lines.
+  * `'empty'` - this will empty the entire line at once.
 *   Argument 2 - Number (milliseconds); the speed at which the backspace will perform. If no number is specified, it will default to the user-supplied Typer speed or Typer's internal default of 70.
 
 * * *
