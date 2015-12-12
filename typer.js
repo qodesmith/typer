@@ -5,6 +5,7 @@ function typer(el, speed) {
 
   var queue = [];
   parentDataNum(); // Assign a random # to the parent el's data attribute.
+  if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
   // List of HTML void elements (http://goo.gl/SWmyS5),
   // used in 'processMsg' & 'processBack'.
@@ -192,6 +193,16 @@ function typer(el, speed) {
     // }
     queue.dataNum = Math.floor(Math.random() * (999999999) + 1);
     el.dataset.typer = queue.dataNum;
+  }
+  function styleSheets() { // https://goo.gl/b4Ckz9
+    // Create the style element.
+    var style = document.createElement('style');
+
+    // Webkit hack.
+    style.appendChild(document.createTextNode(''));
+
+    // Append the style element to the head.
+    document.head.appendChild(style);
   }
   function lineOrContinue(choice, msg, spd, html) {
     var item = {};
@@ -445,6 +456,13 @@ function typer(el, speed) {
 
     // Prevent '0' from triggering Typer's default speed.
     if(item.speed === 0) item.speed = 1;
+
+    // Empty the line all at once.
+    if(item.back === 'empty') {
+      queue.newDiv.innerHTML = '';
+      queue.item++;
+      return processQueue();
+    }
 
     // Prevent larger 'back' quantities from needlessly interrupting the flow.
     if(item.back > queue.newDiv.innerHTML.length) item.back = 'all';
