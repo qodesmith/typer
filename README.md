@@ -47,7 +47,7 @@ typer(document.body)
   .line('Typer.js is awesome!');
 
 // jQuery selector.
-typer($(.someClass))
+typer($('.someClass'))
   .line('Typer.js is awesome!');
 ```
 
