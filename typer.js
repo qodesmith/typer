@@ -3,7 +3,9 @@ function typer(el, speed) {
   if(el.length) el = el[0]; // Test for jQuery objects.
   if(!speed) speed = 70; // Default speed.
 
+  // The main array to contain all the methods called on typer.
   var queue = [];
+
   parentDataNum(); // Assign a random # to the parent el's data attribute.
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
@@ -429,13 +431,11 @@ function typer(el, speed) {
     clearInterval(queue.type); // Stop the main iterator.
 
     // One-time event listener.
-    item.el.addEventListener(item.listen, handler);
-
-    function handler(e) {
+    item.el.addEventListener(item.listen, function handler(e) {
       item.el.removeEventListener(e.type, handler)
       queue.item++;
       processQueue();
-    }
+    });
   }
   function processBack(item) {
     // Stop the main iterator.
