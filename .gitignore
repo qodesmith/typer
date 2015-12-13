@@ -1,12 +1,13 @@
 # FOLDERS
+/less
 /node_modules
 /old-typer
 
 # FILES
 .DS_Store
-/demo.css
+/typer.less
+/demo.less
 /gulpfile.js
-/typer-dev.css
 /package.json
 /code.psd
 

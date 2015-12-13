@@ -1,5 +1,5 @@
 .typer::after {
-  content:'.';
+  content: '.';
   position: relative;
   display: inline-block;
   width: 0.1em;
@@ -9,51 +9,70 @@
   bottom: 0.125em;
   vertical-align: middle;
 }
-
 .cursor-block::after {
   width: 0.9ex;
 }
-
 .cursor-soft::after {
-  -webkit-animation: softBlink 0.7s infinite;
-          animation: softBlink 0.7s infinite;
+  -webkit-animation: softblink 0.7s infinite;
+          animation: softblink 0.7s infinite;
 }
-
 .cursor-hard::after {
-  -webkit-animation: hardBlink 0.7s infinite;
-          animation: hardBlink 0.7s infinite;
+  -webkit-animation: hardblink 0.7s infinite;
+          animation: hardblink 0.7s infinite;
 }
-
 .no-cursor::after {
   content: none;
 }
-
-@-webkit-keyframes softBlink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+@-webkit-keyframes softblink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-
-@keyframes softBlink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+@keyframes softblink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-
-@-webkit-keyframes hardBlink {
-  0% { opacity: 1; }
-  49% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 0; }
+@-webkit-keyframes hardblink {
+  0% {
+    opacity: 1;
+  }
+  49% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
-
-@keyframes hardBlink {
-  0% { opacity: 1; }
-  49% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 0; }
+@keyframes hardblink {
+  0% {
+    opacity: 1;
+  }
+  49% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
-
 .white-space {
   white-space: pre-wrap;
 }
