@@ -1,17 +1,16 @@
 function typer(el, speed) {
-  if(!window.jQuery) var jQuery = function(){}; // jQuery check.
-  if(el.length) el = el[0]; // Test for jQuery objects.
-  if(!speed) speed = 70; // Default speed.
-
-  // The main array to contain all the methods called on typer.
-  var queue = [];
-
+  var queue = []; // The main array to contain all the methods called on typer.
   parentDataNum(); // Assign a random # to the parent el's data attribute.
-  if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
   // List of HTML void elements (http://goo.gl/SWmyS5),
   // used in 'processMsg' & 'processBack'.
   queue.voids = ['area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
+
+  // Various checks.
+  if(!window.jQuery) var jQuery = function(){}; // jQuery check.
+  if(el.length) el = el[0]; // Test for jQuery objects.
+  if(!speed) speed = 70; // Default speed.
+  if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
 
   // Public methods.

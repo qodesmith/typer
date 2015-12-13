@@ -23,8 +23,8 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgb(30,30,30);
-  transition: opacity 10s;
+  background: rgb(0,20,0);
+  transition: opacity 10s, background 3s;
 }
 
 .hidden {
