@@ -449,8 +449,13 @@ function typer(el, speed) {
 
     function removeEmptys() {
       var kids = queue.newDiv.children;
+
       for(var i = 0; i < kids.length; i++) {
-        if(!kids[i].innerText.length) kids[i].remove();
+        if(!kids[i].innerHTML.length) {
+          kids[i].remove();
+          contents = queue.newDiv.innerHTML.split('');
+          index = contents.length - 1;
+        }
       }
     }
 
