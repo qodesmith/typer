@@ -192,7 +192,7 @@ function typer(el, speed) {
     // function randomNum(min, max) {
     //   return Math.floor(Math.random() * (max - min + 1) + min);
     // }
-    queue.dataNum = Math.floor(Math.random() * (999999999) + 1);
+    queue.dataNum = Math.floor(Math.random() * 999999999 + 1);
     el.dataset.typer = queue.dataNum;
   }
   function styleSheets() { // https://goo.gl/b4Ckz9
