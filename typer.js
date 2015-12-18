@@ -480,7 +480,6 @@ function typer(el, speed) {
     var index = contents.length - 1;
 
     var goBack = setInterval(function() {
-      removeEmptys();
       counter++;
 
       // TAG DETECTION
@@ -558,6 +557,7 @@ function typer(el, speed) {
       // Exit.
       if(counter === item.back) {
         clearInterval(goBack);
+        removeEmptys();
         queue.item++;
         processQueue();
       }
