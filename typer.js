@@ -476,9 +476,7 @@ function typer(el, speed) {
     if(item.back === 'all') item.back = queue.newDiv.innerText.length;
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
-    if(item.back < 0) {
-      item.back = queue.newDiv.innerText.length + item.back;
-    }
+    if(item.back < 0) item.back = queue.newDiv.innerText.length + item.back;
 
     var counter = 0;
     var contents = queue.newDiv.innerHTML.split('');
