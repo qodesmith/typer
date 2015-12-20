@@ -132,7 +132,7 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 .cursor({color: 'rgba(255,0,0,0.7)'});
 ```
 
-*   You can specify any css color you want via any method (i.e. name, rgb, #, etc.).
+*   You can specify any css color you want via any method (i.e. name, rgb, hsla, etc.).
 *   As a default, Typer will grab the color attribute of the parent element and use that for the cursor color to match the text with the cursor.
 
 #### _all options at once_
