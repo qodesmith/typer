@@ -210,7 +210,7 @@ function typer(el, speed) {
     item.html = true; // Default status. Will be possibly overwritten below.
 
     function htmlObj(obj) {
-      for(i in obj) item[i] = obj[i];
+      for(var i in obj) item[i] = obj[i];
     }
 
     // POSSIBLE ARRANGEMENTS:
@@ -316,7 +316,7 @@ function typer(el, speed) {
           }
 
           var isVoid = (function() {
-            for(i in queue.voids) if(queue.voids[i] === voidTag) return true;
+            for(var i in queue.voids) if(queue.voids[i] === voidTag) return true;
             return false;
           })();
 
@@ -346,7 +346,7 @@ function typer(el, speed) {
         } else if(piece === '&') {
           // 1. Build the unicode character.
           var char = '';
-          for(var i = counter; i < counter + 7; i++) { // Max length of unicode code.
+          for(var i = counter; i < msg.length; i++) {
             char += msg[i];
             if(msg[i] === ';') break;
           }
@@ -449,10 +449,10 @@ function typer(el, speed) {
     function removeEmptys() {
       var kids = queue.newDiv.children;
 
-      for(var i = 0; i < kids.length; i++) {
+      for(var i = 0,j; i < kids.length; i++) {
         // Check for HTML void elements.
         var isVoid = false;
-        for(var j = 0; j < queue.voids.length; j++) {
+        for(j in queue.voids) {
           if(queue.voids[j] === kids[i].nodeName.toLowerCase()) isVoid = true;
         }
 
