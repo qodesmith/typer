@@ -32,7 +32,7 @@ typer(el, speed)
 
 The Typer function itself takes two arguments:
 
-*  `el` - a DOM element, such as `document.body`, `document.querySelector('.someClass')`, or `$('.someClass')`.
+*  `el` - a target DOM element, such as `document.body`, `document.querySelector('.someClass')`, or `$('.someClass')`, for Typer to type in.
 *  `speed` - a number (milliseconds) representing how fast each character should be typed out. If no number is given, Typer will default to 70.
 
 Now you begin calling Typer's various [methods](https://github.com/qodesmith/typer#methods) via simple & sexy dot-notation...
