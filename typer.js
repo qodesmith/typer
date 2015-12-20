@@ -484,18 +484,17 @@ function typer(el, speed) {
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
     if(item.back < 0) {
-      // Check for HTML void elements & don't let them count for a 'backspace'.
       var kids = queue.newDiv.children;
       var found = 0;
-      (function() {
-        var j;
-        for(var i = 0; i < kids.length; i++) {
-          for(j in queue.voids) {
-            if(queue.voids[j] === kids[i].nodeName.toLowerCase()) found++;
-          }
-        }
-      })();
 
+      for(var i = 0,j; i < kids.length; i++) {
+        for(j in queue.voids) {
+          // Check for HTML void elements...
+          if(queue.voids[j] === kids[i].nodeName.toLowerCase()) found++;
+        }
+      }
+
+      // ... and don't let them count for a 'backspace'.
       item.back = queue.newDiv.innerText.length + item.back - found;
     }
 
