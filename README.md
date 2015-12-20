@@ -39,7 +39,7 @@ Now you begin calling Typer's various [methods](https://github.com/qodesmith/typ
 
 ## Simple Code Examples
 
-#### Single line:
+#### Type a single line:
 
 ```javascript
 // Vanilla JS selector.
@@ -51,7 +51,7 @@ typer($('.someClass'))
   .line('Typer.js is awesome!');
 ```
 
-#### Single line, correct mispelling with back:
+#### Type a single line, correct mispelling with back:
 
 ```javascript
 typer(document.body)
