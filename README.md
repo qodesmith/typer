@@ -204,6 +204,31 @@ will result in this output on the screen:
 
 * * *
 
+## BACK
+
+```javascript
+.back(5, 1); // Lightning fast erasing!
+.back(-5, 30);
+.back('all');
+.back('empty');
+```
+
+:back: Erase stuff!
+
+### Arguments
+
+The 1st argument is mandatory and has three options. The 2nd argument is optional. These arguments are order sensative.
+
+*   Argument 1:
+  * Number - number of characters to be erased / how many times you want to "hit" the "backspace button".
+    * Positive #'s erase that many characters.
+    * Negative #'s *keep* that many characters. For example, a value of -2 will erase *all but two* characters.
+  * `'all'` - this will "backspace" the entire line, character by character, without you having to give a number. Useful for longer lines.
+  * `'empty'` - this will empty the entire line at once.
+*   Argument 2 - Number (milliseconds); the speed at which the backspace will perform. If no number is specified, it will default to the user-supplied Typer speed or Typer's internal default of 70.
+
+* * *
+
 ## CONTINUE
 
 ```javascript
@@ -274,31 +299,6 @@ Typer has the ability (read: super-power) to listen for events as well. The `.li
 2. `('event')` - the event name we're listening for; Omitting a DOM element will default to listening to `document.body` for the event.
 
 _* NOTE: Typer uses **one-time event** listeners. When the event is fired, the listener is triggered, then removed._
-
-* * *
-
-## BACK
-
-```javascript
-.back(5, 1); // Lightning fast erasing!
-.back(-5, 30);
-.back('all');
-.back('empty');
-```
-
-:back: Erase stuff!
-
-### Arguments
-
-The 1st argument is mandatory and has three options. The 2nd argument is optional. These arguments are order sensative.
-
-*   Argument 1:
-  * Number - number of characters to be erased / how many times you want to "hit" the "backspace button".
-    * Positive #'s erase that many characters.
-    * Negative #'s *keep* that many characters. For example, a value of -2 will erase *all but two* characters.
-  * `'all'` - this will "backspace" the entire line, character by character, without you having to give a number. Useful for longer lines.
-  * `'empty'` - this will empty the entire line at once.
-*   Argument 2 - Number (milliseconds); the speed at which the backspace will perform. If no number is specified, it will default to the user-supplied Typer speed or Typer's internal default of 70.
 
 * * *
 
