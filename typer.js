@@ -447,20 +447,21 @@ function typer(el, speed) {
     }
 
     function removeEmptys() {
-      var kids = queue.newDiv.children;
+      // Convert HTMLcollection to an array: http://goo.gl/2rTC4i
+      var kids = [].slice.call(queue.newDiv.children);
 
-      for(var i = 0,j; i < kids.length; i++) {
+      for(i in kids) {
         // Check for HTML void elements.
         var isVoid = false;
-        for(j in queue.voids) {
+        for(var j in queue.voids) {
           if(queue.voids[j] === kids[i].nodeName.toLowerCase()) isVoid = true;
         }
 
         // Only check non-voids.
         if(!kids[i].innerHTML.length && !isVoid) {
           kids[i].remove();
-          contents = queue.newDiv.innerHTML.split('');
-          index = contents.length - 1;
+          contents = queue.newDiv.innerHTML.split(''); // Reset the contents array.
+          index = contents.length - 1; // Reset the index.
         }
       }
     }
