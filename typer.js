@@ -450,20 +450,18 @@ function typer(el, speed) {
       // Convert HTMLcollection to an array: http://goo.gl/2rTC4i
       var kids = [].slice.call(queue.newDiv.children);
 
-      for(i in kids) {
-        // Check for HTML void elements.
+      kids.map(function(kid) {
         var isVoid = false;
-        for(var j in queue.voids) {
-          if(queue.voids[j] === kids[i].nodeName.toLowerCase()) isVoid = true;
-        }
+        queue.voids.map(function(v) {
+          if(v === kid.nodeName.toLowerCase()) isVoid = true;
+        });
 
-        // Only check non-voids.
-        if(!kids[i].innerHTML.length && !isVoid) {
-          kids[i].remove();
+        if(!kid.innerHTML.length && !isVoid) {
+          kid.remove();
           contents = queue.newDiv.innerHTML.split(''); // Reset the contents array.
-          index = contents.length - 1; // Reset the index.
+          index = contents.length -1; // Reset the index.
         }
-      }
+      });
     }
 
     // Prevent '0' from triggering Typer's default speed.
