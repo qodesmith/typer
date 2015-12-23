@@ -486,12 +486,14 @@ function typer(el, speed) {
       var kids = queue.newDiv.children;
       var found = 0;
 
-      for(var i = 0,j; i < kids.length; i++) {
-        for(j in queue.voids) {
+      var kids = [].slice.call(queue.newDiv.children);
+
+      kids.map(function(kid) {
+        queue.voids.map(function(v) {
           // Check for HTML void elements...
-          if(queue.voids[j] === kids[i].nodeName.toLowerCase()) found++;
-        }
-      }
+          if (v === kid.nodeName.toLowerCase()) found++;
+        });
+      });
 
       // ... and don't let them count for a 'backspace'.
       item.back = queue.newDiv.innerText.length + item.back - found;
@@ -528,7 +530,9 @@ function typer(el, speed) {
             var vTag = tag.slice(1, tag.length - 1).join('');
             var isVoid;
 
-            for(var j in queue.voids) if(queue.voids[j] === vTag) isVoid = true;
+            queue.voids.map(function(v) {
+              if(v === vTag) isVoid = true;
+            });
             index = i - 1;
 
             // Remove void tag.
