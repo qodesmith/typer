@@ -315,10 +315,9 @@ function typer(el, speed) {
             if(msg[i] === '>') break;
           }
 
-          var isVoid = (function() {
-            for(var i in queue.voids) if(queue.voids[i] === voidTag) return true;
-            return false;
-          })();
+          var isVoid = queue.voids.some(function(v) {
+            return v === voidTag;
+          });
 
           // Non-void elements get focused on as the typing target.
           if(!isVoid) {
@@ -451,9 +450,8 @@ function typer(el, speed) {
       var kids = [].slice.call(queue.newDiv.children);
 
       kids.map(function(kid) {
-        var isVoid = false;
-        queue.voids.map(function(v) {
-          if(v === kid.nodeName.toLowerCase()) isVoid = true;
+        var isVoid = queue.voids.some(function(v) {
+          return v === kid.nodeName.toLowerCase();
         });
 
         if(!kid.innerHTML.length && !isVoid) {
@@ -483,10 +481,8 @@ function typer(el, speed) {
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
     if(item.back < 0) {
-      var kids = queue.newDiv.children;
-      var found = 0;
-
       var kids = [].slice.call(queue.newDiv.children);
+      var found = 0;
 
       kids.map(function(kid) {
         queue.voids.map(function(v) {
@@ -528,11 +524,10 @@ function typer(el, speed) {
           // Void tag check.
           } else if(contents[i] === '<') {
             var vTag = tag.slice(1, tag.length - 1).join('');
-            var isVoid;
-
-            queue.voids.map(function(v) {
-              if(v === vTag) isVoid = true;
+            var isVoid = queue.voids.some(function(v) {
+              return v === vTag;
             });
+
             index = i - 1;
 
             // Remove void tag.
