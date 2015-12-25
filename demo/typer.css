@@ -1,5 +1,5 @@
 .typer::after {
-  content: '.';
+  content: '';
   position: relative;
   display: inline-block;
   width: 0.1em;
