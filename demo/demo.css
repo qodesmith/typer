@@ -24,7 +24,6 @@ body {
           align-items: center;
   width: 100vw;
   height: 100vh;
-  z-index: -1;
   background-image: url(images/code.gif);
   background-size: cover;
   background-repeat: repeat-y;
@@ -37,7 +36,7 @@ body {
   height: 100vh;
   left: 0;
   top: 0;
-  transition: opacity 3s;
+  transition: background 5s;
   background: #001400;
 }
 .progress-container,
@@ -91,6 +90,9 @@ body {
   right: 200px;
   cursor: not-allowed;
 }
+.progress-container .progress.right {
+  right: 0;
+}
 .progress-container .progress::before {
   content: 'PROGRESS';
   position: absolute;
@@ -111,13 +113,15 @@ body {
 .progress-container .progress .method.active {
   background: #182f2d;
   font-style: italic;
+}
+.progress-container .progress .method.active .method-name {
   -webkit-animation: methods 2.5s infinite;
           animation: methods 2.5s infinite;
 }
 .progress-container .progress .method.complete {
   text-decoration: line-through;
 }
-.progress-container .progress .timer {
+.progress-container .progress .method .timer {
   position: absolute;
   color: yellow;
   right: -45px;
@@ -126,8 +130,10 @@ body {
       -ms-transform: translateY(-50%);
           transform: translateY(-50%);
   transition: color 1s;
+  -webkit-animation: none;
+          animation: none;
 }
-.progress-container .progress .timer.complete {
+.progress-container .progress .method .timer.complete {
   color: #777;
 }
 @-webkit-keyframes methods {
@@ -225,6 +231,9 @@ body {
   transition: opacity 6s ease-in;
   font-family: monospace;
   font-size: 7vw;
+}
+.fin.show {
+  opacity: 1;
 }
 .italic {
   font-style: italic;
