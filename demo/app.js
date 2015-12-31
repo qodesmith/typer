@@ -6,7 +6,7 @@
 
   // Every time the scrolling transition ends, start it up again.
   bg.addEventListener('transitionend', function startBGscroll(e) {
-    scrollBG();
+    // scrollBG();
   });
 
   function scrollBG() {

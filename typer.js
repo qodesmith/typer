@@ -297,7 +297,7 @@ function typer(el, speed) {
         // Avoid HTML parsing on supplied arrays.
         if(typeof msg !== 'string') {
           var div = document.createElement('div');
-          div.innerText = piece;
+          div.textContent = piece;
           piece = div.innerHTML;
         }
 
@@ -353,7 +353,7 @@ function typer(el, speed) {
           // 2. Test the unicode character.
           var div = document.createElement('div');
           div.innerHTML = char;
-          if(div.innerText.length === 1) { // Unicode's will convert to HTML with a length of 1.
+          if(div.textContent.length === 1) { // Unicode's will convert to HTML with a length of 1.
             targetList[0].innerHTML += char;
             counter = i; // Move the counter to the end of the unicode text.
           } else {
@@ -440,7 +440,7 @@ function typer(el, speed) {
     clearInterval(queue.type);
 
     // Check for being called on an empty line.
-    if(!queue.newDiv.innerText) {
+    if(!queue.newDiv.textContent) {
       queue.item++;
       return processQueue();
     }
@@ -477,7 +477,7 @@ function typer(el, speed) {
 
     // A simple way to erase the whole line without knowing the contents:
     // set the # of 'backspaces' to the content's length.
-    if(item.back === 'all') item.back = queue.newDiv.innerText.length;
+    if(item.back === 'all') item.back = queue.newDiv.textContent.length;
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
     if(item.back < 0) {
@@ -492,7 +492,7 @@ function typer(el, speed) {
       });
 
       // ... and don't let them count for a 'backspace'.
-      item.back = queue.newDiv.innerText.length + item.back - found;
+      item.back = queue.newDiv.textContent.length + item.back - found;
     }
 
     var counter = 0;
@@ -556,7 +556,7 @@ function typer(el, speed) {
         var div = document.createElement('div');
         div.innerHTML = uni.join('');
 
-        if(div.innerText.length === 1) {
+        if(div.textContent.length === 1) {
           index = j - 1;
           // Remove the whole chunk.
           contents.splice(j, uni.length);
