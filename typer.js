@@ -269,10 +269,10 @@ function typer(el, speed) {
 
     var targetList = [queue.newDiv];
     var counter = 0;
-    var iterator = setInterval(function() {
+    queue.iterator = setInterval(function() {
       // End of message processing logic.
       if(counter === msg.length) {
-        clearInterval(iterator);
+        clearInterval(queue.iterator);
         queue.item++; // Increment our main item counter.
         return processQueue(); // Restart the main iterator.
       }
@@ -419,6 +419,7 @@ function typer(el, speed) {
     // One-time event listener.
     item.el.addEventListener(item.listen, function handler(e) {
       item.el.removeEventListener(e.type, handler)
+      if(queue.killed) return; // Prevent error if kill switch is engaged.
       queue.item++;
       processQueue();
     });
@@ -479,19 +480,6 @@ function typer(el, speed) {
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
     if(item.back < 0) {
-      // var kids = [].slice.call(queue.newDiv.children);
-      // var found = 0;
-
-      // kids.map(function(kid) {
-      //   queue.voids.map(function(v) {
-      //     // Check for HTML void elements...
-      //     if (v === kid.nodeName.toLowerCase()) found++;
-      //   });
-      // });
-
-      // // ... and don't let them count for a 'backspace'.
-      // item.back = queue.newDiv.textContent.length + item.back - found;
-
       var text = queue.newDiv.textContent;
       item.back = text.substring(item.back * -1, text.length).length;
     }
@@ -500,7 +488,7 @@ function typer(el, speed) {
     var contents = queue.newDiv.innerHTML.split('');
     var index = contents.length - 1;
 
-    var goBack = setInterval(function() {
+    queue.goBack = setInterval(function() {
       counter++;
 
       // TAG DETECTION
@@ -578,7 +566,7 @@ function typer(el, speed) {
 
       // Exit.
       if(counter === item.back) {
-        clearInterval(goBack);
+        clearInterval(queue.goBack);
         removeEmptys(queue.newDiv);
         queue.item++;
         processQueue();
@@ -602,6 +590,28 @@ function typer(el, speed) {
     clearInterval(queue.type); // Final stop to our main iterator.
     queue.cb(); // Run the callback provided.
   }
+
+  // The kill switch.
+  +function killSwitch() {
+    document.body.addEventListener('killTyper', function killTyper(e) {
+      document.body.removeEventListener(e.type, killTyper);
+
+      // Stop all iterations.
+      clearInterval(queue.iterator); // From processMsg.
+      clearInterval(queue.goBack); // From processBack.
+
+      // Eliminate the current listener if applicable.
+      var ear = queue[queue.item];
+      queue.killed = true; // For processListen.
+      if(ear.name) {
+        var name = new Event(ear.name);
+        ear.el.dispatchEvent(name);
+      }
+
+      console.log('Typer killed!');
+    });
+  }();
+
 
   // Return 'typerObj' to be able to run the various methods.
   return typerObj;

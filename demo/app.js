@@ -192,12 +192,12 @@ var timeKeeping = {
     back: '2:06',
     continue: '0:21',
     pause: '0:51',
-    emit: '1:02',
+    emit: '1:00',
     listen: '0:59',
     empty: '0:24',
     run: '1:11',
     end: '1:18'
-    // 13:55 TOTAL
+    // 13:53 TOTAL
   },
   startTime: function() {
     var _this = this;
