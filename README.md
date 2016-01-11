@@ -360,7 +360,7 @@ function kill() {
 }
 ```
 
-To active Typer's kill switch, an `killTyper` event must be dispatched from the `<body>`. That's it.
+To active Typer's kill switch, a `killTyper` event must be dispatched from the `<body>`. That's it.
 
 * * *
 
