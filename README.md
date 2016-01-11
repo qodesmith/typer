@@ -343,10 +343,11 @@ The `.end` method always removes the cursor, can optionally execute a callback f
 As with the `.run` method above, `.end` exposes the parent element that Typer is currently typing in through an argument in the function you pass to to `.end`.
 
 * * *
+* * *
 
-# KILL SWITCH
+## Kill Switch
 
-Typer's kill switch feature let's you annihilate a typer function no matter *what* it's currently doing. This is particularly useful for single-page applications to prevent typer from continuing in the background even after a view has been removed from the DOM. The kill switch will also remove any current listener typer has on a DOM element.
+Typer's kill switch feature let's you annihilate a Typer function no matter *what* it's currently doing. This is particularly useful for single-page applications to prevent Typer from continuing in the background even after a view has been removed from the DOM. The kill switch will also remove any current listener Typer has on a DOM element.
 
 ### How to use:
 
