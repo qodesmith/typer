@@ -612,7 +612,6 @@ function typer(el, speed) {
     });
   }();
 
-
   // Return 'typerObj' to be able to run the various methods.
   return typerObj;
 }
