@@ -94,7 +94,7 @@ function typer(el, speed) {
     listen: function(event, el) {
       if(!el) el = document.body;
       if(el instanceof jQuery) el = el[0];
-      if(!el.nodeType || el.nodeType !== 1) throw '.listen() error: invalid element provided.');
+      if(!el.nodeType || el.nodeType !== 1) throw '.listen() error: invalid element provided.';
 
       queue.push({listen: event, el: el});
       return this;
