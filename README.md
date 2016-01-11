@@ -343,6 +343,7 @@ The `.end` method always removes the cursor, can optionally execute a callback f
 As with the `.run` method above, `.end` exposes the parent element that Typer is currently typing in through an argument in the function you pass to to `.end`.
 
 * * *
+END OF METHODS
 * * *
 
 ## Kill Switch
