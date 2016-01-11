@@ -263,8 +263,8 @@ The `.pause` method takes a single argument, a number in milliseconds. Typer wil
 
 ```javascript
 // Examples.
-.emit(document.querySelector('.someClass'), 'boom');
-.emit($('.someClass'), 'boom');
+.emit('boom', document.querySelector('.someClass'));
+.emit('boom', $('.someClass'));
 .emit('boom');
 ```
 
@@ -272,10 +272,8 @@ Emits an event on a specified DOM element or defaults to `document.body`. This i
 
 ### Arguments
 
-2 possible argument structures:
-
-1. `(el, 'event')` - specify a DOM element that the `'event'` will be fired from.
-2. `('event')` - the event name; Omitting a DOM element will default to the event firing from `document.body`.
+1. `('event')` - the event name; Omitting a DOM element will default to the event firing from `document.body`.
+2. `('event', el)` - specify a DOM element that the `'event'` will be fired from.
 
 * * *
 
@@ -283,8 +281,8 @@ Emits an event on a specified DOM element or defaults to `document.body`. This i
 
 ```javascript
 // Examples.
-.listen(document.querySelector('.someClass'), 'boom');
-.listen($('.someClass'), 'boom');
+.listen('boom', document.querySelector('.someClass'));
+.listen('boom', $('.someClass'));
 .listen('boom');
 ```
 
@@ -292,11 +290,8 @@ Typer has the ability (read: super-power) to listen for events as well. The `.li
 
 ### Arguments
 
-2 possible argument structures:
-
-
-1. `(el, 'event')` - specify a DOM element to listen to.
 2. `('event')` - the event name we're listening for; Omitting a DOM element will default to listening to `document.body` for the event.
+1. `('event', el)` - specify a DOM element to listen for the event on.
 
 _* NOTE: Typer uses **one-time event** listeners. When the event is fired, the listener is triggered, then removed._
 
