@@ -319,7 +319,7 @@ The parent element could contain multiple lines and HTML elements, the likes of 
 To round out our automation tools, the `.run` method will do just that: run a function before proceeding with any additional methods. Feed it a function and let it fly.
 
 #### Access to the parent element
-The `.run` method exposes the parent element that Typer is currently typing in through the first argument in the function you pass to `.run`. Be aware that if your function uses multiple arguments, the first argument will always represent the parent element that Typer is currently typing in.
+The `.run` method exposes the parent element that Typer is currently typing in through an argument in the function you pass to `.run` (`el` in the example above).
 
 * * *
 
@@ -340,7 +340,7 @@ The `.end` method always removes the cursor, can optionally execute a callback f
 *   `true` - Indicates you want the `typerFinished` event fired once Typer is finished. This event is fired from `document.body`. The default (if left unspecified) is false.
 
 #### Access to the parent element
-As with the `.run` method above, `.end` exposes the parent element that Typer is currently typing in through the first argument in the function you pass to to `.end`. Be aware that if your function uses multiple arguments, the first argument will always represent the parent element that Typer is currently typing in.
+As with the `.run` method above, `.end` exposes the parent element that Typer is currently typing in through an argument in the function you pass to to `.end`.
 
 * * *
 
