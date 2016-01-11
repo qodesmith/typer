@@ -354,7 +354,7 @@ Typer's kill switch feature let's you annihilate a Typer function no matter *wha
 
 This is an example function you can use to flip the kill switch:
 ``` javascript
-function kill() {
+function killTyper() {
   var kill = new Event('killTyper');
   document.body.dispatchEvent(kill);
 }
