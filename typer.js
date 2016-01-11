@@ -83,32 +83,20 @@ function typer(el, speed) {
       queue.push({pause: num});
       return this;
     },
-    emit: function(el, event) {
-      if(el instanceof jQuery) el = el[0]; // Test for jQuery objects.
+    emit: function(event, el) {
+      if(!el) el = document.body // If no el is given. default to the body.
+      if(el instanceof jQuery) el = el[0];
+      if(!el.nodeType || el.nodeType !== 1) throw '.emit() error: invalid element provided.';
 
-      if(typeof el === 'string') {
-        // If no el is given, default to the body.
-        queue.push({emit: el, el: document.body});
-      } else if(!el.nodeType || el.nodeType !== 1) { // Check for valid element.
-        console.log('Invalid element provided. Skipping emitter.');
-      } else {
-        queue.push({emit: event, el: el});
-      }
-
+      queue.push({emit: event, el: el});
       return this;
     },
-    listen: function(el, event) {
-      if(el instanceof jQuery) el = el[0]; // Test for jQuery objects.
+    listen: function(event, el) {
+      if(!el) el = document.body;
+      if(el instanceof jQuery) el = el[0];
+      if(!el.nodeType || el.nodeType !== 1) throw '.listen() error: invalid element provided.');
 
-      if(typeof el === 'string') {
-        // If no el is given, default to the body.
-        queue.push({listen: el, el: document.body});
-      } else if(!el.nodeType || el.nodeType !== 1) { // Check for valid element.
-        console.log('Invalid element provided. Skipping listener.');
-      } else {
-        queue.push({listen: event, el: el});
-      }
-
+      queue.push({listen: event, el: el});
       return this;
     },
     back: function(chars, spd) {
@@ -491,19 +479,21 @@ function typer(el, speed) {
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
     if(item.back < 0) {
-      var kids = [].slice.call(queue.newDiv.children);
-      var found = 0;
+      // var kids = [].slice.call(queue.newDiv.children);
+      // var found = 0;
 
+      // kids.map(function(kid) {
+      //   queue.voids.map(function(v) {
+      //     // Check for HTML void elements...
+      //     if (v === kid.nodeName.toLowerCase()) found++;
+      //   });
+      // });
 
-      kids.map(function(kid) {
-        queue.voids.map(function(v) {
-          // Check for HTML void elements...
-          if (v === kid.nodeName.toLowerCase()) found++;
-        });
-      });
+      // // ... and don't let them count for a 'backspace'.
+      // item.back = queue.newDiv.textContent.length + item.back - found;
 
-      // ... and don't let them count for a 'backspace'.
-      item.back = queue.newDiv.textContent.length + item.back - found;
+      var text = queue.newDiv.textContent;
+      item.back = text.substring(item.back * -1, text.length).length;
     }
 
     var counter = 0;
