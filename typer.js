@@ -445,21 +445,31 @@ function typer(el, speed) {
       return processQueue();
     }
 
-    function removeEmptys() {
+    function removeEmptys(el) {
       // Convert HTMLcollection to an array: http://goo.gl/2rTC4i
-      var kids = [].slice.call(queue.newDiv.children);
+      var children = [].slice.call(el.children);
 
-      kids.map(function(kid) {
-        var isVoid = queue.voids.some(function(v) {
-          return v === kid.nodeName.toLowerCase();
-        });
+      children.map(function(child, i) {
+        // Child.
+        if(!child.innerHTML.length) {
+          child.remove();
 
-        if(!kid.innerHTML.length && !isVoid) {
-          kid.remove();
-          contents = queue.newDiv.innerHTML.split(''); // Reset the contents array.
-          index = contents.length -1; // Reset the index.
+          if(el === queue.newDiv) {
+            contents = el.innerHTML.split(''); // Reset the contents array.
+            index = contents.length - 1; // Reset the index.
+          }
+
+        // Children of child.
+        } else if(child.children.length) {
+          removeEmptys(child); // Recursion (read: inception).
+
+          if(!this[i].innerHTML.length) {
+            this[i].remove(); // Remove empty recursive parent.
+            contents = el.innerHTML.split('');
+            index = contents.length - 1;
+          }
         }
-      });
+      }, children);
     }
 
     // Prevent '0' from triggering Typer's default speed.
@@ -483,6 +493,7 @@ function typer(el, speed) {
     if(item.back < 0) {
       var kids = [].slice.call(queue.newDiv.children);
       var found = 0;
+
 
       kids.map(function(kid) {
         queue.voids.map(function(v) {
@@ -578,7 +589,7 @@ function typer(el, speed) {
       // Exit.
       if(counter === item.back) {
         clearInterval(goBack);
-        removeEmptys();
+        removeEmptys(queue.newDiv);
         queue.item++;
         processQueue();
       }
