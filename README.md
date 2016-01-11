@@ -344,6 +344,24 @@ As with the `.run` method above, `.end` exposes the parent element that Typer is
 
 * * *
 
+# KILL SWITCH
+
+Typer's kill switch feature let's you annihilate a typer function no matter *what* it's currently doing. This is particularly useful for single-page applications to prevent typer from continuing in the background even after a view has been removed from the DOM. The kill switch will also remove any current listener typer has on a DOM element.
+
+### How to use:
+
+This is an example function you can use to flip the kill switch:
+``` javascript
+function kill() {
+  var kill = new Event('killTyper');
+  document.body.dispatchEvent(kill);
+}
+```
+
+To active Typer's kill switch, an `killTyper` event must be dispatched from the `<body>`. That's it.
+
+* * *
+
 ## Showcase
 
 Have you done something cool with Typer.js? Have an awesome site / use-case you'd like to share? [Contact me!](https://twitter.com/Qodesmith) I'd love to show off your awesomeness with a link here.
