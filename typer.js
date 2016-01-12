@@ -7,9 +7,9 @@ function typer(el, speed) {
   queue.voids = ['area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
 
   // Various checks.
+  speed = speed || 70;
   var jQuery = jQuery || function(){}; // jQuery check.
   if(el.length) el = el[0]; // Test for jQuery objects.
-  if(!speed) speed = 70; // Default speed.
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
 
@@ -462,7 +462,7 @@ function typer(el, speed) {
     }
 
     // Prevent '0' from triggering Typer's default speed.
-    if(item.speed === 0) item.speed = 1;
+    item.speed = item.speed || 1;
 
     // Empty the line all at once.
     if(item.back === 'empty') {
