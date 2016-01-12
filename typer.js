@@ -7,7 +7,7 @@ function typer(el, speed) {
   queue.voids = ['area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
 
   // Various checks.
-  if(!window.jQuery) var jQuery = function(){}; // jQuery check.
+  var jQuery = jQuery || function(){}; // jQuery check.
   if(el.length) el = el[0]; // Test for jQuery objects.
   if(!speed) speed = 70; // Default speed.
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
