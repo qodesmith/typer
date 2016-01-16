@@ -39,10 +39,6 @@ function typer(el, speed) {
       // Optional cursor color - https://goo.gl/8k2mqL
       if(cursorObj.color) {
         document.styleSheets[0].addRule(data + ' .typer:after', 'background-color:' + cursorObj.color + ';');
-      } else {
-        // Cursor defaults to the color of the specified 'el' in 'typer'.
-        var color = window.getComputedStyle(el).color;
-        document.styleSheets[0].addRule(data + ' .typer:after', 'background-color:' + color + ';');
       }
 
       // Cursor's blinking style - default to soft.
@@ -234,15 +230,7 @@ function typer(el, speed) {
 
     // If no cursor is declared, resort to default styling.
     // The cursor will be pinged later by each line.
-    if(!queue.cursor) {
-      // Default cursor-blink style.
-      queue.cursor = 'cursor-soft';
-
-      // Cursor defaults to the color of the specified 'el' in 'typer'.
-      var data = '[data-typer="' + queue.dataNum + '"]';
-      var color = window.getComputedStyle(el).color;
-      document.styleSheets[0].addRule(data + ' .typer:after', 'background-color:' + color + ';');
-    }
+    if(!queue.cursor) queue.cursor = 'cursor-soft';
 
     // Main iterator.
     queue.type = setInterval(function() {

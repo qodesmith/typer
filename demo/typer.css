@@ -4,7 +4,7 @@
   display: inline-block;
   width: 0.1em;
   height: 2ex;
-  color: transparent;
+  background-color: currentColor;
   margin-left: 0.1em;
   bottom: 0.125em;
   vertical-align: middle;
