@@ -586,12 +586,12 @@ function typer(el, speed) {
       document.body.removeEventListener(e.type, q.kill);
       q.killed = true; // For processListen.
 
-      if(q.item === q.length) return console.log('This typer has completed; removing listener.');
-
       // Stop all iterations & pauses.
       clearInterval(q.iterator); // From processMsg.
       clearInterval(q.goBack); // From processBack.
-      clearTimeout(q.pause) // from processPause.
+      clearTimeout(q.pause) // From processPause.
+
+      if(q.item === q.length) return console.log('This typer has completed; removing listener.');
 
       // If typer is in a listener state...
       var ear = q[q.item];
