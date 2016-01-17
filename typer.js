@@ -1,10 +1,10 @@
 function typer(el, speed) {
-  var queue = []; // The main array to contain all the methods called on typer.
+  var q = []; // The main array to contain all the methods called on typer.
   parentDataNum(); // Assign a random # to the parent el's data attribute.
 
   // List of HTML void elements (http://goo.gl/SWmyS5),
   // used in 'processMsg' & 'processBack'.
-  queue.voids = ['area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
+  q.voids = ['area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
 
   // Various checks.
   speed = speed || 70;
@@ -20,21 +20,21 @@ function typer(el, speed) {
       if(cursorObj === undefined) cursorObj = true;
 
       // Prevent cursor from being run multiple times.
-      if(queue.cursorRan) {
+      if(q.cursorRan) {
         console.log('You can only call .cursor once.');
         return this;
       }
 
-      queue.cursorRan = true;
+      q.cursorRan = true;
 
       // No cursor.
       if(cursorObj === false) {
-        queue.cursor = 'no-cursor';
+        q.cursor = 'no-cursor';
         return this;
       }
 
       var cursor = [];
-      var data = '[data-typer="' + queue.dataNum + '"]';
+      var data = '[data-typer="' + q.dataNum + '"]';
 
       // Optional cursor color - https://goo.gl/8k2mqL
       if(cursorObj.color) {
@@ -47,36 +47,36 @@ function typer(el, speed) {
       // Cursor: block or line.
       if(cursorObj.block === true) cursor.push('cursor-block');
 
-      queue.cursor = cursor.join(' ');
+      q.cursor = cursor.join(' ');
 
       return this;
     },
     line: function(msg, spd, html) {
       if(!msg) {
-        queue.push({line: 1});
+        q.push({line: 1});
       } else {
-        queue.push(lineOrContinue('line', msg, spd, html));
+        q.push(lineOrContinue('line', msg, spd, html));
       }
 
       // Push the first dominoe on the typing iteration,
-      // ensuring 'processQueue()' can only be run once.
-      if(!queue.typing) {
-        queue.typing = true;
-        processQueue();
+      // ensuring 'processq()' can only be run once.
+      if(!q.typing) {
+        q.typing = true;
+        processq();
       }
 
       return this;
     },
     continue: function(msg, spd, html) {
       if(!msg) return this; // Skip empty continues.
-      queue.push(lineOrContinue('continue', msg, spd, html));
+      q.push(lineOrContinue('continue', msg, spd, html));
       return this;
     },
     pause: function(num) {
       // Default to 500 milliseconds.
       if(num === undefined) num = 500;
 
-      queue.push({pause: num});
+      q.push({pause: num});
       return this;
     },
     emit: function(event, el) {
@@ -84,7 +84,7 @@ function typer(el, speed) {
       if(el instanceof jQuery) el = el[0];
       if(!el.nodeType || el.nodeType !== 1) throw '.emit() error: invalid element provided.';
 
-      queue.push({emit: event, el: el});
+      q.push({emit: event, el: el});
       return this;
     },
     listen: function(event, el) {
@@ -92,30 +92,30 @@ function typer(el, speed) {
       if(el instanceof jQuery) el = el[0];
       if(!el.nodeType || el.nodeType !== 1) throw '.listen() error: invalid element provided.';
 
-      queue.push({listen: event, el: el});
+      q.push({listen: event, el: el});
       return this;
     },
     back: function(chars, spd) {
-      queue.push({back: chars, speed: spd});
+      q.push({back: chars, speed: spd});
       return this;
     },
     empty: function() {
-      queue.push({empty: true});
+      q.push({empty: true});
       return this;
     },
     run: function(fxn) {
-      queue.push({run: fxn});
+      q.push({run: fxn});
       return this;
     },
     end: function(fxn, e) {
-      queue.push({end: true});
+      q.push({end: true});
 
-      queue.cb = function() {
+      q.cb = function() {
         // Finalize the the div class names before ending.
-        queue.newDiv.className = 'white-space';
-        var classes = queue.newDiv.dataset.class;
-        if(classes) queue.newDiv.className += ' ' + classes;
-        queue.newDiv = '';
+        q.newDiv.className = 'white-space';
+        var classes = q.newDiv.dataset.class;
+        if(classes) q.newDiv.className += ' ' + classes;
+        q.newDiv = '';
 
         if(fxn && typeof fxn === 'function') fxn(el);
         if((fxn && typeof fxn === 'boolean') || e) {
@@ -176,8 +176,8 @@ function typer(el, speed) {
     // function randomNum(min, max) {
     //   return Math.floor(Math.random() * (max - min + 1) + min);
     // }
-    queue.dataNum = Math.floor(Math.random() * 999999999 + 1);
-    el.dataset.typer = queue.dataNum;
+    q.dataNum = Math.floor(Math.random() * 999999999 + 1);
+    el.dataset.typer = q.dataNum;
   }
   function styleSheets() { // https://goo.gl/b4Ckz9
     // Create the style element.
@@ -225,19 +225,20 @@ function typer(el, speed) {
 
     return item;
   }
-  function processQueue() { // Begin our main iterator.
-    if(!(queue.item >= 0)) queue.item = 0;
+  function processq() { // Begin our main iterator.
+    if(!(q.item >= 0)) q.item = 0;
+    if(q.item === q.length) document.body.removeEventListener('killTyper', q.kill);
 
     // If no cursor is declared, resort to default styling.
     // The cursor will be pinged later by each line.
-    if(!queue.cursor) queue.cursor = 'cursor-soft';
+    if(!q.cursor) q.cursor = 'cursor-soft';
 
     // Main iterator.
-    queue.type = setInterval(function() {
-      var currentItem = queue[queue.item];
+    q.type = setInterval(function() {
+      var currentItem = q[q.item];
 
-      // If we arrive here and we've exausted the queue...
-      if(queue.item === queue.length) return clearInterval(queue.type); // Stop the main iterator.
+      // If we arrive here and we've exausted the q...
+      if(q.item === q.length) return clearInterval(q.type); // Stop the main iterator.
 
       // Various processing functions.
       if(currentItem.line) processLine(currentItem);
@@ -255,14 +256,14 @@ function typer(el, speed) {
     var msg;
     item.line ? msg = item.line : msg = item.continue;
 
-    var targetList = [queue.newDiv];
+    var targetList = [q.newDiv];
     var counter = 0;
-    queue.iterator = setInterval(function() {
+    q.iterator = setInterval(function() {
       // End of message processing logic.
       if(counter === msg.length) {
-        clearInterval(queue.iterator);
-        queue.item++; // Increment our main item counter.
-        return processQueue(); // Restart the main iterator.
+        clearInterval(q.iterator);
+        q.item++; // Increment our main item counter.
+        return processq(); // Restart the main iterator.
       }
 
       var piece = msg[counter];
@@ -277,7 +278,7 @@ function typer(el, speed) {
           piece = div.innerHTML;
         }
 
-        queue.newDiv.innerHTML += piece;
+        q.newDiv.innerHTML += piece;
 
       // HTML
       } else {
@@ -291,7 +292,7 @@ function typer(el, speed) {
             if(msg[i] === '>') break;
           }
 
-          var isVoid = queue.voids.some(function(v) {
+          var isVoid = q.voids.some(function(v) {
             return v === voidTag;
           });
 
@@ -345,22 +346,22 @@ function typer(el, speed) {
   }
   function processLine(item) {
     // Stop the main iterator.
-    clearInterval(queue.type);
+    clearInterval(q.type);
 
     // Process the previous line if there was one.
-    if(queue.newDiv) {
-      queue.newDiv.className = '';
-      var userClass = queue.newDiv.dataset.class;
-      if(userClass) queue.newDiv.className = userClass;
+    if(q.newDiv) {
+      q.newDiv.className = '';
+      var userClass = q.newDiv.dataset.class;
+      if(userClass) q.newDiv.className = userClass;
 
-      queue.newDiv.classList.add('white-space');
-      if(queue.newDiv.innerHTML === '') queue.newDiv.innerHTML = ' '; // Retains the height of a single line.
+      q.newDiv.classList.add('white-space');
+      if(q.newDiv.innerHTML === '') q.newDiv.innerHTML = ' '; // Retains the height of a single line.
     }
 
     // Create new div.
     var div = document.createElement('div');
-    div.dataset.typerChild = queue.dataNum;
-    div.className = queue.cursor;
+    div.dataset.typerChild = q.dataNum;
+    div.className = q.cursor;
     div.classList.add('typer', 'white-space');
 
     if(item.class) { // User-provided additional classes.
@@ -369,57 +370,57 @@ function typer(el, speed) {
     }
 
     el.appendChild(div);
-    queue.newDiv = div;
+    q.newDiv = div;
 
     // If our line has no contents...
     if(item.line === 1) {
-      queue.item++;
-      return processQueue();
+      q.item++;
+      return processq();
     }
 
     // Message iterator.
     processMsg(item);
   }
   function processContinue(item) {
-    clearInterval(queue.type); // Stop the main iterator.
+    clearInterval(q.type); // Stop the main iterator.
     processMsg(item); // Message iterator.
   }
   function processPause(item) {
-    clearInterval(queue.type); // Stop the main iterator.
+    clearInterval(q.type); // Stop the main iterator.
 
-    setTimeout(function() {
-      queue.item++; // Increment our main item counter.
-      processQueue(); // Restart the main iterator.
+    q.pause = setTimeout(function() {
+      q.item++; // Increment our main item counter.
+      processq(); // Restart the main iterator.
     }, item.pause);
   }
   function processEmit(item) {
-    clearInterval(queue.type); // Stop the main iterator.
+    clearInterval(q.type); // Stop the main iterator.
 
     var e = new Event(item.emit);
     item.el.dispatchEvent(e);
 
-    queue.item++;
-    processQueue();
+    q.item++;
+    processq();
   }
   function processListen(item) {
-    clearInterval(queue.type); // Stop the main iterator.
+    clearInterval(q.type); // Stop the main iterator.
 
     // One-time event listener.
     item.el.addEventListener(item.listen, function handler(e) {
       item.el.removeEventListener(e.type, handler)
-      if(queue.killed) return; // Prevent error if kill switch is engaged.
-      queue.item++;
-      processQueue();
+      if(q.killed) return; // Prevent error if kill switch is engaged.
+      q.item++;
+      processq();
     });
   }
   function processBack(item) {
     // Stop the main iterator.
-    clearInterval(queue.type);
+    clearInterval(q.type);
 
     // Check for being called on an empty line.
-    if(!queue.newDiv.textContent) {
-      queue.item++;
-      return processQueue();
+    if(!q.newDiv.textContent) {
+      q.item++;
+      return processq();
     }
 
     function removeEmptys(el) {
@@ -431,7 +432,7 @@ function typer(el, speed) {
         if(!child.innerHTML.length) {
           child.remove();
 
-          if(el === queue.newDiv) {
+          if(el === q.newDiv) {
             contents = el.innerHTML.split(''); // Reset the contents array.
             index = contents.length - 1; // Reset the index.
           }
@@ -454,29 +455,29 @@ function typer(el, speed) {
 
     // Empty the line all at once.
     if(item.back === 'empty') {
-      queue.newDiv.innerHTML = '';
-      queue.item++;
-      return processQueue();
+      q.newDiv.innerHTML = '';
+      q.item++;
+      return processq();
     }
 
     // Prevent larger 'back' quantities from needlessly interrupting the flow.
-    if(item.back > queue.newDiv.innerHTML.length) item.back = 'all';
+    if(item.back > q.newDiv.innerHTML.length) item.back = 'all';
 
     // A simple way to erase the whole line without knowing the contents:
     // set the # of 'backspaces' to the content's length.
-    if(item.back === 'all') item.back = queue.newDiv.textContent.length;
+    if(item.back === 'all') item.back = q.newDiv.textContent.length;
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
     if(item.back < 0) {
-      var text = queue.newDiv.textContent;
+      var text = q.newDiv.textContent;
       item.back = text.substring(item.back * -1, text.length).length;
     }
 
     var counter = 0;
-    var contents = queue.newDiv.innerHTML.split('');
+    var contents = q.newDiv.innerHTML.split('');
     var index = contents.length - 1;
 
-    queue.goBack = setInterval(function() {
+    q.goBack = setInterval(function() {
       counter++;
 
       // TAG DETECTION
@@ -501,7 +502,7 @@ function typer(el, speed) {
           // Void tag check.
           } else if(contents[i] === '<') {
             var vTag = tag.slice(1, tag.length - 1).join('');
-            var isVoid = queue.voids.some(function(v) {
+            var isVoid = q.voids.some(function(v) {
               return v === vTag;
             });
 
@@ -543,61 +544,65 @@ function typer(el, speed) {
           index--;
         }
 
-        queue.newDiv.innerHTML = contents.join('');
+        q.newDiv.innerHTML = contents.join('');
 
       // DEFAULT SINGLE-CHARACTER REMOVAL
       } else {
         contents.splice(index, 1);
-        queue.newDiv.innerHTML = contents.join('');
+        q.newDiv.innerHTML = contents.join('');
         index--;
       }
 
       // Exit.
       if(counter === item.back) {
-        clearInterval(queue.goBack);
-        removeEmptys(queue.newDiv);
-        queue.item++;
-        processQueue();
+        clearInterval(q.goBack);
+        removeEmptys(q.newDiv);
+        q.item++;
+        processq();
       }
 
     }, item.speed || speed);
   }
   function processEmpty() {
-    queue.newDiv = '';
+    q.newDiv = '';
     el.innerHTML = '';
-    processLine({line: 1}); // This will stop the main iterator & run 'processQueue'.
+    processLine({line: 1}); // This will stop the main iterator & run 'processq'.
   }
   function processRun(item) {
-    clearInterval(queue.type); // Stop the main iterator.
+    clearInterval(q.type); // Stop the main iterator.
 
     item.run(el);
-    queue.item++;
-    processQueue();
+    q.item++;
+    processq();
   }
   function processEnd() {
-    clearInterval(queue.type); // Final stop to our main iterator.
-    queue.cb(); // Run the callback provided.
+    clearInterval(q.type); // Final stop to our main iterator.
+    q.cb(); // Run the callback provided.
   }
 
   // The kill switch.
   +function killSwitch() {
-    document.body.addEventListener('killTyper', function killTyper(e) {
-      document.body.removeEventListener(e.type, killTyper);
+    q.kill = function(e) {
+      document.body.removeEventListener(e.type, q.kill);
+      q.killed = true; // For processListen.
 
-      // Stop all iterations.
-      clearInterval(queue.iterator); // From processMsg.
-      clearInterval(queue.goBack); // From processBack.
+      if(q.item === q.length) return console.log('This typer has completed; removing listener.');
 
-      // Eliminate the current listener if applicable.
-      var ear = queue[queue.item];
-      queue.killed = true; // For processListen.
-      if(ear.name) {
-        var name = new Event(ear.name);
+      // Stop all iterations & pauses.
+      clearInterval(q.iterator); // From processMsg.
+      clearInterval(q.goBack); // From processBack.
+      clearTimeout(q.pause) // from processPause.
+
+      // If typer is in a listener state...
+      var ear = q[q.item];
+      if(ear.listen) {
+        var name = new Event(ear.listen);
         ear.el.dispatchEvent(name);
       }
 
       console.log('Typer killed!');
-    });
+    }
+    document.body.addEventListener('killTyper', q.kill);
   }();
 
   // Return 'typerObj' to be able to run the various methods.
