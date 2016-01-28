@@ -8,7 +8,7 @@ function typer(el, speed) {
 
   // Various checks.
   speed = speed || 70;
-  var jQuery = jQuery || function(){}; // jQuery check.
+  if(!window.jQuery) var jQuery = function(){}; // jQuery check.
   if(el.length) el = el[0]; // Test for jQuery objects.
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
@@ -21,7 +21,7 @@ function typer(el, speed) {
 
       // Prevent cursor from being run multiple times.
       if(q.cursorRan) {
-        console.log('You can only call .cursor once.');
+        console.log('You can only call ".cursor" once.');
         return this;
       }
 
@@ -104,6 +104,7 @@ function typer(el, speed) {
       return this;
     },
     run: function(fxn) {
+      if(!(fxn instanceof Function)) fxn = function(){};
       q.push({run: fxn});
       return this;
     },
