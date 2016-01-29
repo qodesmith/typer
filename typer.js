@@ -228,7 +228,11 @@ function typer(el, speed) {
   }
   function processq() { // Begin our main iterator.
     if(!(q.item >= 0)) q.item = 0;
-    if(q.item === q.length) document.body.removeEventListener('killTyper', q.kill);
+    if(q.item === q.length) return document.body.removeEventListener('killTyper', q.kill);
+    if(!q.ks) {
+      q.ks = true;
+      document.body.addEventListener('killTyper', q.kill);
+    }
 
     // If no cursor is declared, resort to default styling.
     // The cursor will be pinged later by each line.
@@ -236,21 +240,18 @@ function typer(el, speed) {
 
     // Main iterator.
     q.type = setInterval(function() {
-      var currentItem = q[q.item];
-
-      // If we arrive here and we've exausted the q...
-      if(q.item === q.length) return clearInterval(q.type); // Stop the main iterator.
+      var item = q[q.item];
 
       // Various processing functions.
-      if(currentItem.line) processLine(currentItem);
-      if(currentItem.continue) processContinue(currentItem);
-      if(currentItem.pause) processPause(currentItem);
-      if(currentItem.emit) processEmit(currentItem);
-      if(currentItem.listen) processListen(currentItem);
-      if(currentItem.back) processBack(currentItem);
-      if(currentItem.empty) processEmpty();
-      if(currentItem.run) processRun(currentItem);
-      if(currentItem.end) processEnd(currentItem);
+      if(item.line) processLine(item);
+      if(item.continue) processContinue(item);
+      if(item.pause) processPause(item);
+      if(item.emit) processEmit(item);
+      if(item.listen) processListen(item);
+      if(item.back) processBack(item);
+      if(item.empty) processEmpty();
+      if(item.run) processRun(item);
+      if(item.end) processEnd(item);
     }, 0);
   }
   function processMsg(item) { // Used by 'processLine' & 'processContinue'.
@@ -582,30 +583,26 @@ function typer(el, speed) {
   }
 
   // The kill switch.
-  +function killSwitch() {
-    q.kill = function(e) {
-      document.body.removeEventListener(e.type, q.kill);
-      q.killed = true; // For processListen.
+  q.kill = function(e) {
+    document.body.removeEventListener(e.type, q.kill);
+    q.killed = true; // For processListen.
 
-      // Stop all iterations & pauses.
-      clearInterval(q.iterator); // From processMsg.
-      clearInterval(q.goBack); // From processBack.
-      clearTimeout(q.pause) // From processPause.
+    // Stop all iterations & pauses.
+    clearInterval(q.iterator); // From processMsg.
+    clearInterval(q.goBack); // From processBack.
+    clearTimeout(q.pause) // From processPause.
 
-      if(q.item === q.length) return console.log('This typer has completed; removing listener.');
+    if(q.item === q.length) return console.log('This typer has completed; removing listener.');
 
-      // If typer is in a listener state...
-      var ear = q[q.item];
-      if(ear.listen) {
-        var name = new Event(ear.listen);
-        ear.el.dispatchEvent(name);
-      }
-
-      console.log('Typer killed!');
+    // If typer is in a listener state...
+    var ear = q[q.item];
+    if(ear && ear.listen) {
+      var name = new Event(ear.listen);
+      ear.el.dispatchEvent(name);
     }
-    document.body.addEventListener('killTyper', q.kill);
-  }();
 
+    console.log('Typer killed!');
+  }
   // Return 'typerObj' to be able to run the various methods.
   return typerObj;
 }
