@@ -423,7 +423,7 @@ function typer(el, speed) {
       children.map(function(child, i) {
         // Child.
         if(!child.innerHTML.length) {
-          child.remove();
+          child.remove ? child.remove() : child.removeNode(); // IE nonsense.
 
           if(el === q.newDiv) {
             contents = el.innerHTML.split(''); // Reset the contents array.
@@ -435,7 +435,7 @@ function typer(el, speed) {
           removeEmptys(child); // Recursion (read: inception).
 
           if(!this[i].innerHTML.length) {
-            this[i].remove(); // Remove empty recursive parent.
+            this[i].remove ? this[i].remove() : this[i].removeNode(); // Remove empty recursive parent.
             contents = el.innerHTML.split('');
             index = contents.length - 1;
           }

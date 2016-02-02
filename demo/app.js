@@ -72,7 +72,7 @@ typer(document.querySelector('.matrix'))
         }, 300);
 
         el.children[0].removeEventListener(e.type, kickoff);
-        el.remove();
+        el.remove ? el.remove() : el.removeNode(); // IE nonsense.
       }
     });
   });
