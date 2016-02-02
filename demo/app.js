@@ -189,7 +189,7 @@ var timeKeeping = {
     typer: '0:59',
     cursor: '2:02',
     line: '2:42',
-    back: '2:06',
+    back: '2:05',
     continue: '0:21',
     pause: '0:51',
     emit: '1:00',

@@ -1,6 +1,5 @@
 function typer(el, speed) {
   var q = []; // The main array to contain all the methods called on typer.
-  parentDataNum(); // Assign a random # to the parent el's data attribute.
 
   // List of HTML void elements (http://goo.gl/SWmyS5),
   // used in 'processMsg' & 'processBack'.
@@ -8,17 +7,15 @@ function typer(el, speed) {
 
   // Various checks.
   speed = speed || 70;
-  if(!window.jQuery) var jQuery = function(){}; // jQuery check.
-  if(el.length) el = el[0]; // Test for jQuery objects.
+  if(el.length) el = el[0]; // jQuery check.
+  if(!el.nodeType || el.nodeType !== 1) throw 'typer error: invalid element provided.';
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
+  parentDataNum(); // Assign a random # to the parent el's data attribute.
 
   // Public methods.
   var typerObj = {
     cursor: function(cursorObj) {
-      // Prevent errors from no arguments.
-      if(cursorObj === undefined) cursorObj = true;
-
       // Prevent cursor from being run multiple times.
       if(q.cursorRan) {
         console.log('You can only call ".cursor" once.');
@@ -27,9 +24,12 @@ function typer(el, speed) {
 
       q.cursorRan = true;
 
+      // Prevent errors from no arguments.
+      if(cursorObj === undefined) cursorObj = true;
+
       // No cursor.
       if(cursorObj === false) {
-        q.cursor = 'no-cursor';
+        q.cursor = 'no-cursor'; // Used as a class.
         return this;
       }
 
@@ -47,19 +47,15 @@ function typer(el, speed) {
       // Cursor: block or line.
       if(cursorObj.block === true) cursor.push('cursor-block');
 
-      q.cursor = cursor.join(' ');
+      q.cursor = cursor.join(' '); // Used as a class.
 
       return this;
     },
     line: function(msg, spd, html) {
-      if(!msg) {
-        q.push({line: 1});
-      } else {
-        q.push(lineOrContinue('line', msg, spd, html));
-      }
+      msg ? q.push(lineOrContinue('line', msg, spd, html)) : q.push({line: 1});
 
       // Push the first dominoe on the typing iteration,
-      // ensuring 'processq()' can only be run once.
+      // ensuring public methods will only call 'processq()' once.
       if(!q.typing) {
         q.typing = true;
         processq();
@@ -68,20 +64,18 @@ function typer(el, speed) {
       return this;
     },
     continue: function(msg, spd, html) {
-      if(!msg) return this; // Skip empty continues.
+      if(!msg) return this; // Ignore empty continues.
       q.push(lineOrContinue('continue', msg, spd, html));
       return this;
     },
     pause: function(num) {
-      // Default to 500 milliseconds.
-      if(num === undefined) num = 500;
-
-      q.push({pause: num});
+      // Default to 500ms.
+      q.push({pause: num || 500});
       return this;
     },
     emit: function(event, el) {
       if(!el) el = document.body // If no el is given. default to the body.
-      if(el instanceof jQuery) el = el[0];
+      if(el.length) el = el[0];
       if(!el.nodeType || el.nodeType !== 1) throw '.emit() error: invalid element provided.';
 
       q.push({emit: event, el: el});
@@ -89,7 +83,7 @@ function typer(el, speed) {
     },
     listen: function(event, el) {
       if(!el) el = document.body;
-      if(el instanceof jQuery) el = el[0];
+      if(el.length) el = el[0];
       if(!el.nodeType || el.nodeType !== 1) throw '.listen() error: invalid element provided.';
 
       q.push({listen: event, el: el});
@@ -104,7 +98,6 @@ function typer(el, speed) {
       return this;
     },
     run: function(fxn) {
-      if(!(fxn instanceof Function)) fxn = function(){};
       q.push({run: fxn});
       return this;
     },
@@ -114,15 +107,14 @@ function typer(el, speed) {
       q.cb = function() {
         // Finalize the the div class names before ending.
         q.newDiv.className = 'white-space';
-        var classes = q.newDiv.dataset.class;
+        var classes = q.newDiv.getAttribute('data-class');
         if(classes) q.newDiv.className += ' ' + classes;
         q.newDiv = '';
 
-        if(fxn && typeof fxn === 'function') fxn(el);
+        if(fxn && fxn instanceof Function) fxn(el);
         if((fxn && typeof fxn === 'boolean') || e) {
-          if(typeof e === 'function') e(el);
-          var fin = new Event('typerFinished');
-          document.body.dispatchEvent(fin);
+          if(e instanceof Function) e(el);
+          document.body.dispatchEvent(new Event('typerFinished'));
         }
       }
 
@@ -178,7 +170,7 @@ function typer(el, speed) {
     //   return Math.floor(Math.random() * (max - min + 1) + min);
     // }
     q.dataNum = Math.floor(Math.random() * 999999999 + 1);
-    el.dataset.typer = q.dataNum;
+    el.setAttribute('data-typer', q.dataNum);
   }
   function styleSheets() { // https://goo.gl/b4Ckz9
     // Create the style element.
@@ -209,7 +201,7 @@ function typer(el, speed) {
     //  8. msg = div, html
     //  9. msg = div, spd, html
     // 10. msg = div, html, spd
-    if(typeof msg === 'string' || msg.constructor.name === 'Array') {
+    if(typeof msg === 'string' || msg instanceof Array) {
       item[choice] = msg; // 1
     } else {
       if(msg.length) msg = msg[0]; // Test for jQuery objects.
@@ -243,15 +235,15 @@ function typer(el, speed) {
       var item = q[q.item];
 
       // Various processing functions.
-      if(item.line) processLine(item);
-      if(item.continue) processContinue(item);
-      if(item.pause) processPause(item);
-      if(item.emit) processEmit(item);
-      if(item.listen) processListen(item);
-      if(item.back) processBack(item);
-      if(item.empty) processEmpty();
-      if(item.run) processRun(item);
-      if(item.end) processEnd(item);
+      item.line ? processLine(item) :
+      item.continue ? processContinue(item) :
+      item.pause ? processPause(item) :
+      item.emit ? processEmit(item) :
+      item.listen ? processListen(item) :
+      item.back ? processBack(item) :
+      item.empty ? processEmpty() :
+      item.run ? processRun(item) :
+      item.end && processEnd(item);
     }, 0);
   }
   function processMsg(item) { // Used by 'processLine' & 'processContinue'.
@@ -303,7 +295,6 @@ function typer(el, speed) {
             var div = document.createElement('div');
             div.innerHTML = tag;
 
-            var length = tag.length;
             var parent = targetList[0];
             targetList.unshift(div.firstChild); // Add current tag to beginning of the 'targetList' array.
             parent.appendChild(div.firstChild);
@@ -353,7 +344,7 @@ function typer(el, speed) {
     // Process the previous line if there was one.
     if(q.newDiv) {
       q.newDiv.className = '';
-      var userClass = q.newDiv.dataset.class;
+      var userClass = q.newDiv.getAttribute('data-class');
       if(userClass) q.newDiv.className = userClass;
 
       q.newDiv.classList.add('white-space');
@@ -362,13 +353,14 @@ function typer(el, speed) {
 
     // Create new div.
     var div = document.createElement('div');
-    div.dataset.typerChild = q.dataNum;
+    div.setAttribute('data-typer-child', q.dataNum);
     div.className = q.cursor;
     div.classList.add('typer', 'white-space');
 
     if(item.class) { // User-provided additional classes.
+      debugger
       div.className += (' ' + item.class);
-      div.dataset.class = item.class;
+      div.setAttribute('data-class', item.class);
     }
 
     el.appendChild(div);
@@ -398,8 +390,7 @@ function typer(el, speed) {
   function processEmit(item) {
     clearInterval(q.type); // Stop the main iterator.
 
-    var e = new Event(item.emit);
-    item.el.dispatchEvent(e);
+    item.el.dispatchEvent(new Event(item.emit));
 
     q.item++;
     processq();
@@ -596,10 +587,7 @@ function typer(el, speed) {
 
     // If typer is in a listener state...
     var ear = q[q.item];
-    if(ear && ear.listen) {
-      var name = new Event(ear.listen);
-      ear.el.dispatchEvent(name);
-    }
+    if(ear && ear.listen) ear.el.dispatchEvent(new Event(ear.listen));
 
     console.log('Typer killed!');
   }
