@@ -42,7 +42,7 @@ typer(document.querySelector('.matrix'))
   .run(function(el) {
 
     // Grab the cursor and set initial styles.
-    var num = el.dataset.typer;
+    var num = el.getAttribute('data-typer');
     document.styleSheets[0].addRule('[data-typer="' + num + '"] .typer::after', 'transition: top 1.5s ease-in, left 2s ease-out;');
     document.styleSheets[0].addRule('[data-typer="' + num + '"] .typer::after', 'top: 0vh;');
     document.styleSheets[0].addRule('[data-typer="' + num + '"] .typer::after', 'left: 0vw;');
