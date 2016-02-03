@@ -11,6 +11,43 @@ function typer(el, speed) {
   if(!el.nodeType || el.nodeType !== 1) throw 'typer error: invalid element provided.';
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
+  // IE nonsense: minimal classList shim.
+  if(!Element.prototype.classList) {
+      var ClassLister = function(el) {
+        this.el = el;
+        el.className.split(' ').map(function(clss) {
+          this.push(clss);
+        }, this);
+      }
+
+      ClassLister.prototype = [];
+
+      ClassLister.prototype.add = function() {
+        [].map.call(arguments, function(arg) {
+          if(this.indexOf(arg) === -1) this.push(arg);
+        }, this);
+
+        this.el.className = this.join(' ');
+        return this;
+      }
+
+      ClassLister.prototype.remove = function() {
+        [].map.call(arguments, function(arg) {
+          var i = this.indexOf(arg);
+          i >= 0 ? this.splice(i, 1) : !1;
+        }, this);
+
+        this.el.className = this.join(' ');
+        return this;
+      }
+
+      Object.defineProperty(Element.prototype, 'classList', {
+        get: function() {
+          return new ClassLister(this);
+        },
+      });
+  }
+
   parentDataNum(); // Assign a random # to the parent el's data attribute.
 
   // Public methods.
