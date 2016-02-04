@@ -16,55 +16,6 @@ function typer(el, speed) {
   // EVERY DEVELOPERS EXISTENCE... //
   ///////////////////////////////////
 
-  // IE nonsense: minimal classList shim.
-  if(!Element.prototype.hasOwnProperty('classList')) {
-    var ClassLister = function(el) {
-      this.el = el;
-      ''.split.call(el.className, ' ')
-      el.className.split(' ').map(function(clss) {
-        this.push(clss);
-      }, this);
-
-      return this;
-    }
-
-    ClassLister.prototype = [];
-
-    ClassLister.prototype.add = function() {
-      [].map.call(arguments, function(arg) {
-        if(this.indexOf(arg) === -1) this.push(arg);
-      }, this);
-
-      this.el.className = this.join(' ');
-      return this;
-    }
-
-    ClassLister.prototype.remove = function() {
-      [].map.call(arguments, function(arg) {
-        var i = this.indexOf(arg);
-        i >= 0 ? this.splice(i, 1) : !1;
-      }, this);
-
-      this.el.className = this.join(' ');
-      return this;
-    }
-
-    ClassLister.prototype.toggle = function() {
-      [].map.call(arguments, function(arg) {
-        var i = this.indexOf(arg);
-        i >= 0 ? this.splice(i, 1) : this.push(arg);
-      }, this);
-
-      this.el.className = this.join(' ');
-    }
-
-    Object.defineProperty(Element.prototype, 'classList', {
-      get: function() {
-        return new ClassLister(this);
-      },
-    });
-  }
-
   // IE nonsense: Event constructor polyfill (http://goo.gl/bmB7VH).
   (function () {
     function CustomEvent (event, params) {
@@ -175,8 +126,6 @@ function typer(el, speed) {
       q.cb = function() {
         // Finalize the the div class names before ending.
         q.newDiv.className = 'white-space';
-        var classes = q.newDiv.getAttribute('data-class');
-        if(classes) q.newDiv.className += ' ' + classes;
         q.newDiv = '';
 
         if(fxn && fxn instanceof Function) fxn(el);
@@ -411,11 +360,7 @@ function typer(el, speed) {
 
     // Process the previous line if there was one.
     if(q.newDiv) {
-      q.newDiv.className = '';
-      var userClass = q.newDiv.getAttribute('data-class');
-      if(userClass) q.newDiv.className = userClass;
-
-      q.newDiv.classList.add('white-space');
+      q.newDiv.className = 'white-space';
       if(q.newDiv.innerHTML === '') q.newDiv.innerHTML = ' '; // Retains the height of a single line.
     }
 
@@ -423,13 +368,8 @@ function typer(el, speed) {
     var div = document.createElement('div');
     div.setAttribute('data-typer-child', q.dataNum);
     div.className = q.cursor;
-    div.classList.add('typer', 'white-space');
-
-    if(item.class) { // User-provided additional classes.
-      debugger
-      div.className += (' ' + item.class);
-      div.setAttribute('data-class', item.class);
-    }
+    div.classList.add('typer');
+    div.classList.add('white-space');
 
     el.appendChild(div);
     q.newDiv = div;
