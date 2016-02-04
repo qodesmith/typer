@@ -182,7 +182,7 @@ function typer(el, speed) {
         if(fxn && fxn instanceof Function) fxn(el);
         if((fxn && typeof fxn === 'boolean') || e) {
           if(e instanceof Function) e(el);
-          document.body.dispatchEvent(new Event('typerFinished'));
+          document.body.dispatchEvent(new CustomEvent('typerFinished'));
         }
       }
 
@@ -458,7 +458,7 @@ function typer(el, speed) {
   function processEmit(item) {
     clearInterval(q.type); // Stop the main iterator.
 
-    item.el.dispatchEvent(new Event(item.emit));
+    item.el.dispatchEvent(new CustomEvent(item.emit));
 
     q.item++;
     processq();
@@ -655,7 +655,7 @@ function typer(el, speed) {
 
     // If typer is in a listener state...
     var ear = q[q.item];
-    if(ear && ear.listen) ear.el.dispatchEvent(new Event(ear.listen));
+    if(ear && ear.listen) ear.el.dispatchEvent(new CustomEvent(ear.listen));
 
     console.log('Typer killed!');
   }

@@ -72,7 +72,7 @@ typer(document.querySelector('.matrix'))
         }, 300);
 
         el.children[0].removeEventListener(e.type, kickoff);
-        el.remove ? el.remove() : el.removeNode(); // IE nonsense.
+        el.parentElement.innerHTML = '';
       }
     });
   });
@@ -272,7 +272,7 @@ function demo() {
     .continue("Let's get started.")
     .pause(1000)
     .back('all', 10)
-    .continue('<span class="lime">Typer</span> has <strong class="underline"><em>no dependencies<em></strong>.')
+    .continue('<span class="lime">Typer</span> has <strong class="underline"><em>no dependencies</em></strong>.')
     .pause()
     .line('Slap it on your page and go.')
     .pause(1000)
