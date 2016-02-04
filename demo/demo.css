@@ -7,6 +7,7 @@ body {
   margin: 0;
   padding: 0;
   color: white;
+  overflow: hidden;
 }
 .hidden {
   display: none;
@@ -61,6 +62,12 @@ body {
   padding: 10px;
   box-sizing: border-box;
   transition: opacity 5s;
+}
+.progress-container.column,
+.main-container.column {
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 .progress-container {
   -webkit-justify-content: flex-start;
@@ -127,7 +134,6 @@ body {
   right: -45px;
   top: 50%;
   -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
           transform: translateY(-50%);
   transition: color 1s;
   -webkit-animation: none;

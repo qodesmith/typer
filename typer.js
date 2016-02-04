@@ -11,42 +11,73 @@ function typer(el, speed) {
   if(!el.nodeType || el.nodeType !== 1) throw 'typer error: invalid element provided.';
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
+  ///////////////////////////////////
+  // BECAUSE IE IS THE BANE OF     //
+  // EVERY DEVELOPERS EXISTENCE... //
+  ///////////////////////////////////
+
   // IE nonsense: minimal classList shim.
-  if(!Element.prototype.classList) {
-      var ClassLister = function(el) {
-        this.el = el;
-        el.className.split(' ').map(function(clss) {
-          this.push(clss);
-        }, this);
-      }
+  if(!Element.prototype.hasOwnProperty('classList')) {
+    var ClassLister = function(el) {
+      this.el = el;
+      ''.split.call(el.className, ' ')
+      el.className.split(' ').map(function(clss) {
+        this.push(clss);
+      }, this);
 
-      ClassLister.prototype = [];
+      return this;
+    }
 
-      ClassLister.prototype.add = function() {
-        [].map.call(arguments, function(arg) {
-          if(this.indexOf(arg) === -1) this.push(arg);
-        }, this);
+    ClassLister.prototype = [];
 
-        this.el.className = this.join(' ');
-        return this;
-      }
+    ClassLister.prototype.add = function() {
+      [].map.call(arguments, function(arg) {
+        if(this.indexOf(arg) === -1) this.push(arg);
+      }, this);
 
-      ClassLister.prototype.remove = function() {
-        [].map.call(arguments, function(arg) {
-          var i = this.indexOf(arg);
-          i >= 0 ? this.splice(i, 1) : !1;
-        }, this);
+      this.el.className = this.join(' ');
+      return this;
+    }
 
-        this.el.className = this.join(' ');
-        return this;
-      }
+    ClassLister.prototype.remove = function() {
+      [].map.call(arguments, function(arg) {
+        var i = this.indexOf(arg);
+        i >= 0 ? this.splice(i, 1) : !1;
+      }, this);
 
-      Object.defineProperty(Element.prototype, 'classList', {
-        get: function() {
-          return new ClassLister(this);
-        },
-      });
+      this.el.className = this.join(' ');
+      return this;
+    }
+
+    ClassLister.prototype.toggle = function() {
+      [].map.call(arguments, function(arg) {
+        var i = this.indexOf(arg);
+        i >= 0 ? this.splice(i, 1) : this.push(arg);
+      }, this);
+
+      this.el.className = this.join(' ');
+    }
+
+    Object.defineProperty(Element.prototype, 'classList', {
+      get: function() {
+        return new ClassLister(this);
+      },
+    });
   }
+
+  // IE nonsense: Event constructor polyfill (http://goo.gl/bmB7VH).
+  (function () {
+    function CustomEvent (event, params) {
+      params = params || {bubbles: false, cancelable: false, detail: undefined};
+      var evt = document.createEvent('CustomEvent');
+      evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+      return evt;
+     }
+
+    CustomEvent.prototype = window.Event.prototype;
+
+    window.CustomEvent = CustomEvent;
+  })();
 
   parentDataNum(); // Assign a random # to the parent el's data attribute.
 
@@ -628,6 +659,7 @@ function typer(el, speed) {
 
     console.log('Typer killed!');
   }
+
   // Return 'typerObj' to be able to run the various methods.
   return typerObj;
 }

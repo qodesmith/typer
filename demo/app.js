@@ -153,7 +153,7 @@ function beforeDemo() {
   progress.addEventListener('transitionend', function progressShown(e) {
     progress.removeEventListener(e.type, progressShown);
 
-    main.style.flexDirection = 'column';
+    main.classList.add('column');
     main.appendChild(narration);
     main.appendChild(code);
     code.appendChild(cc);
