@@ -1170,7 +1170,7 @@ function demo() {
     .emit('run-4')
     .listen('run-5')
     .run(function(el) {
-      el.style.backgroundColor = 'initial';
+      el.style.backgroundColor = 'none';
     })
     .emit('run-6')
     // METHOD: END
