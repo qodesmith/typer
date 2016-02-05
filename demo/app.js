@@ -21,10 +21,19 @@
 
   // Fade in code-background.
   setTimeout(function() {
-    document.styleSheets[0].addRule('.background::after', 'background: rgba(0,20,0,0.8);');
+    addStyle('.background::after', 'background: rgba(0,20,0,0.8');
   }, 0)
 })();
 
+function addStyle(selector, rules) { // https://goo.gl/b4Ckz9
+  var sheet = document.styleSheets[0];
+
+  if('insertRule' in sheet) {
+    sheet.insertRule(selector + '{' + rules + '}', 1);
+  } else {
+    sheet.addRule(selector, rules);
+  }
+}
 
 // MATRIX TYPING INTRO
 typer(document.querySelector('.matrix'))
@@ -42,10 +51,7 @@ typer(document.querySelector('.matrix'))
   .run(function(el) {
 
     // Grab the cursor and set initial styles.
-    var num = el.getAttribute('data-typer');
-    document.styleSheets[0].addRule('[data-typer="' + num + '"] .typer::after', 'transition: top 1.5s ease-in, left 2s ease-out;');
-    document.styleSheets[0].addRule('[data-typer="' + num + '"] .typer::after', 'top: 0vh;');
-    document.styleSheets[0].addRule('[data-typer="' + num + '"] .typer::after', 'left: 0vw;');
+    document.querySelector('.typer').classList.add('ready');
 
     // All letters to separate spans.
     contentsToSpans(el.children[0]);
@@ -53,8 +59,7 @@ typer(document.querySelector('.matrix'))
     // Letter explosion.
     setTimeout(function() {
       letItRain();
-      document.styleSheets[0].addRule('[data-typer="' + num + '"] .typer::after', 'top:55vh;');
-      document.styleSheets[0].addRule('[data-typer="' + num + '"] .typer::after', 'left:30vh;');
+      document.querySelector('.typer').classList.add('drop');
     }, 50);
 
     // Detect when all letters are gone.
@@ -80,12 +85,12 @@ typer(document.querySelector('.matrix'))
 function contentsToSpans(el) {
   var classes = 'single-letter';
   var div = document.createElement('div');
-  var contents = el.innerText.split('');
+  var contents = el.textContent.split('');
 
   for(i in contents) {
     var span = document.createElement('span');
     span.className = classes;
-    span.innerText = contents[i];
+    span.textContent = contents[i];
     div.appendChild(span);
   }
 
@@ -203,7 +208,7 @@ var timeKeeping = {
     var _this = this;
     this.el = document.querySelector('.method.active .timer');
     var name = this.el.parentElement.id.split('-')[1];
-    this.el.innerText = this.methodTimes[name];
+    this.el.textContent = this.methodTimes[name];
 
     var min = Number(this.methodTimes[name].split(':')[0]);
     var sec = Number(this.methodTimes[name].split(':')[1]);
@@ -218,7 +223,7 @@ var timeKeeping = {
       }
       if(sec < 10) sec = '0' + sec;
 
-      _this.el.innerText = min + ':' + sec;
+      _this.el.textContent = min + ':' + sec;
     }, 1000);
   },
   stopTime: function() {

@@ -11,6 +11,15 @@ body {
 .hidden {
   display: none;
 }
+.typer.ready::after {
+  transition: top 1.5s ease-in, left 2s ease-out;
+  top: 0vh;
+  left: 0vw;
+}
+.typer.ready.drop::after {
+  top: 55vh;
+  left: 30vh;
+}
 .background {
   display: -webkit-flex;
   display: -ms-flexbox;

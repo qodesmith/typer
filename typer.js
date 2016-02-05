@@ -55,10 +55,8 @@ function typer(el, speed) {
       var cursor = [];
       var data = '[data-typer="' + q.dataNum + '"]';
 
-      // Optional cursor color - https://goo.gl/8k2mqL
-      if(cursorObj.color) {
-        document.styleSheets[0].addRule(data + ' .typer:after', 'background-color:' + cursorObj.color + ';');
-      }
+      // Optional cursor color - https://goo.gl/b4Ckz9
+      if(cursorObj.color) addStyle(data + ' .typer::after', 'background-color:' + cursorObj.color);
 
       // Cursor's blinking style - default to soft.
       cursorObj.blink === 'hard' ? cursor.push('cursor-hard') : cursor.push('cursor-soft');
@@ -198,6 +196,15 @@ function typer(el, speed) {
 
     // Append the style element to the head.
     document.head.appendChild(style);
+  }
+  function addStyle(selector, rules) { // https://goo.gl/b4Ckz9
+    var sheet = document.styleSheets[0];
+
+    if('insertRule' in sheet) {
+      sheet.insertRule(selector + '{' + rules + '}', 1);
+    } else {
+      sheet.addRule(selector, rules);
+    }
   }
   function lineOrContinue(choice, msg, spd, html) {
     var item = {};
