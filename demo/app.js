@@ -977,7 +977,7 @@ function demo() {
         times++;
         if(times === 6) {
           clearInterval(blink);
-          var e = new Event('done-blinking-block');
+          var e = new CustomEvent('done-blinking-block');
           document.body.dispatchEvent(e);
           hl.classList.remove('show-border');
         }
@@ -1005,7 +1005,7 @@ function demo() {
         times++;
         if(times === 8) {
           clearInterval(blink);
-          var e = new Event('done-blinking-blink');
+          var e = new CustomEvent('done-blinking-blink');
           document.body.dispatchEvent(e);
           hl.classList.remove('show-border');
         }

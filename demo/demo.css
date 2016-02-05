@@ -7,7 +7,6 @@ body {
   margin: 0;
   padding: 0;
   color: white;
-  overflow: hidden;
 }
 .hidden {
   display: none;
