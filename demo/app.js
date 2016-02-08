@@ -1,17 +1,39 @@
 // Push the first dominoe...
 (function() {
   var main = document.querySelector('.main-container'); // Main flex container.
-  var bg = document.querySelector('.background');
+  var bg = document.querySelector('.background-container');
   var num = 0;
 
   // Every time the scrolling transition ends, start it up again.
-  bg.addEventListener('transitionend', function startBGscroll(e) {
-    // scrollBG();
+  bg.addEventListener('transitionend', function(e) {
+    if(e.target === bg.children[0]) {
+      if(num) {
+        var div = document.createElement('div');
+        var img = document.createElement('img');
+        div.className = 'bg-img-div test';
+        img.className = 'bg-img test';
+        img.setAttribute('src', 'images/code.gif');
+        div.appendChild(img);
+        var div2 = div.cloneNode(true);
+
+        bg.children[1].remove ? bg.children[1].remove() : bg.children[1].removeNode();
+        bg.children[0].remove ? bg.children[0].remove() : bg.children[0].removeNode();
+
+        bg.appendChild(div);
+        bg.appendChild(div2);
+      }
+
+      num++;
+      scrollBG();
+    }
   });
 
   function scrollBG() {
-    num -= 2000;
-    bg.style.backgroundPositionY = num + 'px';
+    setTimeout(function() {
+      var divs = document.querySelectorAll('.bg-img-div');
+      divs[0].style.transform = 'translateY(-100%)';
+      divs[1].style.transform = 'translateY(-100%)';
+    }, 0)
   }
 
   // Create intro (matrix) div.
@@ -21,17 +43,18 @@
 
   // Fade in code-background.
   setTimeout(function() {
-    addStyle('.background::after', 'background: rgba(0,20,0,0.8');
+    // bg.style.background = 'transparent';
+    addStyle('.bg-img-div::after', 'background: rgba(0,20,0,.8)!important');
   }, 0)
 })();
 
 function addStyle(selector, rules) { // https://goo.gl/b4Ckz9
   var sheet = document.styleSheets[0];
 
-  if('insertRule' in sheet) {
-    sheet.insertRule(selector + '{' + rules + '}', 1);
-  } else {
+  if('addRule' in sheet) {
     sheet.addRule(selector, rules);
+  } else {
+    sheet.insertRule(selector + '{' + rules + '}', 1);
   }
 }
 
@@ -122,25 +145,21 @@ function letItRain() {
     return obj;
   }
 
-  var letters = document.querySelectorAll('.single-letter');
-  for(var i = 0; i < letters.length; i++) {
+  [].map.call(document.querySelectorAll('.single-letter'), function(l) {
     var newStyle = randomFalls(),
-        a = 'transform 2s linear,',
+        a = 'transition: transform 2s linear,',
         b = 'top ' + (1 + Math.random()) + 's cubic-bezier(.8,.03,.86,.72),',
         c = 'left 2s linear,',
-        d = 'right 2s linear';
+        d = 'right 2s linear;',
+        e = 'transform:' + (newStyle.left ? 'rotate(-360deg);' : 'rotate(360deg);'),
+        f = 'display: inline-block;';
 
-    letters[i].style.transition = a + b + c + d;
-    letters[i].style.top = '105vh';
+    var style = a + b + c + d + e + f + 'top:105vh;';
+    style += (newStyle.left ? 'left:' + newStyle.left : 'right:' + newStyle.right) + ';';
 
-    if(newStyle.left) {
-      letters[i].style.left = newStyle.left;
-      letters[i].style.transform = 'rotate(-360deg)';
-    } else {
-      letters[i].style.right = newStyle.right;
-      letters[i].style.transform = 'rotate(360deg)';
-    }
-  }
+    l.setAttribute('style', style);
+  });
+
 }
 
 // Setup of narration & code divs.

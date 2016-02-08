@@ -7,6 +7,7 @@ body {
   margin: 0;
   padding: 0;
   color: white;
+  overflow: hidden;
 }
 .hidden {
   display: none;
@@ -20,10 +21,7 @@ body {
   top: 55vh;
   left: 30vh;
 }
-.background {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
+.background-container {
   position: absolute;
   -webkit-justify-content: center;
       -ms-flex-pack: center;
@@ -33,16 +31,26 @@ body {
           align-items: center;
   width: 100vw;
   height: 100vh;
-  background-image: url(images/code.gif);
-  background-size: cover;
-  background-repeat: repeat-y;
-  transition: background-position 200s linear;
+  background: #001400;
 }
-.background::after {
+.background-container .bg-img-div {
+  position: relative;
+  -webkit-transform: translateY(0%);
+          transform: translateY(0%);
+  transition: -webkit-transform 220s linear;
+  transition: transform 220s linear;
+  transition: transform 220s linear, -webkit-transform 220s linear;
+}
+.background-container .bg-img-div .bg-img {
+  width: 100vw;
+  height: auto;
+  display: block;
+}
+.background-container .bg-img-div::after {
   content: '';
   position: absolute;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   left: 0;
   top: 0;
   transition: background 5s;
