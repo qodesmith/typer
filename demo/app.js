@@ -43,7 +43,6 @@
 
   // Fade in code-background.
   setTimeout(function() {
-    // bg.style.background = 'transparent';
     addStyle('.bg-img-div::after', 'background: rgba(0,20,0,.8)!important');
   }, 0)
 })();
