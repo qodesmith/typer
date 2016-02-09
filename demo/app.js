@@ -6,12 +6,12 @@
 
   // Every time the scrolling transition ends, start it up again.
   bg.addEventListener('transitionend', function(e) {
-    if(e.target === bg.children[0]) {
+    if(e.srcElement === bg.children[0]) {
       if(num) {
         var div = document.createElement('div');
         var img = document.createElement('img');
-        div.className = 'bg-img-div test';
-        img.className = 'bg-img test';
+        div.className = 'bg-img-div';
+        img.className = 'bg-img';
         img.setAttribute('src', 'images/code.gif');
         div.appendChild(img);
         var div2 = div.cloneNode(true);
@@ -21,19 +21,24 @@
 
         bg.appendChild(div);
         bg.appendChild(div2);
+
+        // Needed for a slight pause to allow a
+        // change in classes to take affect.
+        setTimeout(function() {
+          scrollBG();
+        }, 0);
       }
 
+      if(!num) scrollBG();
       num++;
-      scrollBG();
     }
   });
 
   function scrollBG() {
-    setTimeout(function() {
-      var divs = document.querySelectorAll('.bg-img-div');
-      divs[0].style.transform = 'translateY(-100%)';
-      divs[1].style.transform = 'translateY(-100%)';
-    }, 0)
+      // Scrolling the background with 'transform: translateY(-100%)'
+      // because it will avoid DOM repaints: http://goo.gl/9Okvmm
+      bg.children[0].classList.add('scroll');
+      bg.children[1].classList.add('scroll');
   }
 
   // Create intro (matrix) div.
@@ -158,7 +163,6 @@ function letItRain() {
 
     l.setAttribute('style', style);
   });
-
 }
 
 // Setup of narration & code divs.
@@ -922,16 +926,14 @@ function demo() {
     .run(function() {
       timeKeeping.stopTime();
 
-      document.querySelector('.progress-container').style.opacity = '0';
+      var fin = document.createElement('div');
+      fin.className = 'fin';
+      document.body.appendChild(fin);
+
       document.querySelector('.main-container').style.opacity = '0';
+      document.querySelector('.progress-container').style.opacity = '0';
 
-      var bg = document.querySelector('.background');
-      var div = document.createElement('div');
-
-      div.className = 'fin';
-      bg.appendChild(div);
-
-      typer(div, 150)
+      typer(fin, 150)
         .cursor({block: true, blink: 'hard'})
         .line()
         .run(function(el) {
