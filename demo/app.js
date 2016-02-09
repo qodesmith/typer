@@ -2,43 +2,51 @@
 (function() {
   var main = document.querySelector('.main-container'); // Main flex container.
   var bg = document.querySelector('.background-container');
-  var num = 0;
+
+  // The initial background scroll - because IE.
+  bg.addEventListener('ieSUX', function startScrolling(e) {
+    bg.removeEventListener(e.type, startScrolling);
+    scrollBG();
+    setTimeout(function() {
+      everyOtherScroll();
+    }, 1000);
+  });
 
   // Every time the scrolling transition ends, start it up again.
-  bg.addEventListener('transitionend', function(e) {
-    if(e.srcElement === bg.children[0]) {
-      if(num) {
+  function everyOtherScroll() {
+    bg.addEventListener('transitionend', function(e) {
+      function makeNodes() {
         var div = document.createElement('div');
         var img = document.createElement('img');
+
         div.className = 'bg-img-div';
         img.className = 'bg-img';
         img.setAttribute('src', 'images/code.gif');
         div.appendChild(img);
-        var div2 = div.cloneNode(true);
 
-        bg.children[1].remove ? bg.children[1].remove() : bg.children[1].removeNode();
-        bg.children[0].remove ? bg.children[0].remove() : bg.children[0].removeNode();
-
-        bg.appendChild(div);
-        bg.appendChild(div2);
-
-        // Needed for a slight pause to allow a
-        // change in classes to take affect.
-        setTimeout(function() {
-          scrollBG();
-        }, 0);
+        return div;
       }
 
-      if(!num) scrollBG();
-      num++;
-    }
-  });
+      var div1 = makeNodes();
+      var div2 = makeNodes();
+
+      bg.innerHTML = '';
+      bg.appendChild(div1);
+      bg.appendChild(div2);
+
+      // Needed for a slight pause to allow a
+      // change in classes to take affect.
+      setTimeout(function() {
+        scrollBG();
+      }, 0);
+    });
+  }
 
   function scrollBG() {
-      // Scrolling the background with 'transform: translateY(-100%)'
-      // because it will avoid DOM repaints: http://goo.gl/9Okvmm
-      bg.children[0].classList.add('scroll');
-      bg.children[1].classList.add('scroll');
+    // Scrolling the background with 'transform: translateY(-100%)'
+    // because it will avoid DOM repaints: http://goo.gl/9Okvmm
+    bg.children[0].classList.add('scroll');
+    bg.children[1].classList.add('scroll');
   }
 
   // Create intro (matrix) div.
@@ -49,7 +57,13 @@
   // Fade in code-background.
   setTimeout(function() {
     addStyle('.bg-img-div::after', 'background: rgba(0,20,0,.8)!important');
-  }, 0)
+
+    // Because IE.
+    setTimeout(function() {
+      var ieSUX = CustomEvent('ieSUX');
+      bg.dispatchEvent(ieSUX);
+    }, 5000);
+  }, 0);
 })();
 
 function addStyle(selector, rules) { // https://goo.gl/b4Ckz9
