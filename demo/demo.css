@@ -13,13 +13,17 @@ body {
   display: none;
 }
 .typer.ready::after {
-  transition: top 1.5s ease-in, left 2s ease-out;
+  transition: top 1.5s ease-in, left 2s ease-out, -webkit-transform 2s;
+  transition: top 1.5s ease-in, left 2s ease-out, transform 2s;
+  transition: top 1.5s ease-in, left 2s ease-out, transform 2s, -webkit-transform 2s;
   top: 0vh;
   left: 0vw;
 }
 .typer.ready.drop::after {
   top: 55vh;
   left: 30vh;
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
 }
 .background-container {
   position: absolute;
