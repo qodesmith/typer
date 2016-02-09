@@ -5,7 +5,9 @@
 
 # FILES
 .DS_Store
+.gitignore
 .npmignore
+/npm-debug.log
 /typer.less
 /demo.less
 /gulpfile.js
