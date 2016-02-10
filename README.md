@@ -31,6 +31,7 @@ From the CLI run:
 `npm install typer-js`
 
 Files & locations:
+
 |     File     |          Location          |           Description            |
 | ------------ | -------------------------- | -------------------------------- |
 | typer.js     | node_modules/typer-js/     | our main file                    |
