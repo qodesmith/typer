@@ -8,6 +8,8 @@ In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/ht
 
 ## Installation
 
+### Manually
+
 Simply include `typer.css` in the `<head>`...
 ```html
 <head>
@@ -23,6 +25,19 @@ and include `typer.js` just above your closing `</body>` tag...
   <script src="typer.js"></script>
 </body>
 ```
+
+### NPM
+From the CLI run:
+`npm install typer-js`
+
+Files & locations:
+|     File     |          Location          |           Description            |
+| ------------ | -------------------------- | -------------------------------- |
+| typer.js     | node_modules/typer-js/     | our main file                    |
+| typer.min.js | node_modules/typer-js/     | minified main file               |
+| typer.css    | node_modules/typer-js/     | css: needed to see the cursor    |
+| typer.less   | node_modules/typer-js/less | less: use it for your own builds |
+
 
 ## Usage
 
