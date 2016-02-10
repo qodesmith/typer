@@ -32,12 +32,12 @@ From the CLI run:
 
 Files & locations:
 
-|     File     |          Location          |           Description            |
-| ------------ | -------------------------- | -------------------------------- |
-| typer.js     | node_modules/typer-js/     | our main file                    |
-| typer.min.js | node_modules/typer-js/     | minified main file               |
-| typer.css    | node_modules/typer-js/     | css: needed to see the cursor    |
-| typer.less   | node_modules/typer-js/less | less: use it for your own builds |
+|     File     |          Location          |           Description               |
+| ------------ | -------------------------- | --------------------------------    |
+| typer.js     | node_modules/typer-js/     | our main file                       |
+| typer.min.js | node_modules/typer-js/     | minified main file                  |
+| typer.css    | node_modules/typer-js/     | stylesheet necessary for the cursor |
+| typer.less   | node_modules/typer-js/less | less: use it for your own builds    |
 
 
 ## Usage
