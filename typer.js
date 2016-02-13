@@ -389,7 +389,13 @@ function typer(el, speed) {
 
     // Process the previous line if there was one.
     if(q.newDiv) {
-      q.newDiv.className = 'white-space';
+      // Because wack IE doesn't support multiple parameters for .remove or .add.
+      ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'].map(function(name) {
+        q.newDiv.classList.remove(name)
+      });
+
+      q.newDiv.classList.add('white-space');
+
       if(q.newDiv.innerHTML === '') q.newDiv.innerHTML = ' '; // Retains the height of a single line.
     }
 
