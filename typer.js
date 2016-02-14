@@ -147,7 +147,7 @@ function typer(el, speed) {
         // Finalize the the div class names before ending.
         // Because wack IE doesn't support multiple parameters for .remove or .add.
         ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'].map(function(name) {
-          q.newDiv.classList.remove(name)
+          q.newDiv.classList.remove(name);
         });
 
         q.newDiv.classList.add('white-space');
@@ -396,7 +396,7 @@ function typer(el, speed) {
     if(q.newDiv) {
       // Because wack IE doesn't support multiple parameters for .remove or .add.
       ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'].map(function(name) {
-        q.newDiv.classList.remove(name)
+        q.newDiv.classList.remove(name);
       });
 
       q.newDiv.classList.add('white-space');
