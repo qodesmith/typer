@@ -29,7 +29,7 @@ function typer(el, speed) {
 
   // Various checks.
   speed = speed || 70;
-  if(typeof el !== 'string') throw 'typer error: selector provided is not a string.';
+  if(checkType(el) !== 'String') throw 'typer error: selector provided is not a string.';
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
   el = document.querySelector(el);
@@ -92,8 +92,6 @@ function typer(el, speed) {
       return this;
     },
     line: function(msg, spd, html) {
-      if(checkType(msg) === 'Object') msg = document.querySelector(msg.el)[html ? 'innerHTML': 'textContent'];
-      if(msg && msg.constructor.name === 'Object') msg = document.querySelector(msg.el);
       msg ? q.push(lineOrContinue('line', msg, spd, html)) : q.push({line: 1});
 
       // Push the first dominoe on the typing iteration,
@@ -116,9 +114,11 @@ function typer(el, speed) {
       return this;
     },
     emit: function(event, el) {
-      if(!el) el = document.body // If no el is given. default to the body.
-      if(el.length) el = el[0];
-      if(!el.nodeType || el.nodeType !== 1) throw '.emit() error: invalid element provided.';
+      // if(!el) el = document.body // If no el is given. default to the body.
+      if(!el) el = 'body'; // If no el is given. default to the body.
+
+      // Simple way to throw an error for invalid selectors.
+      document.querySelector(el);
 
       q.push({emit: event, el: el});
       return this;
@@ -211,7 +211,8 @@ function typer(el, speed) {
   // Private functions.
   function checkType(thing) {
     var type = Object.prototype.toString.call(thing);
-    return type.substr(0, thing.length - 1);
+    type = type.split(' ')[1];
+    return type.substr(0, type.length - 1);
   }
   function parentDataNum() {
     // Random # function with min & max values.
@@ -241,40 +242,23 @@ function typer(el, speed) {
     }
   }
   function lineOrContinue(choice, msg, spd, html) {
-    var item = {};
-    item.html = true; // Default status. Will be possibly overwritten below.
+    var obj = {};
 
-    function htmlObj(obj) {
-      for(var i in obj) item[i] = obj[i];
+    if(checkType(spd) === 'Number') obj.speed = spd;
+    if(checkType(spd) === 'Boolean') obj.html = spd;
+
+    if(checkType(html) === 'Number') obj.speed = html;
+    if(checkType(html) === 'Boolean') obj.html = html;
+
+    if(checkType(msg) === 'Object') {
+      // Prevents a hard dependency on 'el'.
+      var key = Object.keys(msg)[0];
+      msg = document.querySelector(msg[key])[obj.html ? 'innerHTML': 'textContent'].trim();
     }
 
-    // POSSIBLE ARRANGEMENTS:
-    //  1. msg = string/array
-    //  2. msg = string/array, spd
-    //  3. msg = string/array, html
-    //  4. msg = string/array, spd, html
-    //  5. msg = string/array, html, spd
-    //  6. msg = div
-    //  7. msg = div, spd
-    //  8. msg = div, html
-    //  9. msg = div, spd, html
-    // 10. msg = div, html, spd
-    if(typeof msg === 'string' || msg instanceof Array) {
-      item[choice] = msg; // 1
-    } else {
-      if(msg.length) msg = msg[0]; // Test for jQuery objects.
-      item[choice] = msg.innerHTML; // 6
-    }
+    obj[choice] = msg;
 
-    if(spd && typeof spd === 'number') {
-      item.speed = spd; // 2, 7
-      if(html) htmlObj(html); // 4, 9
-    } else if(spd) {
-      htmlObj(spd); // 3, 8
-      if(html) item.speed = html; // 5, 10
-    }
-
-    return item;
+    return obj;
   }
   function processq() { // Begin our main iterator.
     if(!(q.item >= 0)) q.item = 0;
@@ -444,8 +428,8 @@ function typer(el, speed) {
   }
   function processEmit(item) {
     clearInterval(q.type); // Stop the main iterator.
-
-    item.el.dispatchEvent(new CustomEvent(item.emit));
+    // TODO: check IE if we new to use 'new' with CustomEvent.
+    document.querySelector(item.el).dispatchEvent(CustomEvent(item.emit));
 
     q.item++;
     processq();
