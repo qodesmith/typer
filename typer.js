@@ -29,9 +29,10 @@ function typer(el, speed) {
 
   // Various checks.
   speed = speed || 70;
-  if(el.length) el = el[0]; // jQuery check.
-  if(!el.nodeType || el.nodeType !== 1) throw 'typer error: invalid element provided.';
+  if(typeof el !== 'string') throw 'typer error: selector provided is not a string.';
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
+
+  el = document.querySelector(el);
 
   ///////////////////////////////////
   // BECAUSE IE IS THE BANE OF     //
@@ -91,6 +92,8 @@ function typer(el, speed) {
       return this;
     },
     line: function(msg, spd, html) {
+      if(checkType(msg) === 'Object') msg = document.querySelector(msg.el)[html ? 'innerHTML': 'textContent'];
+      if(msg && msg.constructor.name === 'Object') msg = document.querySelector(msg.el);
       msg ? q.push(lineOrContinue('line', msg, spd, html)) : q.push({line: 1});
 
       // Push the first dominoe on the typing iteration,
@@ -206,6 +209,10 @@ function typer(el, speed) {
   };
 
   // Private functions.
+  function checkType(thing) {
+    var type = Object.prototype.toString.call(thing);
+    return type.substr(0, thing.length - 1);
+  }
   function parentDataNum() {
     // Random # function with min & max values.
     // function randomNum(min, max) {
