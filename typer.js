@@ -243,16 +243,12 @@ function typer(el, speed) {
     }
   }
   function lineOrContinue(choice, msg, spd, html) {
-    var obj = {};
+    var obj = {html: spd === false ? false : html === false ? false : true};
 
     if(checkType(spd) === 'Number') obj.speed = spd;
-    if(checkType(spd) === 'Boolean') obj.html = spd;
-
     if(checkType(html) === 'Number') obj.speed = html;
-    if(checkType(html) === 'Boolean') obj.html = html;
-
     if(checkType(msg) === 'Object') {
-      // Prevents a hard dependency on 'el'.
+      // Prevents a hard dependency on 'el' as the property name.
       var key = Object.keys(msg)[0];
       msg = document.querySelector(msg[key])[obj.html ? 'innerHTML': 'textContent'].trim();
     }
