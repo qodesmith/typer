@@ -157,9 +157,10 @@ function typer(el, speed) {
         q.newDiv = '';
 
         if(fxn && fxn instanceof Function) fxn(el);
-        if((fxn && typeof fxn === 'boolean') || e) {
+        if((fxn && checkType(fxn) === 'Boolean') || e) {
           if(e instanceof Function) e(el);
-          document.body.dispatchEvent(new CustomEvent('typerFinished'));
+          // TODO: does new need to be added before Custom Event?
+          document.body.dispatchEvent(CustomEvent('typerFinished'));
         }
       }
 
