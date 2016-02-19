@@ -114,8 +114,7 @@ function typer(el, speed) {
       return this;
     },
     emit: function(event, el) {
-      // if(!el) el = document.body // If no el is given. default to the body.
-      if(!el) el = 'body'; // If no el is given. default to the body.
+      if(!el) el = 'body'; // Default to the body.
 
       // Simple way to throw an error for invalid selectors.
       document.querySelector(el);
@@ -124,9 +123,10 @@ function typer(el, speed) {
       return this;
     },
     listen: function(event, el) {
-      if(!el) el = document.body;
-      if(el.length) el = el[0];
-      if(!el.nodeType || el.nodeType !== 1) throw '.listen() error: invalid element provided.';
+      if(!el) el = 'body'; // Default to the body.
+
+      // Simple way to throw an error for invalid selectors.
+      document.querySelector(el);
 
       q.push({listen: event, el: el});
       return this;
@@ -437,9 +437,11 @@ function typer(el, speed) {
   function processListen(item) {
     clearInterval(q.type); // Stop the main iterator.
 
+    var el = document.querySelector(item.el);
+
     // One-time event listener.
-    item.el.addEventListener(item.listen, function handler(e) {
-      item.el.removeEventListener(e.type, handler)
+    el.addEventListener(item.listen, function handler(e) {
+      el.removeEventListener(e.type, handler)
       if(q.killed) return; // Prevent error if kill switch is engaged.
       q.item++;
       processq();
