@@ -789,7 +789,7 @@ function demo() {
     .pause(1500)
     .empty()
     .continue('Giving <span class="lime">listen</span> a string causes <span class="lime">Typer</span> to stop,')
-    .line('waiting for that event to fire on the <span class="mono">&lt;<span class="pink">body</span>&gt;</span>.')
+    .line('waiting for that event to fire from the <span class="mono">&lt;<span class="pink">body</span>&gt;</span>.')
     .pause()
     .line('<span class="lime">Typer</span> won\'t do anything else until that specific event fires.')
     .pause(1500)
