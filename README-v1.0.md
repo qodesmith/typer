@@ -1,7 +1,8 @@
 # Typer.js
 Typer.js is an easy to use, choc-full-of-options, robust automated typing library. There are a number of [methods](https://github.com/qodesmith/typer#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
 
-Typer.js has **no library dependencies** so just slap it on your page and go. We still love you, [jQuery](https://cdnjs.com/libraries/jquery/).
+Typer.js has **no library dependencies** so just slap it on your page and go.
+We still love you, [jQuery](https://cdnjs.com/libraries/jquery/). And to show that love, Typer and its various methods can be fed jQuery selectors along with good 'ol vanilla JS selectors (as you'll see in the examples in each section).
 
 In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/) (using HTML decimal code), whole words, half words, HTML elements, erase stuff, go fast, go slow, make new lines, fire events, listen to events, run functions, and make julienne fries in minutes.
 
@@ -42,12 +43,12 @@ Files & locations:
 ## Usage
 
 ```javascript
-typer(selector, speed)
+typer(el, speed)
 ```
 
 The Typer function itself takes two arguments:
 
-1. `selector` - a valid CSS selector, such as `'.some-class'`, `'#some-id'`, or `'.a-class .in-a-class'`, for Typer to grab (with `document.querySelector`) and type in.
+1. `el` - a target DOM element, such as `document.body`, `document.querySelector('.someClass')`, or `$('.someClass')`, for Typer to type in.
 2. `speed` - a number (milliseconds) representing how fast each character should be typed out. If no number is given, Typer will default to 70.
 
 Now you begin calling Typer's various [methods](https://github.com/qodesmith/typer#methods) via simple & sexy dot-notation...
@@ -57,15 +58,19 @@ Now you begin calling Typer's various [methods](https://github.com/qodesmith/typ
 #### Type a single line:
 
 ```javascript
-// Type in the body element.
-typer('body')
+// Vanilla JS selector.
+typer(document.body)
+  .line('Typer.js is awesome!');
+
+// jQuery selector.
+typer($('.someClass'))
   .line('Typer.js is awesome!');
 ```
 
 #### Type a single line, correct mispelling with back:
 
 ```javascript
-typer('.some-class')
+typer(document.body)
   .line('This function roolz.')
   .back(5)
   .continue('ules!');
@@ -74,7 +79,7 @@ typer('.some-class')
 #### Type a list of frameworks with the help of pause & back:
 
 ```javascript
-typer('#container')
+typer(document.body)
   .line('Backbone')
   .pause(1000)
   .back('all')
@@ -87,7 +92,7 @@ typer('#container')
 #### Multi-line typing:
 
 ```javascript
-typer('div')
+typer(document.body)
   .line('How cool is this?')
   .line('So very cool.')
   .line('Agreed!');
@@ -161,25 +166,22 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 .line('Typer.js is visual awesomeness!');
 .line('Typer.js is visual <em>awesomeness!</em>', 100);
 .line(['Type. ', 'Whole. ', '<span style="color: red;">Words.</span>'], 200);
-.line({el: '.some-class'}, 200, false); // Order of 2nd & 3rd arguments is irrelevant.
-.line() // Creates a blank line.
+.line(document.querySelector('.someClass'), 200, {html: false}); // Order of 2nd & 3rd arguments is irrelevant.
+.line($('.someClass'), 200);
 ```
 
 The `.line` method is the heart of Typer. As the name suggests, it types out a single line.  
-You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an object with a CSS selector as it's only (necessary) argument. `.line` can take an additional two arguments in any particular order. `.line` defaults to parsing HTML, so you must explicitly tell it not to with the option below.
+You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or a DOM element as it's only (necessary) argument. `.line` can take an additional two arguments in any particular order. `.line` defaults to parsing HTML, so you must explicitly tell it not to with the option below.
 
 ### Arguments
 
 * Argument 1:
   * `string` - The message you want typed out, character by character (normal typing).
   * `array` - The message you want typed out, phrase by phrase / word by word.
-  * `object` - **SEO** in the house! If you give `.line` an object with a single property-value pair where the value is a CSS selector, Typer will grab that element and use its contents to type with. For obvious reasons, the element should be hidden (css - `display: none;`). This will allow your content to be indexed while still maintaining *JavaScript typing awesomeness*. All of the following will grab the element with an id of awesome:
-    * `{el: '#awesome'}`
-    * `{whySoLong: '#awesome'}`
-    * `{1: '#awesome'}`
+  * DOM element - **SEO** in the house! If you give `.line` a DOM element, Typer will use the contents of that element to type with. For obvious reasons, the element should be hidden (css - `display: none;`). This will allow your content to be indexed while still maintaining *JavaScript typing awesomeness*.
 * Arguments 2 or 3:
   * `speed` - A number (milliseconds); Each line can optionally have its own typing speed. If no speed is given, it defaults to the number given to the `typer` function itself or Typer's internal default of 70.
-  * `html` - `false`; specifies that the provided content is to be treated as non-html code. Characters will be typed out exactly as you provide them.
+  * `html` - `{html: false}`; specifies that the provided content is to be treated as non-html code. Characters will be typed out exactly as you provide them.
 
 _* TIP: If you supply no arguments, you will create a blank line._
 
@@ -248,8 +250,9 @@ The 1st argument is mandatory and has three options. The 2nd argument is optiona
 ```javascript
 // Examples.
 .continue("I'm on the same line!");
-.continue('Same line, emphasis on <em>sloooow</em>.', 500, false);
-.continue({el: '.hidden-div'}, false, 500);
+.continue('Same line, emphasis on <em>sloooow</em>.', 500, {html: false});
+.continue(document.querySelector('.hiddenDiv'));
+.continue($('.hiddenDiv'), 200);
 ```
 
 The `.continue` method works just like `.line` in that it accepts the same arguments but it *continues* typing on the same line, whereas `.line` creates new lines. In conjunction with the `.pause` and `.line` methods, you can create eloborate schemes. You can feed `.continue` the same content (HTML, unicode, etc.) as `.line`.
@@ -257,8 +260,6 @@ The `.continue` method works just like `.line` in that it accepts the same argum
 ### Arguments
 
 Same as those for `.line` ([above](https://github.com/qodesmith/typer#line)).
-
-_*NOTE: unlike_ `.line`_, calling_ `.continue` _with no arguments will produce no effect._
 
 * * *
 
@@ -278,16 +279,17 @@ The `.pause` method takes a single argument, a number in milliseconds. Typer wil
 
 ```javascript
 // Examples.
-.emit('boom'); // Fires off the body.
-.emit('boom', '.some-class'); // Fires off a specific element.
+.emit('boom', document.querySelector('.someClass'));
+.emit('boom', $('.someClass'));
+.emit('boom');
 ```
 
-Emits an event on a specified DOM element or defaults to `'body'`. This is useful for setting up complex automation scenarios where multiple Typer functions (or other functions on your page) are time-dependant on eachother. DOM event explosions causing mass automated awesomeness. What could be better?
+Emits an event on a specified DOM element or defaults to `document.body`. This is useful for setting up complex automation scenarios where multiple Typer functions (or other functions on your page) are time-dependant on eachother. DOM event explosions causing mass automated awesomeness. What could be better?
 
 ### Arguments
 
-1. `('event')` - the event name; Omitting a 2nd argument will default to the event firing from `'body'`.
-2. `('event', 'selector')` - target a DOM element that the `'event'` will be fired from.
+1. `('event')` - the event name; Omitting a DOM element will default to the event firing from `document.body`.
+2. `('event', el)` - specify a DOM element that the `'event'` will be fired from.
 
 * * *
 
@@ -295,16 +297,17 @@ Emits an event on a specified DOM element or defaults to `'body'`. This is usefu
 
 ```javascript
 // Examples.
-.listen('boom'); // Listens on the body.
-.listen('boom', '.some-class'); // Listens on a specific element.
+.listen('boom', document.querySelector('.someClass'));
+.listen('boom', $('.someClass'));
+.listen('boom');
 ```
 
 Typer has the ability (read: super-power) to listen for events as well. The `.listen` method will stop Typer in its tracks until the specified event is fired. Once fired, Typer will proceed from where it last left off. More automation goodness.
 
 ### Arguments
 
-2. `('event')` - the event name we're listening for; Omitting a 2nd argument will default to listening to the `'body'` for the event.
-1. `('event', 'selector')` - target a DOM element to listen for the event on.
+2. `('event')` - the event name we're listening for; Omitting a DOM element will default to listening to `document.body` for the event.
+1. `('event', el)` - specify a DOM element to listen for the event on.
 
 _* NOTE: Typer uses **one-time event** listeners. When the event is fired, the listener is triggered, then removed._
 
@@ -373,7 +376,7 @@ function killTyper() {
 }
 ```
 
-To activate Typer's kill switch, a `killTyper` event must be dispatched from the `<body>`. That's it.
+To active Typer's kill switch, a `killTyper` event must be dispatched from the `<body>`. That's it.
 
 * * *
 
