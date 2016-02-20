@@ -482,7 +482,7 @@ function typer(el, speed) {
     }
 
     // Prevent '0' from triggering Typer's default speed.
-    item.speed = item.speed || 1;
+    if(item.speed === 0) item.speed = 1;
 
     // Empty the line all at once.
     if(item.back === 'empty') {
