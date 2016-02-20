@@ -77,7 +77,7 @@ function addStyle(selector, rules) { // https://goo.gl/b4Ckz9
 }
 
 // MATRIX TYPING INTRO
-typer(document.querySelector('.matrix'))
+typer('.matrix')
   .cursor({block: true})
   .line()
   .pause(2000)
@@ -128,7 +128,7 @@ function contentsToSpans(el) {
   var div = document.createElement('div');
   var contents = el.textContent.split('');
 
-  for(i in contents) {
+  for(var i in contents) {
     var span = document.createElement('span');
     span.className = classes;
     span.textContent = contents[i];
@@ -227,18 +227,18 @@ function demoListen(code) {
 var timeKeeping = {
   times: [],
   methodTimes: {
-    typer: '0:59',
-    cursor: '2:02',
-    line: '2:42',
-    back: '2:05',
-    continue: '0:21',
-    pause: '0:51',
-    emit: '1:00',
-    listen: '0:59',
+    typer: '0:56',
+    cursor: '2:03',
+    line: '2:47',
+    back: '2:06',
+    continue: '0:22',
+    pause: '0:50',
+    emit: '0:52',
+    listen: '0:58',
     empty: '0:24',
     run: '1:11',
     end: '1:18'
-    // 13:53 TOTAL
+    // ???? TOTAL
   },
   startTime: function() {
     var _this = this;
@@ -252,7 +252,7 @@ var timeKeeping = {
     this.time = setInterval(function() {
       sec--;
 
-      if(sec < 0 && min < 1) return _this.stopTime();
+      // if(sec < 0 && min < 1) return _this.stopTime();
       if(sec < 0) {
         sec = 59;
         min--;
@@ -270,8 +270,6 @@ var timeKeeping = {
 
 // NARRATION & CODE TYPERS
 function demo() {
-  var nar = document.querySelector('.narration');
-  var code = document.querySelector('.code-container');
   var methods = {
     count: 0,
     items: ['typer', 'cursor', 'line', 'back', 'continue', 'pause', 'emit', 'listen', 'empty', 'run', 'end']
@@ -290,7 +288,7 @@ function demo() {
     newMethod.classList.toggle('active');
   }
 
-  typer(nar)
+  typer('.narration')
     .run(function time() {
       timeKeeping.startTime();
     })
@@ -320,22 +318,14 @@ function demo() {
     .empty()
     .continue("<span class='lime'>Typer</span> itself takes two arguments.")
     .pause()
-    .line('The 1st argument is a DOM element:')
+    .line('The 1st argument is any valid CSS selector:')
     .emit('typer-1')
     .listen('typer-2')
-    .back(1)
-    .continue(' - optionally you can use a jQuery selector:')
+    .empty()
+    .continue('The 2nd argument is a speed - milliseconds / character typed:')
     .emit('typer-3')
     .listen('typer-4')
-    .back(41, 10)
-    .continue("(let's stick with vanilla JS)")
-    .pause()
-    .emit('typer-5')
-    .listen('typer-6')
-    .back('all', 10)
-    .continue('The 2nd argument is a speed - milliseconds / character typed:')
-    .emit('typer-7')
-    .listen('typer-8')
+    .pause(1500)
     .empty()
     .continue('The speed is optional.')
     .pause()
@@ -393,7 +383,7 @@ function demo() {
     .continue([' &#8594;'])
     .pause(1500)
     .back('all', 10)
-    .continue('By using <span class="mono">block: <span class="purple">true</span></span> below, we get the old-school style block:')
+    .continue('By using <span class="mono">block: <span class="purple mono">true</span></span> below, we get the old-school style block:')
     .emit('cursor-7')
     .listen('cursor-8')
     .empty()
@@ -430,7 +420,7 @@ function demo() {
     .continue('If you omit the cursor object <em>or</em> method altogether,')
     .line('the following default values will be used:')
     .pause()
-    .line('<span class="mono">{block: <span class="purple">false</span>, blink: <span class="yellow">\'soft\'</span>}</span>')
+    .line('<span class="mono">{block: <span class="purple mono">false</span>, blink: <span class="yellow">\'soft\'</span>}</span>')
     .line('and the color will be set to the parent elements text color.')
     .pause(1500)
     .emit('cursor-13')
@@ -513,21 +503,23 @@ function demo() {
     .line('Go nuts.')
     .pause(1500)
     .empty()
-    .continue('The 3rd argument for <span class="lime">line</span> is')
-    .line('an object stating <em>not</em> to use HTML:')
+    .continue('The 3rd argument for <span class="lime">line</span> is a boolean:')
     .emit('line-14')
     .listen('line-15')
     .pause(2000)
     .empty()
-    .continue('The code below will result in a line looking like this:')
+    .continue('Passing in <span class="purple mono">false</span> will tell <span class="lime">line</span> to <em>not</em> process HTML.')
+    .pause()
+    .line('The code below will result in a line looking like this:')
     .pause(1000)
-    .line(['Typer.js <strong>rules</strong>!'], {html: false})
+    .line(['Typer.js <strong>rules</strong>!'], false)
     .pause(3000)
     .empty()
-    .continue("Now here's the twist:")
+    .continue('By default, <span class="lime">line</span> <em>will</em> process the content as HTML.')
     .pause()
-    .line('The 2nd & 3rd arguments are order agnostic!')
-    .pause(1000)
+    .line('No need to pass in <span class="purple mono">true</span>.')
+    .pause()
+    .line('Also, note the 2nd & 3rd arguments are order agnostic:')
     .emit('line-16')
     .listen('line-17')
     .pause(1500)
@@ -535,9 +527,13 @@ function demo() {
     .continue('Want another twist?')
     .pause(1000)
     .back('all', 10)
-    .continue('If you give <span class="lime">line</span> a DOM element')
-    .line('as the first argument (instead of a string or an array),')
+    .continue('If you give <span class="lime">line</span> an object with a selector')
+    .line('as the first argument (instead of a string or an array)...')
+    .emit('line-18')
+    .listen('line-19')
     .pause()
+    .back(3)
+    .continue(',')
     .line("you're now using the contents of that element to supply <span class='lime'>line</span>")
     .line('with something to type.')
     .pause()
@@ -545,9 +541,6 @@ function demo() {
     .pause(1000)
     .continue([' ;)'])
     .pause()
-    .emit('line-18')
-    .listen('line-19')
-    .pause(1000)
     .empty()
     .continue(['Boom.'])
     .pause(1000)
@@ -558,7 +551,7 @@ function demo() {
     .listen('line-21')
     .pause()
     .back('all', 10)
-    .continue('Passing <em>no argument</em> to line will just create a blank line.')
+    .continue('Passing <em>no argument</em> to <span class="lime">line</span> will just create a blank line.')
     .pause()
     .line()
     .line('&#11014; &#11014; &#11014; &#11014; &#11014; &#11014; &#11014; &#11014;')
@@ -638,7 +631,7 @@ function demo() {
     .listen('back-10')
     .pause(1200)
     .empty()
-    .continue('Passing in a negative number, in this case <span class="mono"><span class="pink">-</span><span class="purple">5</span></span>,')
+    .continue('Passing in a negative number, in this case <span class="mono"><span class="pink">-</span><span class="purple mono">5</span></span>,')
     .line('is the equivalent to saying <em style="text-decoration: underline">erase all but</em> 5 characters.')
     .pause()
     .line('You can see how this would again be convenient for longer lines.')
@@ -655,7 +648,13 @@ function demo() {
     .pause()
     .line('No character-by-character backspacing will occur.')
     .pause()
-    .line(['Poof.', ' Gone.'], 750)
+    .empty()
+    .pause()
+    .line(['Poof.'])
+    .pause(1000)
+    .empty()
+    .pause()
+    .line([' Gone.'])
     .pause(1000)
     .run(function() {
       timeKeeping.stopTime();
@@ -758,16 +757,10 @@ function demo() {
     .pause()
     .line('<span class="lime">emit</span> has you covered.')
     .pause()
-    .line('Just pass in a DOM element as the 2nd argument:')
+    .line('Just pass in a CSS selector as the 2nd argument:')
     .emit('emit-3')
     .listen('emit-4')
-    .pause(1000)
-    .empty()
-    .continue("Don't forget that you can use jQuery selectors")
-    .line('with all of <span class="lime">Typer</span>\'s methods:')
-    .emit('emit-5')
-    .listen('emit-6')
-    .pause(1200)
+    .pause(2000)
     .empty()
     .run(function() {
       timeKeeping.stopTime();
@@ -947,7 +940,7 @@ function demo() {
       document.querySelector('.main-container').style.opacity = '0';
       document.querySelector('.progress-container').style.opacity = '0';
 
-      typer(fin, 150)
+      typer('.fin', 150)
         .cursor({block: true, blink: 'hard'})
         .line()
         .run(function(el) {
@@ -957,30 +950,30 @@ function demo() {
         .continue('the .end()');
     });
 
-  typer(code, 30)
+  typer('.code-container', 30)
     .cursor({block: true, blink: 'hard'})
     // METHOD: TYPER
     // METHOD: TYPER
     // METHOD: TYPER
     .line()
     .listen('typer-1')
-    .continue('typer(<span class="aqua italic">document</span>.querySelector(<span class="yellow">\'.someClass\'</span>),')
-    .pause(1200)
+    .continue('typer(<span class="yellow">\'.someClass\'</span>,')
+    .pause(1500)
+    .back(-6, 10)
+    .continue('<span class="yellow">\'#some-id\'</span>')
+    .pause(1500)
+    .back(-6, 10)
+    .continue('<span class="yellow">\'.class1 .class2\'</span>')
+    .pause(1500)
+    .back(-6, 10)
+    .continue('<span class="yellow">\'#so-on.andSoForth\'</span>')
+    .pause(1500)
+    .back(-6, 10)
+    .continue('<span class="yellow">\'.someClass\'</span>')
     .emit('typer-2')
     .listen('typer-3')
-    .back(37, 10)
-    .continue('<span class="pink">$</span>(<span class="yellow">\'.someClass\'</span>),')
-    .pause(1000)
+    .continue(', <span class="purple">100</span>)')
     .emit('typer-4')
-    .listen('typer-5')
-    .back(16, 10)
-    .continue('<span class="aqua italic">document</span>.querySelector(<span class="yellow">\'.someClass\'</span>),')
-    .pause()
-    .emit('typer-6')
-    .listen('typer-7')
-    .continue(' <span class="purple">100</span>)')
-    .pause(1500)
-    .emit('typer-8')
     // METHOD: CURSOR
     // METHOD: CURSOR
     // METHOD: CURSOR
@@ -1097,15 +1090,15 @@ function demo() {
     .emit('line-13')
     .listen('line-14')
     .back(-8, 10)
-    .continue('<span class="yellow">\'Typer.js &lt;strong&gt;rules&lt;/strong&gt;!\'</span>, <span class="purple">400</span>, {html: <span class="purple">false</span>})')
+    .continue('<span class="yellow">\'Typer.js &lt;strong&gt;rules&lt;/strong&gt;!\'</span>, <span class="purple">400</span>, <span class="purple">false</span>)')
     .emit('line-15')
     .listen('line-16')
-    .back(19, 10)
-    .continue('{html: <span class="purple">false</span>}, <span class="purple">400</span>)')
+    .back(11, 10)
+    .continue('<span class="purple">false</span>, <span class="purple">400</span>)')
     .emit('line-17')
     .listen('line-18')
     .back(-8, 10)
-    .continue('<span class="aqua italic">document</span>.querySelector(<span class="yellow">\'.anotherClass\'</span>), {html: <span class="purple">false</span>}, <span class="purple">400</span>)')
+    .continue('{el: <span class="yellow">\'.anotherClass\'</span>})')
     .emit('line-19')
     .listen('line-20')
     .back(-8, 10)
@@ -1142,7 +1135,7 @@ function demo() {
     // METHOD: PAUSE
     .listen('pause-1')
     .empty()
-    .continue('typer(<span class="aqua italic">document</span>.querySelector(<span class="yellow">\'.someClass\'</span>), <span class="purple">100</span>)')
+    .continue('typer(<span class="yellow">\'.someClass\'</span>, <span class="purple">100</span>)')
     .line('  .cursor({block: <span class="purple">true</span>, blink: <span class="yellow">\'hard\'</span>})')
     .line('  .line(<span class="yellow">\'Typer.js\'</span>)')
     .continue('<br>  .pause(<span class="purple">2000</span>)')
@@ -1152,27 +1145,27 @@ function demo() {
     .back(-8, 10)
     .continue('<span class="yellow">\'Typer.js rulez!\'</span>)')
     .emit('pause-4')
+    // METHOD: EMIT
+    // METHOD: EMIT
+    // METHOD: EMIT
     .listen('emit-1')
     .line('  .emit(<span class="yellow">\'boom\'</span>)')
     .emit('emit-2')
     .listen('emit-3')
     .back(1, 10)
-    .continue(', <span class="aqua italic">document</span>.querySelector(<span class="yellow">\'.anotherClass\'</span>))')
+    .continue(', <span class="yellow">\'.anotherClass\'</span>)')
     .emit('emit-4')
-    .listen('emit-5')
-    .back(-16, 10)
-    .continue('<span class="pink">$</span>(<span class="yellow">\'.anotherClass\'</span>))')
     .emit('emit-6')
+    // METHOD: LISTEN
+    // METHOD: LISTEN
+    // METHOD: LISTEN
     .listen('listen-1')
     .back(-3, 10)
-    // METHOD: LISTEN
-    // METHOD: LISTEN
-    // METHOD: LISTEN
     .continue('listen(<span class="yellow">\'boom\'</span>)')
     .emit('listen-2')
     .listen('listen-3')
     .back(1, 10)
-    .continue(', <span class="aqua italic">document</span>.querySelector(<span class="yellow">\'.anotherClass\'</span>))')
+    .continue(', <span class="yellow">\'.anotherClass\'</span>)')
     .emit('listen-4')
     // METHOD: EMPTY
     // METHOD: EMPTY
@@ -1224,5 +1217,5 @@ function demo() {
     .listen('end-7')
     .back(34, 10)
     .continue('<span class="gray italic">/* fire \'typerFinished\' when done */</span> }, <span class="purple">true</span>});')
-    .emit('end-8')
+    .emit('end-8');
 }
