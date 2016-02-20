@@ -1,5 +1,4 @@
 # FOLDERS
-/less
 /node_modules
 /old-typer
 
@@ -13,3 +12,4 @@
 /gulpfile.js
 /package.json
 /code.psd
+/less/demo.less
