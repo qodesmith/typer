@@ -204,8 +204,8 @@ typer(document.body)
   .line('<em>How will I look?</em>', {html: false})
   .line('Cookies & milk')
   .line('Cookies &amp; milk')
-  .line('Cookies &amp; milk', {html: false});
-  .line('The &#9992; flies &#8593; in the sky.')
+  .line('Cookies &amp; milk', {html: false})
+  .line('The &#9992; flies &#8593; in the sky.');
 ```
 
 will result in this output on the screen:
