@@ -199,7 +199,7 @@ When using [unicode](http://dev.w3.org/html5/html-author/charref) [characters](h
 
 The following code...
 ```javascript
-typer(document.body)
+typer('body')
   .line('<em>How will I look?</em>')
   .line('<em>How will I look?</em>', false)
   .line('Cookies & milk')
