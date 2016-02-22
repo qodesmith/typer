@@ -1,6 +1,6 @@
 .typer {
   position: relative;
-  min-height: 2.125ex;
+  min-height: 2ex;
 }
 .typer::after {
   content: '';
