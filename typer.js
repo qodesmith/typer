@@ -625,7 +625,10 @@ function typer(el, speed) {
 
     // If typer is in a listener state...
     var ear = q[q.item];
-    if(ear && ear.listen) ear.el.dispatchEvent(new CustomEvent(ear.listen));
+    if(ear && ear.listen) {
+      var el = document.querySelector(ear.el);
+      el.dispatchEvent(CustomEvent(ear.listen));
+    }
 
     console.log('Typer killed!');
   }
