@@ -5,6 +5,8 @@ Typer.js has **no library dependencies** so just slap it on your page and go. We
 
 In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/) (using HTML decimal code), whole words, half words, HTML elements, erase stuff, go fast, go slow, make new lines, fire events, listen to events, run functions, and make julienne fries in minutes.
 
+[Live Demo / Tutorial](https://cdn.rawgit.com/qodesmith/typer/master/demo/index.html)
+
 ## Installation
 
 #### Manually
