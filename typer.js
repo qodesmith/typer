@@ -39,17 +39,18 @@ function typer(el, speed) {
   // EVERY DEVELOPERS EXISTENCE... //
   ///////////////////////////////////
 
-  // IE nonsense: Event constructor polyfill (http://goo.gl/bmB7VH).
+  // Event constructor polyfill (https://goo.gl/Ys7exw).
   (function () {
+    if(typeof window.CustomEvent === 'function') return;
+
     function CustomEvent (event, params) {
       params = params || {bubbles: false, cancelable: false, detail: undefined};
       var evt = document.createEvent('CustomEvent');
       evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
       return evt;
-     }
+    }
 
     CustomEvent.prototype = window.Event.prototype;
-
     window.CustomEvent = CustomEvent;
   })();
 
@@ -160,7 +161,7 @@ function typer(el, speed) {
         if((fxn && checkType(fxn) === 'Boolean') || e) {
           if(e instanceof Function) e(el);
           // TODO: does new need to be added before Custom Event?
-          document.body.dispatchEvent(CustomEvent('typerFinished'));
+          document.body.dispatchEvent(new CustomEvent('typerFinished'));
         }
       }
 
@@ -426,7 +427,7 @@ function typer(el, speed) {
   function processEmit(item) {
     clearInterval(q.type); // Stop the main iterator.
     // TODO: check IE if we new to use 'new' with CustomEvent.
-    document.querySelector(item.el).dispatchEvent(CustomEvent(item.emit));
+    document.querySelector(item.el).dispatchEvent(new CustomEvent(item.emit));
 
     q.item++;
     processq();
@@ -627,7 +628,7 @@ function typer(el, speed) {
     var ear = q[q.item];
     if(ear && ear.listen) {
       var el = document.querySelector(ear.el);
-      el.dispatchEvent(CustomEvent(ear.listen));
+      el.dispatchEvent(new CustomEvent(ear.listen));
     }
 
     console.log('Typer killed!');
