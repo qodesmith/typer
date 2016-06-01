@@ -60,7 +60,7 @@
 
     // Because IE.
     setTimeout(function() {
-      var ieSUX = CustomEvent('ieSUX');
+      var ieSUX = new CustomEvent('ieSUX');
       bg.dispatchEvent(ieSUX);
     }, 5000);
   }, 0);
