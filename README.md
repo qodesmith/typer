@@ -5,7 +5,8 @@ Typer.js has **no library dependencies** so just slap it on your page and go. We
 
 In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/) (using HTML decimal code), whole words, half words, HTML elements, erase stuff, go fast, go slow, make new lines, fire events, listen to events, run functions, and make julienne fries in minutes.
 
-[Live Demo / Tutorial](https://cdn.rawgit.com/qodesmith/typer/master/demo/index.html)
+<!-- Refresh cached version: https://goo.gl/9g8mes -->
+[Live Demo / Tutorial](https://cdn.rawgit.com/qodesmith/typer/3a1d532/demo/index.html)
 
 ## Installation
 
@@ -167,7 +168,7 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 .line() // Creates a blank line.
 ```
 
-The `.line` method is the heart of Typer. As the name suggests, it types out a single line.  
+The `.line` method is the heart of Typer. As the name suggests, it types out a single line.
 You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an object with a CSS selector as it's only (necessary) argument. `.line` can take an additional two arguments in any particular order. `.line` defaults to parsing HTML, so you must explicitly tell it not to with the option below.
 
 ### Arguments
@@ -211,11 +212,11 @@ typer('body')
 ```
 
 will result in this output on the screen:
-> *How will I look?*  
-> &lt;em&gt;How will I look?&lt;/em&gt;  
-> Cookies & milk  
-> Cookies & milk  
-> Cookies &amp;amp; milk  
+> *How will I look?*
+> &lt;em&gt;How will I look?&lt;/em&gt;
+> Cookies & milk
+> Cookies & milk
+> Cookies &amp;amp; milk
 > The &#9992; flies &#8593; in the sky.
 
 * * *
@@ -389,5 +390,5 @@ Have you done something cool with Typer.js? Have an awesome site / use-case you'
 
 > I think I thought of everything, but I thought wrong once, even though I think I'm right.
 
-O.o  
+O.o
 If you think of a feature you feel would be an awesome addition to Typer, raise an [issue](https://github.com/qodesmith/typer/issues) or create a [pull request](https://github.com/qodesmith/typer/pulls). I'm all ears.
