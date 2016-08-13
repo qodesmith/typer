@@ -1,6 +1,6 @@
 /* The MIT License (MIT)
 
-Copyright (c) 2015 Aaron Cordova
+Copyright (c) 2016 Aaron Cordova
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,26 +33,6 @@ function typer(el, speed) {
   if(!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
   el = document.querySelector(el);
-
-  ///////////////////////////////////
-  // BECAUSE IE IS THE BANE OF     //
-  // EVERY DEVELOPERS EXISTENCE... //
-  ///////////////////////////////////
-
-  // Event constructor polyfill (https://goo.gl/Ys7exw).
-  (function () {
-    if(typeof window.CustomEvent === 'function') return;
-
-    function CustomEvent (event, params) {
-      params = params || {bubbles: false, cancelable: false, detail: undefined};
-      var evt = document.createEvent('CustomEvent');
-      evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-      return evt;
-    }
-
-    CustomEvent.prototype = window.Event.prototype;
-    window.CustomEvent = CustomEvent;
-  })();
 
   parentDataNum(); // Assign a random # to the parent el's data attribute.
 
@@ -160,8 +140,7 @@ function typer(el, speed) {
         if(fxn && fxn instanceof Function) fxn(el);
         if((fxn && checkType(fxn) === 'Boolean') || e) {
           if(e instanceof Function) e(el);
-          // TODO: does new need to be added before Custom Event?
-          document.body.dispatchEvent(new CustomEvent('typerFinished'));
+          document.body.dispatchEvent(new Event('typerFinished'));
         }
       }
 
@@ -426,8 +405,7 @@ function typer(el, speed) {
   }
   function processEmit(item) {
     clearInterval(q.type); // Stop the main iterator.
-    // TODO: check IE if we new to use 'new' with CustomEvent.
-    document.querySelector(item.el).dispatchEvent(new CustomEvent(item.emit));
+    document.querySelector(item.el).dispatchEvent(new Event(item.emit));
 
     q.item++;
     processq();
@@ -628,10 +606,8 @@ function typer(el, speed) {
     var ear = q[q.item];
     if(ear && ear.listen) {
       var el = document.querySelector(ear.el);
-      el.dispatchEvent(new CustomEvent(ear.listen));
+      el.dispatchEvent(new Event(ear.listen));
     }
-
-    console.log('Typer killed!');
   }
 
   // Return 'typerObj' to be able to run the various methods.
