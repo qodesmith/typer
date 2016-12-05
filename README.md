@@ -1,4 +1,4 @@
-# Typer.js 2.0
+# Typer.js
 Typer.js is an easy to use, choc-full-of-options, robust automated typing library. There are a number of [methods](https://github.com/qodesmith/typer#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
 
 Typer.js has **no library dependencies** so just slap it on your page and go. We still love you, [jQuery](https://cdnjs.com/libraries/jquery/).
@@ -382,7 +382,7 @@ To activate Typer's kill switch, a `killTyper` event must be dispatched from the
 
 ## Showcase
 
-Have you done something cool with Typer.js? Have an awesome site / use-case you'd like to share? [Contact me!](https://twitter.com/Qodesmith) I'd love to show off your awesomeness with a link here.
+Have you done something cool with Typer.js? Have an awesome site / use-case you'd like to share? [Contact me!](https://aaroncordova.xyz/contact) I'd love to show off your awesomeness with a link here.
 
 * * *
 
