@@ -29,7 +29,7 @@ function typer(el, speed) {
 
   // Various checks.
   speed = speed || 70;
-  if (checkType(el) !== 'String') throw 'typer error: selector provided is not a string.';
+  if (getType(el) !== 'String') throw 'typer error: selector provided is not a string.';
   if (!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
   el = document.querySelector(el);
@@ -138,7 +138,7 @@ function typer(el, speed) {
         q.newDiv = '';
 
         if (fxn && fxn instanceof Function) fxn(el);
-        if ((fxn && checkType(fxn) === 'Boolean') || e) {
+        if ((fxn && getType(fxn) === 'Boolean') || e) {
           if (e instanceof Function) e(el);
           document.body.dispatchEvent(new Event('typerFinished'));
         }
@@ -170,7 +170,7 @@ function typer(el, speed) {
   };
 
   // Private functions.
-  function checkType(thing) {
+  function getType(thing) {
     let type = ({}).toString.call(thing);
 
     return type.split(' ')[1].slice(0, -1);
@@ -205,9 +205,9 @@ function typer(el, speed) {
   function lineOrContinue(choice, msg, spd, html) {
     let obj = {html: spd === false ? false : html === false ? false : true};
 
-    if (checkType(spd) === 'Number') obj.speed = spd;
-    if (checkType(html) === 'Number') obj.speed = html;
-    if (checkType(msg) === 'Object') {
+    if (getType(spd) === 'Number') obj.speed = spd;
+    if (getType(html) === 'Number') obj.speed = html;
+    if (getType(msg) === 'Object') {
       // Prevents a hard dependency on 'el' as the property name.
       let key = Object.keys(msg)[0];
       msg = document.querySelector(msg[key])[obj.html ? 'innerHTML': 'textContent'].trim();
