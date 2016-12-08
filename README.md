@@ -41,6 +41,22 @@ Files & locations:
 | typer.css    | node_modules/typer-js/     | stylesheet necessary for the cursor |
 | typer.less   | node_modules/typer-js/less | less: use it for your own builds    |
 
+#### Via Unpkg CDN
+
+```html
+<head>
+  ...
+  <link rel="stylesheet" href="https://unpkg.com/typer-js/typer.css">
+</head>
+```
+
+and include `typer.js` just above your closing `</body>` tag...
+```html
+<body>
+  ...
+  <script src="https://unpkg.com/typer-js"></script>
+</body>
+```
 
 ## Usage
 
@@ -192,11 +208,11 @@ _Go nuts_. You can include `<div>`'s, `<span>`'s, elements with styles (i.e. `<s
 
 When using [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/) with Typer, you *must* begin with `&` and end with `;`. Some examples:
 
-| Character  | Code     | Character  | Code      | Character  | Code      |
-| :--------: | -------- | :--------: | --------- | :--------: | --------- |
-| &#169;     | `&#169;` | &#8594;    | `&#8594;` | &#9742;    | `&#9742;` |
-| &reg;      | `&reg;`  | &#8600;    | `&#8600;` | &#9834;    | `&#9834;` |
-| &#188;     | `&#188;` | &#8595;    | `&#8595;` | &#9829;    | `&#9829;` |
+| Character  | Code        | Character  | Code      | Character  | Code      |
+| :--------: | ----------- | :--------: | --------- | :--------: | --------- |
+| &#x1f407;  | `&#x1f407;` | &#8594;    | `&#8594;` | &#9742;    | `&#9742;` |
+| &reg;      | `&reg;`     | &#8600;    | `&#8600;` | &#9834;    | `&#9834;` |
+| &#188;     | `&#188;`    | &#8595;    | `&#8595;` | &#9829;    | `&#9829;` |
 
 ##### HTML / Unicode examples:
 
@@ -212,11 +228,11 @@ typer('body')
 ```
 
 will result in this output on the screen:
-> *How will I look?*
-> &lt;em&gt;How will I look?&lt;/em&gt;
-> Cookies & milk
-> Cookies & milk
-> Cookies &amp;amp; milk
+> *How will I look?* <br>
+> &lt;em&gt;How will I look?&lt;/em&gt; <br>
+> Cookies & milk <br>
+> Cookies & milk <br>
+> Cookies &amp;amp; milk <br>
 > The &#9992; flies &#8593; in the sky.
 
 * * *

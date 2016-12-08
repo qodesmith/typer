@@ -175,6 +175,34 @@ function typer(el, speed) {
 
     return type.split(' ')[1].slice(0, -1);
   }
+  function ucs2decode(string) { // Taken from `utf8.js` - https://goo.gl/RYZkAM
+    let output = [];
+    let counter = 0;
+    let length = string.length;
+    let value;
+    let extra;
+
+    while (counter < length) {
+      value = string.charCodeAt(counter++);
+
+      if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+        // high surrogate, and there is a next character
+        extra = string.charCodeAt(counter++);
+
+        if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+          output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+        } else {
+          // unmatched surrogate; only append this code unit, in case the next
+          // code unit is the high surrogate of a surrogate pair
+          output.push(value);
+          counter--;
+        }
+      } else {
+        output.push(value);
+      }
+    }
+    return output;
+  }
   function parentDataNum() {
     // Random # function with min & max values.
     // function randomNum(min, max) {
@@ -309,16 +337,20 @@ function typer(el, speed) {
 
         // Unicode characters.
         } else if (piece === '&') {
-          // 1. Build the unicode character.
+          // 1. Build the (potential) unicode character.
           let char = '';
           for (var i = counter; i < msg.length; i++) {
             char += msg[i];
-            if (msg[i] === ';') break;
+
+            // Accounts for messages like `We &#like &#128007; semicolons!;`
+            // It will properly ignore the 1st `&#` and parse the rabbit character.
+            // Unicode rabbit: https://goo.gl/mEaMl4
+            if (msg[i] === ';' || msg[i + 1] === '&') break;
           }
 
-          // 2. Test the unicode character.
           div.innerHTML = char;
-          if (div.textContent.length === 1) { // Unicode's will convert to HTML with a length of 1.
+
+          if (ucs2decode(div.innerHTML).length === 1) { // Unicode character found.
             targetList[0].innerHTML += char;
             counter = i; // Move the counter to the end of the unicode text.
           } else {
