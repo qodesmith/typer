@@ -17,6 +17,8 @@ Simply include `typer.css` in the `<head>`...
 <head>
   ...
   <link rel="stylesheet" href="typer.css">
+  <!-- Via Unpkg CDN -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/typer-js/typer.css"> -->
 </head>
 ```
 
@@ -25,6 +27,8 @@ and include `typer.js` just above your closing `</body>` tag...
 <body>
   ...
   <script src="typer.js"></script>
+  <!-- Via Unpkg CDN -->
+  <!-- <script src="https://unpkg.com/typer-js"></script> -->
 </body>
 ```
 
@@ -41,22 +45,6 @@ Files & locations:
 | typer.css    | node_modules/typer-js/     | stylesheet necessary for the cursor |
 | typer.less   | node_modules/typer-js/less | less: use it for your own builds    |
 
-#### Via Unpkg CDN
-
-```html
-<head>
-  ...
-  <link rel="stylesheet" href="https://unpkg.com/typer-js/typer.css">
-</head>
-```
-
-and include `typer.js` just above your closing `</body>` tag...
-```html
-<body>
-  ...
-  <script src="https://unpkg.com/typer-js"></script>
-</body>
-```
 
 ## Usage
 
