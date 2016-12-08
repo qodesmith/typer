@@ -175,34 +175,6 @@ function typer(el, speed) {
 
     return type.split(' ')[1].slice(0, -1);
   }
-  function ucs2decode(string) { // Taken from `utf8.js` - https://goo.gl/RYZkAM
-    let output = [];
-    let counter = 0;
-    let length = string.length;
-    let value;
-    let extra;
-
-    while (counter < length) {
-      value = string.charCodeAt(counter++);
-
-      if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-        // high surrogate, and there is a next character
-        extra = string.charCodeAt(counter++);
-
-        if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-          output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-        } else {
-          // unmatched surrogate; only append this code unit, in case the next
-          // code unit is the high surrogate of a surrogate pair
-          output.push(value);
-          counter--;
-        }
-      } else {
-        output.push(value);
-      }
-    }
-    return output;
-  }
   function parentDataNum() {
     // Random # function with min & max values.
     // function randomNum(min, max) {
@@ -350,7 +322,21 @@ function typer(el, speed) {
 
           div.innerHTML = char;
 
-          if (ucs2decode(div.innerHTML).length === 1) { // Unicode character found.
+          //
+          let parsed = Number(
+            char
+            .replace('&#', '0')
+            .slice(0, -1)
+          );
+
+          // Unicode characters may have a length > 1. `codePointAt(0)` will render the
+          // code point of the WHOLE character IF the string contains it. If not, it will
+          // give the code point of the SINGLE character at the 0 index.
+          let isUnicode = div.innerHTML.codePointAt(0) === parsed;
+
+
+          // if (ucs2decode(div.innerHTML).length === 1) { // Unicode character found.
+          if (isUnicode) { // Unicode character found.
             targetList[0].innerHTML += char;
             counter = i; // Move the counter to the end of the unicode text.
           } else {
