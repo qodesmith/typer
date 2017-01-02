@@ -1,6 +1,7 @@
 # FOLDERS
 /node_modules
 /old-typer
+/sandbox
 
 # FILES
 .DS_Store
