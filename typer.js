@@ -325,8 +325,8 @@ function typer(el, speed) {
           //
           let parsed = Number(
             char
-            .replace('&#', '0')
-            .slice(0, -1)
+              .replace('&#', '0')
+              .slice(0, -1)
           );
 
           // Unicode characters may have a length > 1. `codePointAt(0)` will render the
@@ -334,8 +334,6 @@ function typer(el, speed) {
           // give the code point of the SINGLE character at the 0 index.
           let isUnicode = div.innerHTML.codePointAt(0) === parsed;
 
-
-          // if (ucs2decode(div.innerHTML).length === 1) { // Unicode character found.
           if (isUnicode) { // Unicode character found.
             targetList[0].innerHTML += char;
             counter = i; // Move the counter to the end of the unicode text.
