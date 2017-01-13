@@ -186,7 +186,7 @@ You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an obje
     * `{1: '#awesome'}`
 * Arguments 2 or 3:
   * `speed` - A number (milliseconds); Each line can optionally have its own typing speed. If no speed is given, it defaults to the number given to the `typer` function itself or Typer's internal default of 70.
-  * `html` - `false`; specifies that the provided content is to be treated as non-html code. Characters will be typed out exactly as you provide them.
+  * `html` - `false`; specifies that the provided content is to be treated as non-html code. Characters will be typed out exactly as you provide them. The default is `true`.
 
 _* TIP: If you supply no arguments, you will create a blank line._
 

@@ -247,22 +247,51 @@ function typer(el, speed) {
   }
   function processMsg(item) { // Used by 'processLine' & 'processContinue'.
     let msg = item.line || item.continue;
-    let targetList = [q.newDiv];
     let div = document.createElement('div');
-    let counter = 0;
 
-    q.iterator = setInterval(() => {
-      // End of message processing logic.
-      if (counter === msg.length) {
-        clearInterval(q.iterator);
-        q.item++; // Increment our main item counter.
-        return processq(); // Restart the main iterator.
-      }
+    div.innerHTML = msg;
+    item.html ? html() : plain();
 
-      let piece = msg[counter];
+    function html() {
+      let list = createTypingArray(div.childNodes, q.newDiv);
+      let objCounter = 0;
+      let textCounter = 0;
+      let obj = list[objCounter++];
 
-      // NO HTML
-      if (!item.html) {
+      q.iterator = setInterval(() => {
+        // Finished processing everything.
+        if (!obj) return moveOn();
+
+        // Text node.
+        if (obj.content) {
+          obj.parent.innerHTML += obj.content[textCounter++];
+
+          // Finished typing.
+          if (textCounter === obj.content.length) {
+            textCounter = 0;
+            obj = list[objCounter++]
+          }
+
+        // Element node.
+        } else {
+          obj.parent.appendChild(obj.newNode);
+          obj = list[objCounter++];
+        }
+      }, item.speed || speed);
+    }
+
+    function plain() {
+      let counter = 0;
+
+      q.iterator = setInterval(() => {
+        // End of message processing logic.
+        if (counter === msg.length) {
+          clearInterval(q.iterator);
+          q.item++; // Increment our main item counter.
+          return processq(); // Restart the main iterator.
+        }
+
+        let piece = msg[counter];
 
         // Avoid HTML parsing on supplied arrays.
         if (typeof msg !== 'string') {
@@ -271,82 +300,55 @@ function typer(el, speed) {
         }
 
         q.newDiv.innerHTML += piece;
+        counter++;
+      }, item.speed || speed);
+    }
 
-      // HTML
-      } else {
-        // Open tags.
-        if (piece === '<' && msg[counter + 1] !== '/') {
-          let tag = '';
-          let voidTag = '';
+    function createTypingArray(childNodes, parent) {
+      let arr = [];
+      childNodes = Array.from(childNodes);
 
-          for (let i = counter; i < msg.length; i++) {
-            tag += msg[i];
-            if (msg[i] !== '>' && msg[i] !== '<') voidTag += msg[i];
-            if (msg[i] === '>') break;
-          }
+      for (let i = 0; i < childNodes.length; i++) {
+        let node = childNodes[i];
+        let name = node.nodeName;
 
-          let isVoid = q.voids.some(v => v === voidTag);
+        if (name === '#text') {
+          // Only text nodes will get the content property.
+          arr.push({
+            parent: parent,
+            content: node.textContent
+          });
+        } else if (node.childNodes.length) {
+          // 1. Clone to an empty node.
+          let newNode = document.createElement(name);
 
-          // Non-void elements get focused on as the typing target.
-          if (!isVoid) {
-            let parent = targetList[0];
+          // 2. Copy the attributes.
+          copyAttributes(node, newNode);
 
-            div.innerHTML = tag;
-            targetList.unshift(div.firstChild); // Add current tag to beginning of the 'targetList' array.
-            parent.appendChild(div.firstChild);
+          arr.push({
+            parent: parent,
+            newNode: newNode,
+          });
 
-          // Void elements get added to the contents but are not focused on for typing.
-          } else {
-            targetList[0].innerHTML += tag;
-          }
-
-          return counter += tag.length; // Move the counter passed the current tag.
-
-        // Closing tags.
-        } else if (piece === '<' && msg[counter + 1] === '/') {
-          targetList.shift(); // Remove the tag from the 'targetList' array.
-          return counter = msg.indexOf('>', counter) + 1; // Move the counter passed the closing tag.
-
-        // Unicode characters.
-        } else if (piece === '&') {
-          // 1. Build the (potential) unicode character.
-          let char = '';
-          for (var i = counter; i < msg.length; i++) {
-            char += msg[i];
-
-            // Accounts for messages like `We &#like &#128007; semicolons!;`
-            // It will properly ignore the 1st `&#` and parse the rabbit character.
-            // Unicode rabbit: https://goo.gl/mEaMl4
-            if (msg[i] === ';' || msg[i + 1] === '&') break;
-          }
-
-          div.innerHTML = char;
-
-          //
-          let parsed = Number(
-            char
-              .replace('&#', '0')
-              .slice(0, -1)
-          );
-
-          // Unicode characters may have a length > 1. `codePointAt(0)` will render the
-          // code point of the WHOLE character IF the string contains it. If not, it will
-          // give the code point of the SINGLE character at the 0 index.
-          let isUnicode = div.innerHTML.codePointAt(0) === parsed;
-
-          if (isUnicode) { // Unicode character found.
-            targetList[0].innerHTML += char;
-            counter = i; // Move the counter to the end of the unicode text.
-          } else {
-            targetList[0].innerHTML += piece;
-          }
-        } else {
-          targetList[0].innerHTML += piece;
+          arr = [...arr, ...createTypingArray(node.childNodes, newNode)];
         }
       }
 
-      counter++;
-    }, item.speed || speed); // Function for both line and continue.
+      return arr;
+    }
+
+    // Stop the typing iteration & move on to our main iteration.
+    function moveOn() {
+      clearInterval(q.iterator);
+      q.item++; // Increment our main item counter.
+      return processq(); // Restart the main iterator.
+    }
+
+    function copyAttributes(source, target) {
+      Array.from(source.attributes).forEach(attr => {
+        target.setAttribute(attr.name, attr.value);
+      });
+    }
   }
   function processLine(item) {
     // Stop the main iterator.
@@ -426,13 +428,10 @@ function typer(el, speed) {
     }
 
     function removeEmptys(el) {
-      // Convert HTMLcollection to an array: http://goo.gl/2rTC4i
-      let children = [].slice.call(el.children);
-
-      children.forEach(function(child, i) {
+      Array.from(el.children).forEach(function(child, i, arr) {
         // Child.
         if (!child.innerHTML.length) {
-          child.remove ? child.remove() : child.removeNode(); // IE nonsense.
+          child.remove();
 
           if (el === q.newDiv) {
             contents = el.innerHTML.split(''); // Reset the contents array.
@@ -443,14 +442,21 @@ function typer(el, speed) {
         } else if (child.children.length) {
           removeEmptys(child); // Recursion (read: inception).
 
-          if (!this[i].innerHTML.length) {
-            this[i].remove ? this[i].remove() : this[i].removeNode(); // Remove empty recursive parent.
+          if (!arr[i].innerHTML.length) {
+            arr[i].remove(); // Remove empty recursive parent.
             contents = el.innerHTML.split('');
             index = contents.length - 1;
           }
         }
-      }, children);
+      });
     }
+
+    // function removeEmpties(el) {
+    //   Array.from(el.childNodes).forEach(child => {
+    //     if (child.childNodes.length) removeEmpties(child);
+    //     if (child.nodeName !== '#text' && !child.innerHTML.length) child.remove();
+    //   });
+    // }
 
     // Prevent '0' from triggering Typer's default speed.
     if (item.speed === 0) item.speed = 1;
