@@ -113,7 +113,8 @@ function typer(el, speed) {
       return this;
     },
     back: function(chars, spd) {
-      q.push({back: chars, speed: spd ? spd : 1});
+      if (spd === 0) spd++;
+      q.push({back: chars, speed: spd || speed});
       return this;
     },
     empty: function() {
@@ -203,7 +204,7 @@ function typer(el, speed) {
     }
   }
   function lineOrContinue(choice, msg, spd, html) {
-    let obj = {html: spd === false ? false : html === false ? false : true};
+    let obj = {html: (spd === false || html === false) ? false : true};
 
     if (getType(spd) === 'Number') obj.speed = spd;
     if (getType(html) === 'Number') obj.speed = html;
@@ -427,37 +428,6 @@ function typer(el, speed) {
       return processq();
     }
 
-    function removeEmptys(el) {
-      Array.from(el.children).forEach(function(child, i, arr) {
-        // Child.
-        if (!child.innerHTML.length) {
-          child.remove();
-
-          if (el === q.newDiv) {
-            contents = el.innerHTML.split(''); // Reset the contents array.
-            index = contents.length - 1; // Reset the index.
-          }
-
-        // Children of child.
-        } else if (child.children.length) {
-          removeEmptys(child); // Recursion (read: inception).
-
-          if (!arr[i].innerHTML.length) {
-            arr[i].remove(); // Remove empty recursive parent.
-            contents = el.innerHTML.split('');
-            index = contents.length - 1;
-          }
-        }
-      });
-    }
-
-    // function removeEmpties(el) {
-    //   Array.from(el.childNodes).forEach(child => {
-    //     if (child.childNodes.length) removeEmpties(child);
-    //     if (child.nodeName !== '#text' && !child.innerHTML.length) child.remove();
-    //   });
-    // }
-
     // Empty the line all at once.
     if (item.back === 'empty') {
       q.newDiv.innerHTML = '';
@@ -475,95 +445,52 @@ function typer(el, speed) {
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
     if (item.back < 0) {
       let text = q.newDiv.textContent;
-      item.back = text.substring(item.back * -1, text.length).length;
+      item.back = text.slice(item.back).length;
     }
 
     let counter = 0;
-    let contents = q.newDiv.innerHTML.split('');
-    let index = contents.length - 1;
+    let contents = flattenContents(q.newDiv).reverse();
 
     q.goBack = setInterval(function() {
+      if (!contents[0].length) contents.shift();
+
+      let node = contents[0];
+
+      node.textContent = node.textContent.slice(0, -1);
       counter++;
-
-      // TAG DETECTION
-      if (contents[index] === '>') {
-        let tag = [];
-
-        for (let i = index; i >= 0; i--) {
-          tag.unshift(contents[i]);
-
-          // Closing tag check.
-          if (contents[i] === '<' && contents[i + 1] === '/') {
-            tag.length = 0; // Clear the tag array.
-
-            // Back-to-back-tags logic.
-            if (contents[i - 1] === '>') {
-              continue;
-            } else {
-              index = i - 1;
-              break;
-            }
-
-          // Void tag check.
-          } else if (contents[i] === '<') {
-            let vTag = tag.slice(1, tag.length - 1).join('');
-            let isVoid = q.voids.some(v => v === vTag);
-
-            index = i - 1;
-
-            // Remove void tag.
-            if (isVoid) contents.splice(i, tag.length);
-            tag.length = 0;
-
-            // Back-to-back-tags logic.
-            if (contents[i - 1] === '>') {
-              continue;
-            } else {
-              break;
-            }
-          }
-        }
-      }
-
-      // UNICODE DETECTION
-      if (contents[index] === ';') {
-        let uni = [];
-
-        for (var j = index; j >= 0; j--) {
-          uni.unshift(contents[j]);
-          if (contents[j] === '&') break;
-        }
-
-        let div = document.createElement('div');
-        div.innerHTML = uni.join('');
-
-        if (div.textContent.length === 1) {
-          index = j - 1;
-          // Remove the whole chunk.
-          contents.splice(j, uni.length);
-        } else {
-          // Remove a single character.
-          contents.splice(index, 1);
-          index--;
-        }
-
-        q.newDiv.innerHTML = contents.join('');
-
-      // DEFAULT SINGLE-CHARACTER REMOVAL
-      } else {
-        contents.splice(index, 1);
-        q.newDiv.innerHTML = contents.join('');
-        index--;
-      }
 
       // Exit.
       if (counter === item.back) {
         clearInterval(q.goBack);
-        removeEmptys(q.newDiv);
+        removeEmpties(q.newDiv);
         q.item++;
         processq();
       }
     }, item.speed || speed);
+
+    function flattenContents(parent) {
+      let arr = [];
+      let childNodes = Array.from(parent.childNodes);
+
+      if (!childNodes.length) return arr;
+
+      childNodes.forEach(child => {
+        if (child.childNodes.length) {
+          arr = [...arr, ...flattenContents(child)];
+        } else {
+          arr.push(child);
+        }
+      });
+
+      return arr;
+    }
+
+    function removeEmpties(el) {
+      Array.from(el.childNodes).forEach(child => {
+        if (child.childNodes.length) removeEmpties(child);
+        if (child.nodeName !== '#text' && !child.innerHTML.length) child.remove();
+      });
+    }
   }
   function processEmpty() {
     q.newDiv = '';
