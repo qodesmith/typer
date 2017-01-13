@@ -113,7 +113,7 @@ function typer(el, speed) {
       return this;
     },
     back: function(chars, spd) {
-      q.push({back: chars, speed: spd});
+      q.push({back: chars, speed: spd ? spd : 1});
       return this;
     },
     empty: function() {
@@ -458,9 +458,6 @@ function typer(el, speed) {
     //   });
     // }
 
-    // Prevent '0' from triggering Typer's default speed.
-    if (item.speed === 0) item.speed = 1;
-
     // Empty the line all at once.
     if (item.back === 'empty') {
       q.newDiv.innerHTML = '';
@@ -566,7 +563,6 @@ function typer(el, speed) {
         q.item++;
         processq();
       }
-
     }, item.speed || speed);
   }
   function processEmpty() {
