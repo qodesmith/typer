@@ -287,9 +287,9 @@ function typer(el, speed) {
             obj = list[objCounter++]
           }
 
-        // Element node.
+        // Void & non-void element nodes.
         } else {
-          obj.parent.appendChild(obj.newNode);
+          obj.parent.appendChild(obj.voidNode ? obj.voidNode : obj.newNode);
           obj = list[objCounter++];
         }
       }, item.speed || speed);
@@ -327,12 +327,15 @@ function typer(el, speed) {
         let node = childNodes[i];
         let name = node.nodeName;
 
+        // Text nodes.
         if (name === '#text') {
           // Only text nodes will get the content property.
           arr.push({
             parent: parent,
             content: node.textContent
           });
+
+        // Non-void elements.
         } else if (node.childNodes.length) {
           // 1. Clone to an empty node.
           let newNode = document.createElement(name);
@@ -346,6 +349,13 @@ function typer(el, speed) {
           });
 
           arr = [...arr, ...createTypingArray(node.childNodes, newNode)];
+
+        // Void elements.
+        } else if (q.voids.includes(name.toLowerCase())) {
+          arr.push({
+            parent: parent,
+            voidNode: node
+          });
         }
       }
 
@@ -453,13 +463,13 @@ function typer(el, speed) {
     if (item.back > q.newDiv.innerHTML.length) item.back = 'all';
 
     // A simple way to erase the whole line without knowing the contents:
-    // set the # of 'backspaces' to the content's length.
-    if (item.back === 'all') item.back = q.newDiv.textContent.length;
+    // set the # of 'backspaces' to the content's length + any void elements to be removed.
+    if (item.back === 'all') item.back = q.newDiv.textContent.length + countVoids();
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
     if (item.back < 0) {
-      let text = q.newDiv.textContent;
-      item.back = text.slice(item.back).length;
+      let totalLength = q.newDiv.textContent.length + countVoids();
+      item.back = totalLength - (item.back * -1);
     }
 
     let counter = 0;
@@ -469,8 +479,9 @@ function typer(el, speed) {
       if (!contents[0].length) contents.shift();
 
       let node = contents[0];
+      let isVoid = q.voids.includes(node.nodeName.toLowerCase());
 
-      node.textContent = node.textContent.slice(0, -1);
+      isVoid ? node.remove() : node.textContent = node.textContent.slice(0, -1);
       counter++;
 
       // Exit.
@@ -501,9 +512,21 @@ function typer(el, speed) {
 
     function removeEmpties(el) {
       Array.from(el.childNodes).forEach(child => {
+        if (q.voids.includes(child.nodeName.toLowerCase())) return; // Do not remove void tags.
         if (child.childNodes.length) removeEmpties(child);
         if (child.nodeName !== '#text' && !child.innerHTML.length) child.remove();
       });
+    }
+
+    function countVoids() {
+      let num = 0;
+
+      Array.from(q.newDiv.childNodes).forEach(child => {
+        if (q.voids.includes(child.nodeName.toLowerCase())) num++;
+        if (child.childNodes.length) num += countVoids(child.childNodes);
+      });
+
+      return num;
     }
   }
   function processEmpty() {
