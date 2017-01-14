@@ -52,7 +52,7 @@ function typer(el, speed) {
 
       // No cursor.
       if (cursorObj === false) {
-        q.cursor = 'no-cursor'; // Used as a class.
+        q.cursor = 'no-cursor'; // Used as a class name.
         return this;
       }
 
@@ -173,7 +173,6 @@ function typer(el, speed) {
   // Private functions.
   function getType(thing) {
     let type = ({}).toString.call(thing);
-
     return type.split(' ')[1].slice(0, -1);
   }
   function parentDataNum() {
@@ -250,8 +249,23 @@ function typer(el, speed) {
     let msg = item.line || item.continue;
     let div = document.createElement('div');
 
+    if (Array.isArray(msg)) return typeArrays(item.html);
+
     div.innerHTML = msg;
     item.html ? html() : plain();
+
+    function typeArrays(html) {
+      let counter = 0;
+
+      q.iterator = setInterval(() => {
+        let content = msg[counter++];
+
+        div.textContent = content;
+        q.newDiv.innerHTML += html ? content : div.innerHTML;
+
+        if (counter === msg.length) moveOn();
+      }, item.speed || speed);
+    }
 
     function html() {
       let list = createTypingArray(div.childNodes, q.newDiv);
@@ -364,7 +378,7 @@ function typer(el, speed) {
 
       q.newDiv.classList.add('white-space');
 
-      if (q.newDiv.innerHTML === '') q.newDiv.innerHTML = ' '; // Retains the height of a single line.
+      if (!q.newDiv.innerHTML) q.newDiv.innerHTML = ' '; // Retains the height of a single line.
     }
 
     // Create new div.
