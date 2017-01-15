@@ -42,6 +42,7 @@ Files & locations:
 | ------------ | -------------------------- | --------------------------------    |
 | typer.js     | node_modules/typer-js/     | our main file                       |
 | typer.min.js | node_modules/typer-js/     | minified main file                  |
+| typer-npm.js | node_modules/typer-js/     | imported via `require` in node      |
 | typer.css    | node_modules/typer-js/     | stylesheet necessary for the cursor |
 | typer.less   | node_modules/typer-js/less | less: use it for your own builds    |
 
@@ -88,7 +89,7 @@ typer('#container')
   .continue('Angular')
   .pause(1000)
   .back('all')
-  .continue('Ember');
+  .continue('React!!');
 ```
 
 #### Multi-line typing:
@@ -167,6 +168,7 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 // Examples.
 .line('Typer.js is visual awesomeness!');
 .line('Typer.js is visual <em>awesomeness!</em>', 100);
+.line('Typer.js is visual <em>awesomeness!</em>', 100, 'p'); // <p> element created to type in.
 .line(['Type. ', 'Whole. ', '<span style="color: red;">Words.</span>'], 200);
 .line({el: '.some-class'}, 200, false); // Order of 2nd & 3rd arguments is irrelevant.
 .line() // Creates a blank line.
@@ -187,14 +189,16 @@ You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an obje
 * Arguments 2 or 3:
   * `speed` - A number (milliseconds); Each line can optionally have its own typing speed. If no speed is given, it defaults to the number given to the `typer` function itself or Typer's internal default of 70.
   * `html` - `false`; specifies that the provided content is to be treated as non-html code. Characters will be typed out exactly as you provide them. The default is `true`.
+* _Last_ (optional) argument:
+  * `string` - (`div` default) The type of element you would like Typer to generate to type in. The almighty `<div>` is used as default. Regardless of how many arguments you use for `.line`, the last one will always indicate the type of element you'd like Typer to use.
 
 _* TIP: If you supply no arguments, you will create a blank line._
 
 #### HTML / Unicode
 
-_Go nuts_. You can include `<div>`'s, `<span>`'s, elements with styles (i.e. `<span style="color: red;">I'm red!</span>`), `<em>`'s, `<strong>`'s, etc. You can also include [HTML void elements](http://www.w3.org/TR/html-markup/syntax.html#syntax-elements) (self-closing tags) such as `<br>` and `<hr>`. If you're really feeling brave, start including `<textarea>`'s and `<input>`'s!.
+_Go nuts_. You can include `<div>`'s, `<span>`'s, elements with styles (i.e. `<span style="color: red;">I'm red!</span>`), `<em>`'s, `<strong>`'s, etc. You can also include [HTML void elements](http://www.w3.org/TR/html-markup/syntax.html#syntax-elements) (self-closing tags) such as `<br>`, `<img>`, and `<hr>`. If you're really feeling brave, start including `<textarea>`'s and `<input>`'s!.
 
-When using [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/) with Typer, you *must* begin with `&` and end with `;`. Some examples:
+Valid [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/) begin with `&` and end with `;`. Some examples:
 
 | Character  | Code        | Character  | Code      | Character  | Code      |
 | :--------: | ----------- | :--------: | --------- | :--------: | --------- |
@@ -347,9 +351,9 @@ The `.run` method exposes the parent element that Typer is currently typing in t
 
 ```javascript
 .end();
-.end(function() { /* do something */ });
-.end(function() { /* do something */ }, true);
-.end(function(el) { /* do something with access to parent element */ }, true);
+.end(function() { /* do stuff */ });
+.end(function() { /* do stuff */ }, true);
+.end(function(el) { /* do stuff with access to parent element */ }, true);
 ```
 
 ### Arguments

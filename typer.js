@@ -73,7 +73,11 @@ function typer(el, speed) {
       return this;
     },
     line: function(msg, spd, html) {
-      msg ? q.push(lineOrContinue('line', msg, spd, html)) : q.push({line: 1});
+      let lastArg = arguments[arguments.length - 1];
+      let elem = msg !== lastArg && getType(lastArg) === 'String' && lastArg;
+      elem = q.voids.includes(elem && elem.toLowerCase()) ? false : elem && elem.toLowerCase();
+
+      msg ? q.push(lineOrContinue('line', msg, spd, html, elem)) : q.push({line: 1});
 
       // Push the first dominoe on the typing iteration,
       // ensuring public methods will only call 'processq()' once.
@@ -202,8 +206,11 @@ function typer(el, speed) {
       sheet.addRule(selector, rules);
     }
   }
-  function lineOrContinue(choice, msg, spd, html) {
-    let obj = {html: (spd === false || html === false) ? false : true};
+  function lineOrContinue(choice, msg, spd, html, elem) {
+    let obj = {
+      html: (spd === false || html === false) ? false : true,
+      elem: elem
+    };
 
     if (getType(spd) === 'Number') obj.speed = spd;
     if (getType(html) === 'Number') obj.speed = html;
@@ -391,8 +398,8 @@ function typer(el, speed) {
       if (!q.newDiv.innerHTML) q.newDiv.innerHTML = ' '; // Retains the height of a single line.
     }
 
-    // Create new div.
-    let div = document.createElement('div');
+    // Create new div (or specified element).
+    let div = document.createElement(item.elem || 'div');
     div.setAttribute('data-typer-child', q.dataNum);
     div.className = q.cursor;
     div.classList.add('typer');
