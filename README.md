@@ -171,6 +171,7 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 .line('Typer.js is visual <em>awesomeness!</em>', 100, 'p'); // <p> element created to type in.
 .line(['Type. ', 'Whole. ', '<span style="color: red;">Words.</span>'], 200);
 .line({el: '.some-class'}, 200, false); // Order of 2nd & 3rd arguments is irrelevant.
+.line({el: '.some-class'}, false, 200, 'p'); // Order of 2nd & 3rd arguments is irrelevant.
 .line() // Creates a blank line.
 ```
 
