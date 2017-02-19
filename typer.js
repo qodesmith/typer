@@ -25,12 +25,14 @@ function typer(el, speed) {
 
   // List of HTML void elements (http://goo.gl/SWmyS5),
   // used in 'processMsg' & 'processBack'.
-  q.voids = ['area','base','br','col','command','embed','hr','img','input','keygen','link','meta','param','source','track','wbr'];
+  q.voids = ['AREA','BASE','BR','COL','COMMAND','EMBED','HR','IMG','INPUT','KEYGEN','LINK','META','PARAM','SOURCE','TRACK','WBR'];
+
+  // List of class names for cleanup later on.
+  q.classNames = ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'];
 
   // Various checks.
   speed = speed || 70;
   if (getType(el) !== 'String') throw 'typer error: selector provided is not a string.';
-  if (!document.styleSheets.length) styleSheets(); // Create a stylesheet if none exist.
 
   el = document.querySelector(el);
 
@@ -41,7 +43,7 @@ function typer(el, speed) {
     cursor: function(cursorObj) {
       // Prevent cursor from being run multiple times.
       if (q.cursorRan) {
-        console.log('You can only call ".cursor" once.');
+        console.warn('You can only call ".cursor" once.');
         return this;
       }
 
@@ -56,17 +58,18 @@ function typer(el, speed) {
         return this;
       }
 
+      let {color, blink, block} = cursorObj;
       let cursor = [];
       let data = `[data-typer="${q.dataNum}"]`;
 
       // Optional cursor color - https://goo.gl/b4Ckz9
-      if (cursorObj.color) addStyle(`${data} .typer::after`, `background-color:${cursorObj.color}`);
+      if (color) addStyle(`${data} .typer::after`, `background-color:${color}`);
 
       // Cursor's blinking style - default to soft.
-      cursorObj.blink === 'hard' ? cursor.push('cursor-hard') : cursor.push('cursor-soft');
+      cursor.push(`cursor-${blink === 'hard' ? 'hard' : 'soft'}`);
 
       // Cursor: block or line.
-      if (cursorObj.block === true) cursor.push('cursor-block');
+      if (block === true) cursor.push('cursor-block');
 
       q.cursor = cursor.join(' '); // Used as a class.
 
@@ -75,9 +78,9 @@ function typer(el, speed) {
     line: function(msg, spd, html) {
       let lastArg = arguments[arguments.length - 1];
       let elem = msg !== lastArg && getType(lastArg) === 'String' && lastArg;
-      elem = q.voids.includes(elem && elem.toLowerCase()) ? false : elem && elem.toLowerCase();
+      elem = q.voids.includes(elem) && elem;
 
-      msg ? q.push(lineOrContinue('line', msg, spd, html, elem)) : q.push({line: 1});
+      q.push(msg ? lineOrContinue('line', msg, spd, html, elem) : {line: 1});
 
       // Push the first dominoe on the typing iteration,
       // ensuring public methods will only call 'processq()' once.
@@ -133,12 +136,8 @@ function typer(el, speed) {
       q.push({end: true});
 
       q.cb = function() {
-        // Finalize the the div class names before ending.
-        // Because wack IE doesn't support multiple parameters for .remove or .add.
-        ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'].forEach(name => {
-          q.newDiv.classList.remove(name);
-        });
-
+        q.style && q.style.remove();
+        classNameCleanup(); // Finalize the div class names before ending.
         q.newDiv.classList.add('white-space');
         q.newDiv = '';
 
@@ -166,7 +165,7 @@ function typer(el, speed) {
 
       // Message used by the 'catchAll' object.
       function message() {
-        console.log('WARNING: you tried to call a method after ".end" has already been called.');
+        console.warn('WARNING: you tried to call a method after ".end" has already been called.');
         return catchAll;
       }
 
@@ -176,8 +175,12 @@ function typer(el, speed) {
 
   // Private functions.
   function getType(thing) {
-    let type = ({}).toString.call(thing);
-    return type.split(' ')[1].slice(0, -1);
+    return ({}).toString.call(thing).slice(8, -1);
+  }
+  function classNameCleanup() {
+    ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'].forEach(name => {
+      q.newDiv.classList.remove(name);
+    });
   }
   function parentDataNum() {
     // Random # function with min & max values.
@@ -187,21 +190,14 @@ function typer(el, speed) {
     q.dataNum = Math.floor(Math.random() * 999999999 + 1);
     el.setAttribute('data-typer', q.dataNum);
   }
-  function styleSheets() { // https://goo.gl/b4Ckz9
-    // Create the style element.
-    let style = document.createElement('style');
-
-    // Webkit hack.
-    style.appendChild(document.createTextNode(''));
-
-    // Append the style element to the head.
-    document.head.appendChild(style);
-  }
   function addStyle(selector, rules) { // https://goo.gl/b4Ckz9
-    let sheet = document.styleSheets[0];
+    q.style = document.createElement('style'); // Create the style element.
+    q.style.appendChild(document.createTextNode('')); // Webkit hack - https://goo.gl/b4Ckz9
+    document.head.appendChild(q.style); // Append the style element to the head.
+    let sheet = document.styleSheets[document.styleSheets.length - 1];
 
     if ('insertRule' in sheet) {
-      sheet.insertRule(`${selector}{${rules}}`, 1);
+      sheet.insertRule(`${selector}{${rules}}`, 0);
     } else {
       sheet.addRule(selector, rules);
     }
@@ -296,7 +292,7 @@ function typer(el, speed) {
 
         // Void & non-void element nodes.
         } else {
-          obj.parent.appendChild(obj.voidNode ? obj.voidNode : obj.newNode);
+          obj.parent.appendChild(obj.voidNode || obj.newNode);
           obj = list[objCounter++];
         }
       }, item.speed || speed);
@@ -316,7 +312,7 @@ function typer(el, speed) {
         let piece = msg[counter];
 
         // Avoid HTML parsing on supplied arrays.
-        if (typeof msg !== 'string') {
+        if (getType(msg) !== 'String') {
           div.textContent = piece;
           piece = div.innerHTML;
         }
@@ -355,10 +351,10 @@ function typer(el, speed) {
             newNode: newNode,
           });
 
-          arr = [...arr, ...createTypingArray(node.childNodes, newNode)];
+          arr = arr.concat(createTypingArray(node.childNodes, newNode));
 
         // Void elements.
-        } else if (q.voids.includes(name.toLowerCase())) {
+        } else if (q.voids.includes(name)) {
           arr.push({
             parent: parent,
             voidNode: node
@@ -388,13 +384,8 @@ function typer(el, speed) {
 
     // Process the previous line if there was one.
     if (q.newDiv) {
-      // Because wack IE doesn't support multiple parameters for .remove or .add.
-      ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'].forEach(name => {
-        q.newDiv.classList.remove(name);
-      });
-
+      classNameCleanup();
       q.newDiv.classList.add('white-space');
-
       if (!q.newDiv.innerHTML) q.newDiv.innerHTML = ' '; // Retains the height of a single line.
     }
 
@@ -466,16 +457,18 @@ function typer(el, speed) {
       return processq();
     }
 
+    let totalVoids = countVoids(q.newDiv)
+
     // Prevent larger 'back' quantities from needlessly interrupting the flow.
-    if (item.back > q.newDiv.innerHTML.length) item.back = 'all';
+    if (item.back > q.newDiv.textContent.length + totalVoids) item.back = 'all';
 
     // A simple way to erase the whole line without knowing the contents:
     // set the # of 'backspaces' to the content's length + any void elements to be removed.
-    if (item.back === 'all') item.back = q.newDiv.textContent.length + countVoids();
+    if (item.back === 'all') item.back = q.newDiv.textContent.length + totalVoids;
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
     if (item.back < 0) {
-      let totalLength = q.newDiv.textContent.length + countVoids();
+      let totalLength = q.newDiv.textContent.length + totalVoids;
       item.back = totalLength - (item.back * -1);
     }
 
@@ -486,7 +479,7 @@ function typer(el, speed) {
       if (!contents[0].length) contents.shift();
 
       let node = contents[0];
-      let isVoid = q.voids.includes(node.nodeName.toLowerCase());
+      let isVoid = q.voids.includes(node.nodeName);
 
       isVoid ? node.remove() : node.textContent = node.textContent.slice(0, -1);
       counter++;
@@ -508,7 +501,7 @@ function typer(el, speed) {
 
       childNodes.forEach(child => {
         if (child.childNodes.length) {
-          arr = [...arr, ...flattenContents(child)];
+          arr = arr.concat(flattenContents(child));
         } else {
           arr.push(child);
         }
@@ -519,18 +512,18 @@ function typer(el, speed) {
 
     function removeEmpties(el) {
       Array.from(el.childNodes).forEach(child => {
-        if (q.voids.includes(child.nodeName.toLowerCase())) return; // Do not remove void tags.
+        if (q.voids.includes(child.nodeName)) return; // Do not remove void tags.
         if (child.childNodes.length) removeEmpties(child);
         if (child.nodeName !== '#text' && !child.innerHTML.length) child.remove();
       });
     }
 
-    function countVoids() {
+    function countVoids(el) {
       let num = 0;
 
-      Array.from(q.newDiv.childNodes).forEach(child => {
-        if (q.voids.includes(child.nodeName.toLowerCase())) num++;
-        if (child.childNodes.length) num += countVoids(child.childNodes);
+      Array.from(el.childNodes).forEach(child => {
+        if (q.voids.includes(child.nodeName)) num++;
+        if (child.childNodes.length) num += countVoids(q.newDivchild.childNodes);
       });
 
       return num;
@@ -563,7 +556,7 @@ function typer(el, speed) {
     clearInterval(q.goBack); // From processBack.
     clearTimeout(q.pause) // From processPause.
 
-    if (q.item === q.length) return console.log('This typer has completed; removing listener.');
+    if (q.item === q.length) return console.log('This typer has completed. Listeners removed.');
 
     // If typer is in a listener state...
     let ear = q[q.item];
