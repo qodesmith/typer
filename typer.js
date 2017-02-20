@@ -120,8 +120,8 @@ function typer(el, speed) {
       return this;
     },
     back: function(chars, spd) {
-      if (spd === 0) spd++;
-      q.push({back: chars, speed: spd || speed});
+      spd = spd || 1;
+      q.push({back: chars || 1, speed: spd || speed});
       return this;
     },
     empty: function() {
@@ -457,7 +457,7 @@ function typer(el, speed) {
       return processq();
     }
 
-    let totalVoids = countVoids(q.newDiv)
+    let totalVoids = countVoids(q.newDiv);
 
     // Prevent larger 'back' quantities from needlessly interrupting the flow.
     if (item.back > q.newDiv.textContent.length + totalVoids) item.back = 'all';
@@ -476,12 +476,16 @@ function typer(el, speed) {
     let contents = flattenContents(q.newDiv).reverse();
 
     q.goBack = setInterval(function() {
-      if (!contents[0].length) contents.shift();
-
       let node = contents[0];
       let isVoid = q.voids.includes(node.nodeName);
 
-      isVoid ? node.remove() : node.textContent = node.textContent.slice(0, -1);
+      if (isVoid) {
+        node.remove();
+        contents.shift();
+      } else {
+        node.textContent = node.textContent.slice(0, -1);
+      }
+
       counter++;
 
       // Exit.
