@@ -527,7 +527,7 @@ function typer(el, speed) {
 
       Array.from(el.childNodes).forEach(child => {
         if (q.voids.includes(child.nodeName)) num++;
-        if (child.childNodes.length) num += countVoids(q.newDivchild.childNodes);
+        if (child.childNodes.length) num += countVoids(child);
       });
 
       return num;
