@@ -32,9 +32,13 @@ function typer(el, speed) {
 
   // Various checks.
   speed = speed || 70;
-  if (getType(el) !== 'String') throw 'typer error: selector provided is not a string.';
 
-  el = document.querySelector(el);
+  let elType = getType(el);
+  if (elType.slice(0, 4) !== 'HTML' && elType !== 'String') {
+    throw 'You need to provide a string selector, such as ".some-class", or an html element.'
+  }
+
+  if (elType === 'String') el = document.querySelector(el);
 
   parentDataNum(); // Assign a random # to the parent el's data attribute.
 
