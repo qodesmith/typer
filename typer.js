@@ -117,8 +117,8 @@ function typer(el, speed) {
       return this;
     },
     back: function(chars, spd) {
-      spd = spd || 1;
-      q.push({back: chars || 1, speed: spd || speed});
+      spd = spd > 0 ? spd : speed;
+      q.push({back: chars || 1, speed: spd});
       return this;
     },
     empty: function() {
@@ -212,7 +212,7 @@ function typer(el, speed) {
       elem: elem
     };
 
-    if (getType(spd) === 'Number') obj.speed = spd;
+    if (getType(spd) === 'Number') obj.speed = spd > 0 ? spd : speed;
     if (getType(html) === 'Number') obj.speed = html;
     if (getType(msg) === 'Object') {
       let key = Object.keys(msg)[0]; // Prevents a hard dependency on 'el' as the property name.
@@ -271,7 +271,7 @@ function typer(el, speed) {
         q.newDiv.innerHTML += html ? content : div.innerHTML;
 
         if (counter === msg.length) moveOn();
-      }, item.speed || speed);
+      }, item.speed);
     }
 
     function html() {
@@ -299,7 +299,7 @@ function typer(el, speed) {
           obj.parent.appendChild(obj.voidNode || obj.newNode);
           obj = list[objCounter++];
         }
-      }, item.speed || speed);
+      }, item.speed);
     }
 
     function plain() {
@@ -323,7 +323,7 @@ function typer(el, speed) {
 
         q.newDiv.innerHTML += piece;
         counter++;
-      }, item.speed || speed);
+      }, item.speed);
     }
 
     function createTypingArray(childNodes, parent) {
@@ -499,7 +499,7 @@ function typer(el, speed) {
         q.item++;
         processq();
       }
-    }, item.speed || speed);
+    }, item.speed);
 
     function flattenContents(parent) {
       let arr = [];
