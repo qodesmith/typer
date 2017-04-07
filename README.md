@@ -50,15 +50,17 @@ Files & locations:
 ## Usage
 
 ```javascript
-typer(selector, speed)
+typer(thing, speed)
 ```
 
 The Typer function itself takes two arguments:
 
-1. `selector` - a valid CSS selector, such as `'.some-class'`, `'#some-id'`, or `'.a-class .in-a-class'`, for Typer to grab (with `document.querySelector`) and type in.
+1. `thing` - this can be one of two options:
+    * `string` - a valid CSS selector, such as `'.some-class'`, `'#some-id'`, or `'.a-class .in-a-class'`, for Typer to grab (with `document.querySelector`) and type in.
+    * `element` - a single HTML element, such as `document.body` or `document.querySelector('div')`.
 2. `speed` - a number (milliseconds) representing how fast each character should be typed out. If no number is given, Typer will default to 70.
 
-Now you begin calling Typer's various [methods](https://github.com/qodesmith/typer#methods) via simple & sexy dot-notation...
+Now you can begin calling Typer's various [methods](https://github.com/qodesmith/typer#methods) via simple & sexy dot-notation...
 
 ## Simple Code Examples
 
@@ -67,6 +69,10 @@ Now you begin calling Typer's various [methods](https://github.com/qodesmith/typ
 ```javascript
 // Type in the body element.
 typer('body')
+  .line('Typer.js is awesome!');
+
+// Same example with an HTML element.
+typer(document.body)
   .line('Typer.js is awesome!');
 ```
 
@@ -82,7 +88,7 @@ typer('.some-class')
 #### Type a list of frameworks with the help of pause & back:
 
 ```javascript
-typer('#container')
+typer('#some-id')
   .line('Backbone')
   .pause(1000)
   .back('all')
@@ -95,7 +101,8 @@ typer('#container')
 #### Multi-line typing:
 
 ```javascript
-typer('div')
+let element = document.querySelector('.my-element');
+typer(element)
   .line('How cool is this?')
   .line('So very cool.')
   .line('Agreed!');
@@ -183,10 +190,13 @@ You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an obje
 * Argument 1:
   * `string` - The message you want typed out, character by character (normal typing).
   * `array` - The message you want typed out, phrase by phrase / word by word.
-  * `object` - **SEO** in the house! If you give `.line` an object with a single property-value pair where the value is a CSS selector, Typer will grab that element and use its contents to type with. For obvious reasons, the element should be hidden (css - `display: none;`). This will allow your content to be indexed while still maintaining *JavaScript typing awesomeness*. All of the following will grab the element with an id of awesome:
+  * `object` - **SEO** in the house! If you give `.line` an object with a single key-value pair where the value is a CSS selector (`.some-class`, `#some-id`) _or_ an HTML element (`document.body`, `document.querySelector('div')`), Typer will grab that element and use its contents to type with. For obvious reasons, the element should be hidden (css - `display: none;`). This will allow your content to be indexed by search engines while still maintaining *JavaScript typing awesomeness*. All of the following are valid:
     * `{el: '#awesome'}`
     * `{whySoLong: '#awesome'}`
     * `{1: '#awesome'}`
+    * `{el: document.body}`
+    * `{el: document.querySelector('.some-class')}`
+    * `{el: $('.some-class')[0]}` (using jQuery)
 * Arguments 2 or 3:
   * `speed` - A number (milliseconds); Each line can optionally have its own typing speed. If no speed is given, it defaults to the number given to the `typer` function itself or Typer's internal default of 70.
   * `html` - `false`; specifies that the provided content is to be treated as non-html code. Characters will be typed out exactly as you provide them. The default is `true`.
@@ -245,13 +255,13 @@ will result in this output on the screen:
 
 The 1st argument is mandatory and has three options. The 2nd argument is optional. These arguments are order sensative.
 
-1.   Argument 1:
-  * Number - number of characters to be erased / how many times you want to "hit" the "backspace button".
-    * Positive #'s erase that many characters.
-    * Negative #'s *keep* that many characters. For example, a value of -2 will erase *all but two* characters.
-  * `'all'` - this will "backspace" the entire line, character by character, without you having to give a number. Useful for longer lines.
-  * `'empty'` - this will empty the entire line at once.
-2.   Argument 2 - Number (milliseconds); the speed at which the backspace will perform. If no number is specified, it will default to the user-supplied Typer speed or Typer's internal default of 70.
+1. Argument 1:
+    * Number - number of characters to be erased / how many times you want to "hit" the "backspace button".
+      * Positive #'s erase that many characters.
+      * Negative #'s *keep* that many characters. For example, a value of -2 will erase *all but two* characters.
+    * `'all'` - this will "backspace" the entire line, character by character, without you having to give a number. Useful for longer lines.
+    * `'empty'` - this will empty the entire line at once.
+2. Argument 2 - Number (milliseconds); the speed at which the backspace will perform. If no number is specified, it will default to the user-supplied Typer speed or Typer's internal default of 70.
 
 * * *
 
@@ -260,8 +270,9 @@ The 1st argument is mandatory and has three options. The 2nd argument is optiona
 ```javascript
 // Examples.
 .continue("I'm on the same line!");
-.continue('Same line, emphasis on <em>sloooow</em>.', 500, false);
+.continue(' Same line, emphasis on <em>sloooow</em>.', 500, false);
 .continue({el: '.hidden-div'}, false, 500);
+.continue({el: document.querySelector('.hidden-div')}, false, 500);
 ```
 
 The `.continue` method works just like `.line` in that it accepts the same arguments but it *continues* typing on the same line, whereas `.line` creates new lines. In conjunction with the `.pause` and `.line` methods, you can create eloborate schemes. You can feed `.continue` the same content (HTML, unicode, etc.) as `.line`.
@@ -290,16 +301,18 @@ The `.pause` method takes a single argument, a number in milliseconds. Typer wil
 
 ```javascript
 // Examples.
+let element = document.querySelector('#some-id');
 .emit('boom'); // Fires off the body.
-.emit('boom', '.some-class'); // Fires off a specific element.
+.emit('boom', '.some-class'); // Fires off a specific element (string selector).
+.emit('boom', element); // Fires off a specific element (element provided).
 ```
 
-Emits an event on a specified DOM element or defaults to `'body'`. This is useful for setting up complex automation scenarios where multiple Typer functions (or other functions on your page) are time-dependant on eachother. DOM event explosions causing mass automated awesomeness. What could be better?
+Emits an event on a specified DOM element or defaults to the `body`. This is useful for setting up complex automation scenarios where multiple Typer functions (or other functions on your page) are time-dependant on eachother. DOM event explosions causing mass automated awesomeness. What could be better?
 
 ### Arguments
 
-1. `('event')` - the event name; Omitting a 2nd argument will default to the event firing from `'body'`.
-2. `('event', 'selector')` - target a DOM element that the `'event'` will be fired from.
+1. Argument 1: `string` - the event name; Omitting a 2nd argument will default to the event firing from the `body`.
+2. Argument 2: `string` _or_ `element` - (optional) target a DOM element that the event will be fired from. Provide a string CSS selector or an HTML element.
 
 * * *
 
@@ -307,18 +320,20 @@ Emits an event on a specified DOM element or defaults to `'body'`. This is usefu
 
 ```javascript
 // Examples.
+let element = document.querySelector('#some-id');
 .listen('boom'); // Listens on the body.
-.listen('boom', '.some-class'); // Listens on a specific element.
+.listen('boom', '.some-class'); // Listens on a specific element (string selector).
+.listen('boom', element); // Listens on a specific element (element provided).
 ```
 
 Typer has the ability (read: super-power) to listen for events as well. The `.listen` method will stop Typer in its tracks until the specified event is fired. Once fired, Typer will proceed from where it last left off. More automation goodness.
 
 ### Arguments
 
-2. `('event')` - the event name we're listening for; Omitting a 2nd argument will default to listening to the `'body'` for the event.
-1. `('event', 'selector')` - target a DOM element to listen for the event on.
+1. Argument 1: `string` - the event name; Omitting a 2nd argument will default to the listener listening from the `body`.
+2. Argument 2: `string` _or_ `element` - (optional) target a DOM element that the listener will be placed on. Provide a string CSS selector or an HTML element.
 
-_* NOTE: Typer uses **one-time event** listeners. When the event is fired, the listener is triggered, then removed._
+_* NOTE: Typer uses **one-time event** listeners. Once the event is fired the listener is triggered and then immediately removed._
 
 * * *
 
@@ -391,7 +406,7 @@ To activate Typer's kill switch, a `killTyper` event must be dispatched from the
 
 ## Showcase
 
-Have you done something cool with Typer.js? Have an awesome site / use-case you'd like to share? [Contact me!](http://aaroncordova.xyz/contact) I'd love to show off your awesomeness with a link here.
+Have you done something cool with Typer.js? Have an awesome site / use-case you'd like to share? [Contact me!](mailto:theqodesmith@gmail.com) I'd love to show off your awesomeness with a link here.
 
 * * *
 

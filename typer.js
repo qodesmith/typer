@@ -23,6 +23,12 @@ SOFTWARE. */
 function typer(el, speed) {
   let q = []; // The main array to contain all the methods called on typer.
 
+  // Throws an error if el isn't a string selector or HTML element.
+  if (checkSelector(el) === 'String') el = document.querySelector(el);
+
+  // Speed check.
+  speed = speed > 0 ? speed : 70
+
   // List of HTML void elements (http://goo.gl/SWmyS5),
   // used in 'processMsg' & 'processBack'.
   q.voids = ['AREA','BASE','BR','COL','COMMAND','EMBED','HR','IMG','INPUT','KEYGEN','LINK','META','PARAM','SOURCE','TRACK','WBR'];
@@ -30,17 +36,8 @@ function typer(el, speed) {
   // List of class names for cleanup later on.
   q.classNames = ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'];
 
-  // Various checks.
-  speed = speed || 70;
-
-  let elType = getType(el);
-  if (elType.slice(0, 4) !== 'HTML' && elType !== 'String') {
-    throw 'You need to provide a string selector, such as ".some-class", or an html element.'
-  }
-
-  if (elType === 'String') el = document.querySelector(el);
-
-  parentDataNum(); // Assign a random # to the parent el's data attribute.
+  // Assign a random # to the parent el's data attribute.
+  parentDataNum();
 
   // Public methods.
   let typerObj = {
@@ -106,19 +103,15 @@ function typer(el, speed) {
       return this;
     },
     emit: function(event, el) {
-      if (!el) el = 'body'; // Default to the body.
-
-      // Simple way to throw an error for invalid selectors.
-      document.querySelector(el);
+      if (!el) el = document.body;
+      if (checkSelector(el) === 'String') el = document.querySelector(el);
 
       q.push({emit: event, el: el});
       return this;
     },
     listen: function(event, el) {
-      if (!el) el = 'body'; // Default to the body.
-
-      // Simple way to throw an error for invalid selectors.
-      document.querySelector(el);
+      if (!el) el = document.body;
+      if (checkSelector(el) === 'String') el = document.querySelector(el);
 
       q.push({listen: event, el: el});
       return this;
@@ -181,6 +174,13 @@ function typer(el, speed) {
   function getType(thing) {
     return ({}).toString.call(thing).slice(8, -1);
   }
+  function checkSelector(thing) {
+    let type = getType(thing);
+    if (type.slice(0, 4) !== 'HTML' && type !== 'String') {
+      throw 'You need to provide a string selector, such as ".some-class", or an html element.'
+    }
+    return type;
+  }
   function classNameCleanup() {
     ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'].forEach(name => {
       q.newDiv.classList.remove(name);
@@ -215,9 +215,9 @@ function typer(el, speed) {
     if (getType(spd) === 'Number') obj.speed = spd;
     if (getType(html) === 'Number') obj.speed = html;
     if (getType(msg) === 'Object') {
-      // Prevents a hard dependency on 'el' as the property name.
-      let key = Object.keys(msg)[0];
-      msg = document.querySelector(msg[key])[obj.html ? 'innerHTML': 'textContent'].trim();
+      let key = Object.keys(msg)[0]; // Prevents a hard dependency on 'el' as the property name.
+      let val = checkSelector(msg[key]) === 'String' ? document.querySelector(msg[key]) : msg[key];
+      msg = val[obj.html ? 'innerHTML': 'textContent'].trim();
     }
 
     obj[choice] = msg;
