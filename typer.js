@@ -27,7 +27,7 @@ function typer(el, speed) {
   if (checkSelector(el) === 'String') el = document.querySelector(el);
 
   // Speed check.
-  speed = speed > 0 ? speed : 70
+  speed = speed > 0 ? speed : 70;
 
   // List of HTML void elements (http://goo.gl/SWmyS5),
   // used in 'processMsg' & 'processBack'.
@@ -220,6 +220,7 @@ function typer(el, speed) {
       msg = val[obj.html ? 'innerHTML': 'textContent'].trim();
     }
 
+    obj.speed = obj.speed || speed;
     obj[choice] = msg;
 
     return obj;
