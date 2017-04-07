@@ -489,6 +489,7 @@ function typer(el, speed) {
         contents.shift();
       } else {
         node.textContent = node.textContent.slice(0, -1);
+        if (!node.length) contents.shift();
       }
 
       counter++;
@@ -524,6 +525,7 @@ function typer(el, speed) {
         if (q.voids.includes(child.nodeName)) return; // Do not remove void tags.
         if (child.childNodes.length) removeEmpties(child);
         if (child.nodeName !== '#text' && !child.innerHTML.length) child.remove();
+        if (child.nodeName === '#text' && !child.length) child.remove();
       });
     }
 
