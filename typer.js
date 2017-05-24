@@ -37,7 +37,8 @@ function typer(el, speed) {
   q.classNames = ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'];
 
   // Assign a random # to the parent el's data attribute.
-  parentDataNum();
+  q.dataNum = randomNum(1, 999999999)
+  el.setAttribute('data-typer', q.dataNum);
 
   // Public methods.
   let typerObj = {
@@ -186,13 +187,8 @@ function typer(el, speed) {
       q.newDiv.classList.remove(name);
     });
   }
-  function parentDataNum() {
-    // Random # function with min & max values.
-    // function randomNum(min, max) {
-    //   return Math.floor(Math.random() * (max - min + 1) + min);
-    // }
-    q.dataNum = Math.floor(Math.random() * 999999999 + 1);
-    el.setAttribute('data-typer', q.dataNum);
+  function randomNum(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
   function addStyle(selector, rules) { // https://goo.gl/b4Ckz9
     q.style = document.createElement('style'); // Create the style element.
