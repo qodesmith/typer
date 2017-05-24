@@ -262,6 +262,7 @@ function typer(el, speed) {
     div.innerHTML = msg;
     item.html ? html() : plain();
 
+    // Executed if arrays of strings are provided.
     function typeArrays(html) {
       let counter = 0;
 
@@ -275,6 +276,7 @@ function typer(el, speed) {
       }, item.speed);
     }
 
+    // Executed if HTML content is provided.
     function html() {
       let list = createTypingArray(div.childNodes, q.newDiv);
       let objCounter = 0;
@@ -303,6 +305,53 @@ function typer(el, speed) {
       }, item.speed);
     }
 
+    // Called by the `html` function above.
+    function createTypingArray(childNodes, parent) {
+      let arr = [];
+      childNodes = Array.from(childNodes);
+
+      for (let i = 0; i < childNodes.length; i++) {
+        let node = childNodes[i];
+        let name = node.nodeName;
+
+        // Text nodes.
+        if (name === '#text') {
+          // Only text nodes will get the content property.
+          arr.push({
+            parent: parent,
+            content: node.textContent
+          });
+
+        // Non-void elements.
+        } else if (node.childNodes.length) {
+          // 1. Clone to an empty node.
+          let newNode = document.createElement(name);
+
+          // 2. Copy the attributes.
+          Array.from(node.attributes).forEach(attr => {
+            newNode.setAttribute(attr.name, attr.value);
+          });
+
+          arr.push({
+            parent: parent,
+            newNode: newNode,
+          });
+
+          arr = arr.concat(createTypingArray(node.childNodes, newNode));
+
+        // Void elements.
+        } else if (q.voids.includes(name)) {
+          arr.push({
+            parent: parent,
+            voidNode: node
+          });
+        }
+      }
+
+      return arr;
+    }
+
+    // Executed if non-HTML content is provided.
     function plain() {
       let counter = 0;
 
@@ -327,60 +376,11 @@ function typer(el, speed) {
       }, item.speed);
     }
 
-    function createTypingArray(childNodes, parent) {
-      let arr = [];
-      childNodes = Array.from(childNodes);
-
-      for (let i = 0; i < childNodes.length; i++) {
-        let node = childNodes[i];
-        let name = node.nodeName;
-
-        // Text nodes.
-        if (name === '#text') {
-          // Only text nodes will get the content property.
-          arr.push({
-            parent: parent,
-            content: node.textContent
-          });
-
-        // Non-void elements.
-        } else if (node.childNodes.length) {
-          // 1. Clone to an empty node.
-          let newNode = document.createElement(name);
-
-          // 2. Copy the attributes.
-          copyAttributes(node, newNode);
-
-          arr.push({
-            parent: parent,
-            newNode: newNode,
-          });
-
-          arr = arr.concat(createTypingArray(node.childNodes, newNode));
-
-        // Void elements.
-        } else if (q.voids.includes(name)) {
-          arr.push({
-            parent: parent,
-            voidNode: node
-          });
-        }
-      }
-
-      return arr;
-    }
-
     // Stop the typing iteration & move on to our main iteration.
     function moveOn() {
       clearInterval(q.iterator);
       q.item++; // Increment our main item counter.
       return processq(); // Restart the main iterator.
-    }
-
-    function copyAttributes(source, target) {
-      Array.from(source.attributes).forEach(attr => {
-        target.setAttribute(attr.name, attr.value);
-      });
     }
   }
   function processLine(item) {
