@@ -1,4 +1,5 @@
-# Typer.js
+# [Typer.js](http://aaroncordova.xyz/typer) &middot; [![npm version](https://badge.fury.io/js/typer-js.svg)](https://badge.fury.io/js/typer-js)
+
 Typer.js is an easy to use, choc-full-of-options, robust automated typing library. There are a number of [methods](https://github.com/qodesmith/typer#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
 
 Typer.js has **no library dependencies** so just slap it on your page and go. We still love you, [jQuery](https://cdnjs.com/libraries/jquery/).
@@ -7,6 +8,22 @@ In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/ht
 
 <!-- Refresh cached version: https://goo.gl/9g8mes -->
 [Live Demo / Tutorial](http://aaroncordova.xyz/typer)
+
+
+#### Quick Links - API Methods
+
+* [Cursor](https://github.com/qodesmith/typer#cursor)
+* [Line](https://github.com/qodesmith/typer#line)
+* [Back](https://github.com/qodesmith/typer#back)
+* [Continue](https://github.com/qodesmith/typer#continue)
+* [Pause](https://github.com/qodesmith/typer#pause)
+* [Emit](https://github.com/qodesmith/typer#emit)
+* [Listen](https://github.com/qodesmith/typer#listen)
+* [Empty](https://github.com/qodesmith/typer#empty)
+* [Run](https://github.com/qodesmith/typer#run)
+* [End](https://github.com/qodesmith/typer#end)
+* [Kill Switch](https://github.com/qodesmith/typer#kill-switch) (non-api feature)
+
 
 ## Installation
 
