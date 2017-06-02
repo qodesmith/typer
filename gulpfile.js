@@ -16,6 +16,9 @@ gulp.task('babel', function(done) {
     presets: ['env', 'stage-0']
   });
 
+  // * NOTE: `typer-es5.js` is created so we can see babel's output.
+
+  fs.writeFileSync('typer-es5.js', beginning.join('\n') + results.code + end.join('\n'));
   fs.writeFileSync('typer.min.js', beginning.join('\n') + results.code + end.join('\n'));
   done();
 });

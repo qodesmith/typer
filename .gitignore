@@ -7,5 +7,4 @@
 
 # FILES
 .DS_Store
-.gitignore
-.npmignore
+typer-es5.js

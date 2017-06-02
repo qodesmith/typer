@@ -8,7 +8,7 @@
     "automatic typing",
     "javascript typing"
   ],
-  "main": "typer-npm.js",
+  "main": "typer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,13 +20,12 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "babel-preset-es2015": "^6.18.0",
-    "gulp": "^3.9.0",
+    "babel-core": "^6.24.1",
+    "babel-preset-env": "^1.5.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "gulp": "github:gulpjs/gulp#4.0",
     "gulp-autoprefixer": "^3.1.0",
-    "gulp-babel": "^6.1.2",
-    "gulp-concat-util": "^0.5.5",
     "gulp-less": "^3.0.5",
-    "gulp-uglify": "^1.5.1",
-    "merge-stream": "^1.0.0"
+    "uglify-es": "^3.0.14"
   }
 }
