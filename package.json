@@ -10,7 +10,7 @@
   ],
   "main": "typer.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Qodesmith",
   "email": "theqodesmith@gmail.com",
@@ -26,6 +26,7 @@
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-less": "^3.0.5",
+    "jest": "^20.0.4",
     "uglify-es": "^3.0.14"
   }
 }
