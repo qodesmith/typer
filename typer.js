@@ -536,7 +536,7 @@ SOFTWARE. */
       // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
       if (back < 0) back = totalLength + totalVoids - (back * -1);
 
-      q.goBack = setInterval(looper(), spd);
+      q.goBack = setInterval(looper(), spd || speed);
 
       function looper(tempDiv) {
         let counter = 0;
@@ -625,7 +625,7 @@ SOFTWARE. */
     }
 
     // The kill switch.
-    q.kill =  e => {
+    q.kill = e => {
       body.removeEventListener(e.type, q.kill);
       q.killed = true; // For processListen.
 
