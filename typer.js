@@ -47,7 +47,7 @@ SOFTWARE. */
     q.dataNum = Date.now();
     el.setAttribute('data-typer', q.dataNum);
 
-    // Public methods.
+    // Public API methods.
     const typerObj = {
       cursor: function(cursorObj) {
         // Prevent cursor from being run multiple times.

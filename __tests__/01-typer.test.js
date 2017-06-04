@@ -16,7 +16,7 @@ describe(`Testing Typer itself (not the api)`, () => {
     expect(testTyper('#not-on-page')).toThrow();
   });
 
-  test('Typer should throw when the options given are wrong', () => {
+  test("Typer should throw when the options don't have `min` and `max` together", () => {
     expect(testTyper('#test', {min: 5})).toThrow();
     expect(testTyper('#test', {max: 5})).toThrow();
   });
@@ -33,21 +33,3 @@ describe(`Testing Typer itself (not the api)`, () => {
     expect(typer('#test')).toHaveProperty('end');
   });
 });
-
-// describe('Testing the `.line` method:', () => {
-//   beforeEach(() => document.body.innerHTML = '<div id="test"></div>');
-//   afterEach(() => document.body.innerHTML = '');
-
-//   test('simple line contents', () => {
-//     typer('#test', 1)
-//       .line(['Hello']);
-
-//     return new Promise(resolve => {
-//       setTimeout(() => {
-//         resolve(document.body.textContent);
-//       }, 100);
-//     }).then(content => {
-//       expect(content).toBe('Hello!')
-//     });
-//   });
-// });
