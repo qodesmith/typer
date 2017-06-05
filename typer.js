@@ -102,7 +102,7 @@ SOFTWARE. */
       },
       pause: function(num) {
         // Default to 500ms.
-        q.push({pause: num || 500});
+        q.push({pause: +num || 500});
         return this;
       },
       emit: function(event, el) {
@@ -476,7 +476,7 @@ SOFTWARE. */
     }
     function processEmit(item) {
       clearInterval(q.type); // Stop the main iterator.
-      document.querySelector(item.el).dispatchEvent(new Event(item.emit));
+      item.el.dispatchEvent(new Event(item.emit));
 
       q.item++;
       processq();
@@ -484,11 +484,9 @@ SOFTWARE. */
     function processListen(item) {
       clearInterval(q.type); // Stop the main iterator.
 
-      const el = document.querySelector(item.el);
-
       // One-time event listener.
-      el.addEventListener(item.listen, function handler(e) {
-        el.removeEventListener(e.type, handler);
+      item.el.addEventListener(item.listen, function handler(e) {
+        item.el.removeEventListener(e.type, handler);
         if (q.killed) return; // Prevent error if kill switch is engaged.
         q.item++;
         processq();
