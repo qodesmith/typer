@@ -2,7 +2,6 @@ const typer = require('../typer');
 
 describe(`Testing Typer itself (not the api)`, () => {
   beforeEach(() => document.body.innerHTML = '<div id="test"></div>');
-  afterEach(() => document.body.innerHTML = '');
 
   function testTyper(selector, options) {
     return function() {

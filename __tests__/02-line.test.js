@@ -1,8 +1,12 @@
 const typer = require('../typer');
 
 describe('Testing the `.line` API', () => {
-  beforeEach(() => document.body.innerHTML = '<div id="test"></div>');
-  afterEach(() => document.body.innerHTML = '');
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <div id="test"></div>
+      <div id="hidden">Hidden content!</div>
+    `;
+  });
 
   function contents(value, wait) {
     return new Promise(resolve => {
@@ -40,7 +44,7 @@ describe('Testing the `.line` API', () => {
     typer('#test', 1).line('Hello world!', {element: 'p'});
 
     return new Promise(resolve => {
-      setTimeout(() => resolve(document.querySelector('#test p')), 100)
+      setTimeout(() => resolve(document.querySelector('#test p')), 100);
     }).then(p => {
       expect(p.nodeName).toBe('P');
       expect(document.querySelector('#test').children.length).toBe(1);
@@ -76,7 +80,7 @@ describe('Testing the `.line` API', () => {
     typer('#test', 1).line(['Hello', ' world!'], {element: 'p'});
 
     return new Promise(resolve => {
-      setTimeout(() => resolve(document.querySelector('#test p')), 100)
+      setTimeout(() => resolve(document.querySelector('#test p')), 100);
     }).then(p => {
       expect(p.nodeName).toBe('P');
       expect(document.querySelector('#test').children.length).toBe(1);
@@ -94,9 +98,21 @@ describe('Testing the `.line` API', () => {
     return new Promise(resolve => {
       const element = document.querySelector('#test');
       setTimeout(() => resolve(element), 100);
-    }).then(element => {
-      expect(element.children.length).toBe(1);
-      expect(element.children[0].nodeName).toBe('DIV');
+    }).then(el => {
+      expect(el.children.length).toBe(1);
+      expect(el.children[0].nodeName).toBe('DIV');
+    });
+  });
+
+  test('Giving `.line` a single object with container should type those contents', () => {
+    typer('#test', 1).line({container: '#hidden'});
+
+    return new Promise(resolve => {
+      const element = document.querySelector('#test');
+      setTimeout(() => resolve(element), 100);
+    }).then(el => {
+      const hidden = document.querySelector('#hidden').textContent;
+      expect(el.textContent).toBe(hidden);
     });
   });
 });

@@ -2,7 +2,6 @@ const typer = require('../typer');
 
 describe('Testing the `.back` API', () => {
   beforeEach(() => document.body.innerHTML = '<div id="test"></div>');
-  afterEach(() => document.body.innerHTML = '');
 
   test('Passing `.back` no arguments should do nothing', () => {
     typer('#test', 1).line('Hello world!').back();

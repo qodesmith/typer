@@ -2,7 +2,6 @@ const typer = require('../typer');
 
 describe('Testing the `.cursor` API', () => {
   beforeEach(() => document.body.innerHTML = '<div id="test"></div>');
-  afterEach(() => document.body.innerHTML = '');
 
   function promise() {
     return new Promise(resolve => {
