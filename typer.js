@@ -106,15 +106,21 @@ SOFTWARE. */
         return this;
       },
       emit: function(event, el) {
-        if (!el) el = body;
-        if (checkSelector(el) === 'String') el = document.querySelector(el);
+        if (!el) {
+          el = body;
+        } else if (checkSelector(el) === 'String') {
+          el = document.querySelector(el);
+        }
 
         q.push({emit: event, el: el});
         return this;
       },
       listen: function(event, el) {
-        if (!el) el = body;
-        if (checkSelector(el) === 'String') el = document.querySelector(el);
+        if (!el) {
+          el = body;
+        } else if (checkSelector(el) === 'String') {
+          el = document.querySelector(el);
+        }
 
         q.push({listen: event, el: el});
         return this;
@@ -140,9 +146,13 @@ SOFTWARE. */
           q.newDiv.classList.add('white-space');
           q.newDiv = '';
 
-          if (fxn && fxn instanceof Function) fxn(el);
-          if ((fxn && getType(fxn) === 'Boolean') || e) {
-            if (e instanceof Function) e(el);
+          if (fxn instanceof Function) {
+            fxn(el);
+          } else if (e instanceof Function) {
+            e(el);
+          }
+
+          if (fxn === true || e === true) {
             body.dispatchEvent(new Event('typerFinished'));
           }
         }
