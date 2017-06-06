@@ -406,7 +406,7 @@ SOFTWARE. */
       // Called by the `html` function above.
       function createTypingArray(childNodes, parent) {
         let arr = [];
-        childNodes = [...childNodes];
+        childNodes = Array.from(childNodes);
 
         for (let i = 0; i < childNodes.length; i++) {
           const node = childNodes[i];
@@ -426,7 +426,7 @@ SOFTWARE. */
             let newNode = document.createElement(name);
 
             // 2. Copy the attributes.
-            [...node.attributes].forEach(attr => {
+            Array.from(node.attributes).forEach(attr => {
               newNode.setAttribute(attr.name, attr.value);
             });
 
@@ -581,7 +581,7 @@ SOFTWARE. */
 
       function flattenContents(parent) {
         let arr = [];
-        let childNodes = [...parent.childNodes];
+        let childNodes = Array.from(parent.childNodes);
 
         if (!childNodes.length) return arr;
 
@@ -597,7 +597,7 @@ SOFTWARE. */
       }
 
       function removeEmpties(el) {
-        [...el.childNodes].forEach(child => {
+        Array.from(el.childNodes).forEach(child => {
           if (q.voids.includes(child.nodeName)) return; // Do not remove void tags.
           if (child.childNodes.length) removeEmpties(child);
           if (child.nodeName !== '#text' && !child.innerHTML.length) child.remove();
@@ -608,7 +608,7 @@ SOFTWARE. */
       function countVoids(el) {
         let num = 0;
 
-        [...el.childNodes].forEach(child => {
+        Array.from(el.childNodes).forEach(child => {
           if (q.voids.includes(child.nodeName)) num++;
           if (child.childNodes.length) num += countVoids(child);
         });
