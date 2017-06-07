@@ -6,12 +6,12 @@ describe('Testing the `.pause` API', () => {
     typer('body').line([content]).pause().empty();
 
     return new Promise(resolve => {
-      setTimeout(() => resolve(), 250);
+      setTimeout(resolve, 250);
     }).then(() => {
       expect(document.body.textContent).toBe(content);
 
       return new Promise(resolve => {
-        setTimeout(() => resolve(), 350);
+        setTimeout(resolve, 350);
       })
     }).then(() => {
       expect(document.body.textContent).toBe('');
@@ -23,12 +23,12 @@ describe('Testing the `.pause` API', () => {
     typer('body').line([content]).pause(1000).empty();
 
     return new Promise(resolve => {
-      setTimeout(() => resolve(), 250);
+      setTimeout(resolve, 250);
     }).then(() => {
       expect(document.body.textContent).toBe(content);
 
       return new Promise(resolve => {
-        setTimeout(() => resolve(), 850);
+        setTimeout(resolve, 850);
       })
     }).then(() => {
       expect(document.body.textContent).toBe('');

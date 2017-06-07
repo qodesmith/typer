@@ -21,14 +21,15 @@ describe(`Testing Typer itself (not the api)`, () => {
   });
 
   test('Typer should return an API object when given proper arguments', () => {
-    expect(typer('#test')).toHaveProperty('cursor');
-    expect(typer('#test')).toHaveProperty('line');
-    expect(typer('#test')).toHaveProperty('back');
-    expect(typer('#test')).toHaveProperty('continue');
-    expect(typer('#test')).toHaveProperty('pause');
-    expect(typer('#test')).toHaveProperty('emit');
-    expect(typer('#test')).toHaveProperty('listen');
-    expect(typer('#test')).toHaveProperty('run');
-    expect(typer('#test')).toHaveProperty('end');
+    const obj = typer('#test');
+    expect(obj).toHaveProperty('cursor');
+    expect(obj).toHaveProperty('line');
+    expect(obj).toHaveProperty('back');
+    expect(obj).toHaveProperty('continue');
+    expect(obj).toHaveProperty('pause');
+    expect(obj).toHaveProperty('emit');
+    expect(obj).toHaveProperty('listen');
+    expect(obj).toHaveProperty('run');
+    expect(obj).toHaveProperty('end');
   });
 });
