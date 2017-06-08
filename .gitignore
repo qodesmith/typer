@@ -1,17 +1,9 @@
 # FOLDERS
-/node_modules
+/old-demo
 /old-typer
+/node_modules
 /sandbox
 
 # FILES
 .DS_Store
-.gitignore
-.npmignore
-/npm-debug.log
-/typer.less
-/demo.less
-/gulpfile.js
-/package.json
-/code.psd
-/less/demo.less
-typer-npm.js
+typer-es5.js
