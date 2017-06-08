@@ -516,8 +516,8 @@ To activate Typer's kill switch, a `killTyper` event must be dispatched from the
 
 Have you done something cool with Typer.js? Have an awesome site / use-case you'd like to share? [Contact me!](mailto:theqodesmith@gmail.com) I'd love to show off your awesomeness with a link here.
 
-[http://aaroncordova.xyz/this-isnt-real](http://aaroncordova.xyz/this-isnt-real) - awesome 404 pages
-[http://mihaeltomic.com/](http://mihaeltomic.com/) - cool introduction
+* [http://aaroncordova.xyz/this-isnt-real](http://aaroncordova.xyz/this-isnt-real) - awesome 404 pages (random page each time)
+* [http://mihaeltomic.com/](http://mihaeltomic.com/) - cool introduction
 
 
 * * *
