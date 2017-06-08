@@ -196,7 +196,7 @@ SOFTWARE. */
     function checkSpeed(spd) {
       const type = getType(spd);
 
-      if (spd === undefined) return q.speedSet ? speed : 70; // Default `speed` in stop scope.
+      if (spd === undefined) return q.speedSet ? speed : 70; // Default `speed` (in top scope).
       if (type === 'Number' && !isNaN(spd)) return spd;
       if (type === 'Object') {
         const hasMin = spd.hasOwnProperty('min');
@@ -517,6 +517,10 @@ SOFTWARE. */
 
       // Empty the line all at once or a portion of it at once.
       if (back === 'empty') {
+
+        // `spd` here is a quantity -
+        // how many characters we want to erase *at once*.
+
         if (!spd || spd >= totalLength) {
           q.newDiv.innerHTML = '';
         } else {
