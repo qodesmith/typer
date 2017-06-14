@@ -188,7 +188,7 @@ SOFTWARE. */
     }
     function checkSelector(thing) {
       const type = getType(thing);
-      if (type.slice(0, 4) !== 'HTML' && type !== 'String') {
+      if (type.slice(0, 4).toLowerCase() !== 'html' && type !== 'String') {
         throw "You need to provide a string selector, such as '.some-class', or an html element."
       }
       return type;
