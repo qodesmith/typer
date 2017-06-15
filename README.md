@@ -12,7 +12,7 @@
 
 # [Typer.js](http://aaroncordova.xyz/typer) &middot; [![npm version](https://badge.fury.io/js/typer-js.svg)](https://badge.fury.io/js/typer-js)
 
-Typer.js is an easy to use, choc-full-of-options, robust automated typing library. There are a number of [methods](https://github.com/qodesmith/typer#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
+Typer.js is an easy to use, choc-full-of-options, robust automated typing library. There are a number of [methods](#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
 
 Typer.js has **no library dependencies** so just slap it on your page and go. We still love you, [jQuery](https://cdnjs.com/libraries/jquery/). And the minified file is only 2.9k gzipped!
 
@@ -24,17 +24,17 @@ In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/ht
 
 #### Quick Links - API Methods
 
-* [Cursor](https://github.com/qodesmith/typer#cursor)
-* [Line](https://github.com/qodesmith/typer#line)
-* [Back](https://github.com/qodesmith/typer#back)
-* [Continue](https://github.com/qodesmith/typer#continue)
-* [Pause](https://github.com/qodesmith/typer#pause)
-* [Emit](https://github.com/qodesmith/typer#emit)
-* [Listen](https://github.com/qodesmith/typer#listen)
-* [Empty](https://github.com/qodesmith/typer#empty)
-* [Run](https://github.com/qodesmith/typer#run)
-* [End](https://github.com/qodesmith/typer#end)
-* [Kill Switch](https://github.com/qodesmith/typer#kill-switch) (non-api feature)
+* [Cursor](#cursor)
+* [Line](#line)
+* [Back](#back)
+* [Continue](#continue)
+* [Pause](#pause)
+* [Emit](#emit)
+* [Listen](#listen)
+* [Empty](#empty)
+* [Run](#run)
+* [End](#end)
+* [Kill Switch](#kill-switch) (non-api feature)
 
 
 ## Installation
@@ -92,7 +92,7 @@ The Typer function itself takes two arguments:
 
 _* Note: Typer will default to a speed of 70 if nothing is provided._
 
-Now you can begin calling Typer's various [methods](https://github.com/qodesmith/typer#methods) via simple & sexy dot-notation...
+Now you can begin calling Typer's various [methods](#methods) via simple & sexy dot-notation...
 
 ## Simple Code Examples
 
@@ -221,17 +221,17 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 ```
 
 The `.line` method is at the heart of Typer. As the name suggests, it types out a single line.
-You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an options object containing at least a `container` property. `.line` defaults to parsing HTML, so you must explicitly tell it not to within the options ([see below](https://github.com/qodesmith/typer#options-1)).
+You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an options object containing at least a `container` property. `.line` defaults to parsing HTML, so you must explicitly tell it not to within the options ([see below](#options-1)).
 
 ### Arguments
 
 1. Argument 1 - three possibilities:
     * `string` - The message you want typed out, character by character (normal typing).
     * `array` - The message you want typed out, _item by item_ (word by word).
-    * `object` - An options object ([see below](https://github.com/qodesmith/typer#options-1)). If this is the _only_ argument passed to `.line`, it _must_ have the `container` property.
+    * `object` - An options object ([see below](#options-1)). If this is the _only_ argument passed to `.line`, it _must_ have the `container` property.
 2. Argument 2 (optional) - two possibilities:
     * `number` - A speed in milliseconds. Each line can optionally have its own typing speed. If no speed is given, it defaults to the number given to the `typer` function itself or Typer's internal default of 70.
-    * `object` - An options object ([see below](https://github.com/qodesmith/typer#options-1)).
+    * `object` - An options object ([see below](#options-1)).
 
 _* TIP: If you supply no arguments, you will create a blank line._
 
@@ -288,7 +288,7 @@ _Note: the_ `speed` _option will take priority over_ `min` _and_ `max` _if they 
 .line("No need to tell <strong>Typer</strong> to process html since that's the default.");
 ```
 
-Typer can handle html, unicode, and all sorts of craziness ([see below](https://github.com/qodesmith/typer#html--unicode)). It defaults to processing contents as html so you need to explicitly tell it _not_ to.
+Typer can handle html, unicode, and all sorts of craziness ([see below](#html--unicode)). It defaults to processing contents as html so you need to explicitly tell it _not_ to.
 
 ### HTML / Unicode
 
@@ -384,7 +384,7 @@ The `.continue` method works just like `.line` in that it accepts the same argum
 
 ### Arguments
 
-Same as those for `.line` ([above](https://github.com/qodesmith/typer#line)).
+Same as those for `.line` ([above](#line)).
 
 _* NOTE: unlike_ `.line`_, calling_ `.continue` _with no arguments will produce no effect._
 
