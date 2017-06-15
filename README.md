@@ -1,3 +1,15 @@
+```
+ ______
+/\__  _\                                     __
+\/_/\ \/  __  __   _____      __   _ __     /\_\     ____
+   \ \ \ /\ \/\ \ /\ '__`\  /'__`\/\`'__\   \/\ \   /',__\
+    \ \ \\ \ \_\ \\ \ \L\ \/\  __/\ \ \/ __  \ \ \ /\__, `\
+     \ \_\\/`____ \\ \ ,__/\ \____\\ \_\/\_\ _\ \ \\/\____/
+      \/_/ `/___/> \\ \ \/  \/____/ \/_/\/_//\ \_\ \\/___/
+              /\___/ \ \_\                  \ \____/
+              \/__/   \/_/                   \/___/
+```
+
 # [Typer.js](http://aaroncordova.xyz/typer) &middot; [![npm version](https://badge.fury.io/js/typer-js.svg)](https://badge.fury.io/js/typer-js)
 
 Typer.js is an easy to use, choc-full-of-options, robust automated typing library. There are a number of [methods](https://github.com/qodesmith/typer#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
