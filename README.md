@@ -7,7 +7,7 @@
      \ \_\\/`____ \\ \ ,__/\ \____\\ \_\/\_\ _\ \ \\/\____/
       \/_/ `/___/> \\ \ \/  \/____/ \/_/\/_//\ \_\ \\/___/
               /\___/ \ \_\                  \ \____/
-              \/__/   \/_/                   \/___/
+              \/__/   \/_/ By: The Qodesmith \/___/
 ```
 
 # [Typer.js](http://aaroncordova.xyz/typer) &middot; [![npm version](https://badge.fury.io/js/typer-js.svg)](https://badge.fury.io/js/typer-js)
