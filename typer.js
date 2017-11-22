@@ -25,12 +25,19 @@ SOFTWARE. */
   if (typeof define === 'function' && define.amd) return define(function() { return returnTyper() });
   return root.typer = returnTyper();
 })(this, function() {
+  // https://goo.gl/MrXVRS - micro UUID!
+  const uuid = a=>a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuid);
+
   function typer(el, speed) {
     const q = []; // The main array to contain all the methods called on typer.
     const body = document.body; // Cache the body.
+    let currentListener = {}; // Listeners provided by the `.listen` method.
 
     // Throws an error if el isn't a string selector or HTML element.
     if (checkSelector(el) === 'String') el = document.querySelector(el);
+
+    // Prevent calling Typer on the same element twice.
+    if (el.getAttribute('data-typer')) throw `You've already called Typer on this element.`;
 
     // Speed check.
     speed = checkSpeed(speed);
@@ -43,9 +50,9 @@ SOFTWARE. */
     // List of class names for cleanup later on.
     q.classNames = ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'];
 
-    // Assign a unique # to the parent el's data attribute.
-    q.dataNum = Date.now();
-    el.setAttribute('data-typer', q.dataNum);
+    // Assign a unique id to the parent el's data attribute.
+    q.uuid = uuid();
+    el.setAttribute('data-typer', q.uuid);
 
     // Public API methods.
     const typerObj = {
@@ -69,7 +76,7 @@ SOFTWARE. */
 
         const {color, blink, block} = cursorObj;
         const cursor = [];
-        const data = `[data-typer="${q.dataNum}"]`;
+        const data = `[data-typer="${q.uuid}"]`;
 
         // Optional cursor color - https://goo.gl/b4Ckz9
         if (color) addStyle(`${data} .typer::after`, `background-color:${color}`);
@@ -139,47 +146,11 @@ SOFTWARE. */
       },
       end: function(fxn, e) {
         q.push({end: true});
+        q.cb = () => typerCleanup(fxn, e);
 
-        q.cb = function() {
-          q.style && q.style.remove();
-          classNameCleanup(); // Finalize the div class names before ending.
-          q.newDiv.classList.add('white-space');
-          q.newDiv = '';
-
-          if (fxn instanceof Function) {
-            fxn(el);
-          } else if (e instanceof Function) {
-            e(el);
-          }
-
-          if (fxn === true || e === true) {
-            body.dispatchEvent(new Event('typerFinished'));
-          }
-        }
-
-        // A convenient object to warn the user if they
-        // try to call any methods after '.end'.
-        const catchAll = {
-          cursor: message,
-          line: message,
-          continue: message,
-          pause: message,
-          emit: message,
-          listen: message,
-          back: message,
-          empty: message,
-          run: message,
-          end: message
-        };
-
-        // Message used by the 'catchAll' object.
-        function message() {
-          console.warn('WARNING: you tried to call a method after ".end" has already been called.');
-          return catchAll;
-        }
-
-        return catchAll;
-      }
+        return nullApi('end');
+      },
+      kill: kill
     };
 
     // Private functions.
@@ -210,6 +181,25 @@ SOFTWARE. */
       }
 
       throw Error('You have provided an invalid value for speed.');
+    }
+    function typerCleanup(fxn, e) {
+      q.style && q.style.remove();
+      q.newDiv && classNameCleanup(); // Finalize the div class names before ending.
+      el.removeAttribute('data-typer'); // Remove the `data-typer` attribute.
+      body.removeEventListener('killTyper', kill);
+
+      q.newDiv && q.newDiv.classList.add('white-space');
+      q.newDiv = '';
+
+      if (typeof fxn === 'function') {
+        fxn(el);
+      } else if (typeof e === 'function') {
+        e(el);
+      }
+
+      if (fxn === true || e === true) {
+        body.dispatchEvent(new Event('typerFinished'));
+      }
     }
     function classNameCleanup() {
       ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor'].forEach(name => {
@@ -275,10 +265,10 @@ SOFTWARE. */
     }
     function processq() { // Begin our main iterator.
       if (!(q.item >= 0)) q.item = 0;
-      if (q.item === q.length) return body.removeEventListener('killTyper', q.kill);
+      if (q.item === q.length) return body.removeEventListener('killTyper', kill);
       if (!q.ks) {
         q.ks = true;
-        body.addEventListener('killTyper', q.kill);
+        body.addEventListener('killTyper', kill);
       }
 
       // If no cursor is declared, resort to default styling.
@@ -287,6 +277,10 @@ SOFTWARE. */
 
       // Main iterator.
       q.type = setInterval(() => {
+        // This happens if `.kill` is in the initial chain of API methods.
+        // The length is set to 0 in `kill`.
+        if (!q.length) return clearInterval(q.type);
+
         const item = q[q.item];
 
         // Various processing functions.
@@ -314,7 +308,7 @@ SOFTWARE. */
 
       // Create new div (or specified element).
       const div = document.createElement(item.element || 'div');
-      div.setAttribute('data-typer-child', q.dataNum);
+      div.setAttribute('data-typer-child', q.uuid);
       div.className = q.cursor;
       div.classList.add('typer');
       div.classList.add('white-space');
@@ -495,12 +489,17 @@ SOFTWARE. */
       clearInterval(q.type); // Stop the main iterator.
 
       // One-time event listener.
-      item.el.addEventListener(item.listen, function handler(e) {
+      item.el.addEventListener(item.listen, handler);
+      function handler(e) {
         item.el.removeEventListener(e.type, handler);
         if (q.killed) return; // Prevent error if kill switch is engaged.
         q.item++;
         processq();
-      });
+      };
+
+      // Keep a reference to the listener so we can esure its removal
+      // if we kill this instance or all typers.
+      currentListener = { el: item.el, type: item.listen, fxn: handler };
     }
     function processBack({ back, speed: spd }) {
       // Stop the main iterator.
@@ -636,27 +635,53 @@ SOFTWARE. */
       q.cb(); // Run the callback provided.
     }
 
+
     // The kill switch.
-    q.kill = e => {
-      body.removeEventListener(e.type, q.kill);
-      q.killed = true; // For processListen.
+    // Used for both killing all Typers with the `killTyper` event
+    // as well as killing Typer instances with the `.kill` method.
+    function kill() {
+      // Remove listener added in `processListen` if Typer is in a listener state.
+      currentListener.el &&
+      currentListener.el.removeEventListener(currentListener.type, currentListener.fxn);
 
       // Stop all iterations & pauses.
       clearInterval(q.iterator); // From processMsg.
       clearInterval(q.goBack); // From processBack.
-      clearTimeout(q.pause) // From processPause.
+      clearTimeout(q.pause); // From processPause.
 
-      if (q.item === q.length) return console.log('This typer has completed. Listeners removed.');
+      // This is necessary in case `.kill` is used in the initial chain of API methods.
+      // It would be pointless to do so since this achieves nothing:
+      // typer('#some-id').line('yo').kill();
+      q.length = 0;
 
-      // If typer is in a listener state...
-      const ear = q[q.item];
-      if (ear && ear.listen) {
-        const el = document.querySelector(ear.el);
-        el.dispatchEvent(new Event(ear.listen));
+      typerCleanup();
+
+      return nullApi('kill');
+    }
+    function nullApi(method) { // Used after `.end` or `.kill` have been called.
+      // Replace our public API - `typerObj` - with the nullified version.
+      Object.keys(typerObj).forEach(key => {
+        // If `.end` is called, we still want `.kill` to be callable as well.
+        if (key === 'kill' && method === 'end') return;
+        typerObj[key] = message;
+      });
+
+      const warning = `WARNING: you tried to call a method after ".${method}" has already been called.\nThe public API has been nullified.`;
+      if (method === 'kill') {
+        if (q.killed) message();
+        q.killed = true; // For `processListen`.
       }
+
+      // Message used by the 'nullApiObj' object.
+      function message() {
+        console.warn(warning);
+        return typerObj;
+      }
+
+      return typerObj;
     }
 
-    // Return 'typerObj' to be able to run the various methods.
+    // Return `typerObj` to be able to expose our public API.
     return typerObj;
   }
 

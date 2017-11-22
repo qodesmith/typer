@@ -1,4 +1,5 @@
 const typer = require('../typer');
+const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time))
 
 describe('Testing the `.line` API', () => {
   beforeEach(() => {
@@ -8,11 +9,11 @@ describe('Testing the `.line` API', () => {
     `;
   });
 
-  function contents(value, wait) {
-    return new Promise(resolve => {
-      const element = document.querySelector('#test');
-      setTimeout(() => resolve(element.textContent), wait);
-    }).then(content => expect(content).toBe(value));
+  function contents(value, wait = 100) {
+    return promise(wait).then(() => {
+      const el = document.querySelector('#test');
+      expect(el.textContent).toBe(value);
+    });
   }
 
 
@@ -22,32 +23,31 @@ describe('Testing the `.line` API', () => {
 
   test('[String] `.line` should type provided contents on the screen', () => {
     typer('#test', 1).line('Hello world!');
-    return contents('Hello world!', 100);
+    return contents('Hello world!');
   });
 
   test('[String] `.line` should type provided contents on the screen (with number speed)', () => {
     typer('#test').line('Hello world!', 1);
-    return contents('Hello world!', 100);
+    return contents('Hello world!');
   });
 
   test('[String] `.line` should type provided contents on the screen (with obj speed)', () => {
-    typer('#test').line('Hello world!', {speed: 1});
-    return contents('Hello world!', 100);
+    typer('#test').line('Hello world!', { speed: 1 });
+    return contents('Hello world!');
   });
 
   test('[String] `.line` should type provided contents on the screen (with min/max speed)', () => {
-    typer('#test').line('Hello world!', {min: 1, max: 5});
-    return contents('Hello world!', 100);
+    typer('#test').line('Hello world!', { min: 1, max: 5 });
+    return contents('Hello world!', 200);
   });
 
   test('[String] `.line` should type provided contents on the screen in specified element', () => {
-    typer('#test', 1).line('Hello world!', {element: 'p'});
+    typer('#test', 1).line('Hello world!', { element: 'p' });
 
-    return new Promise(resolve => {
-      setTimeout(() => resolve(document.querySelector('#test p')), 100);
-    }).then(p => {
-      expect(p.nodeName).toBe('P');
-      expect(document.querySelector('#test').children.length).toBe(1);
+    return promise().then(() => {
+      const el = document.querySelector('#test p');
+      expect(el.nodeName).toBe('P');
+      expect(el.parentElement.children.length).toBe(1);
     });
   });
 
@@ -58,32 +58,31 @@ describe('Testing the `.line` API', () => {
 
   test('[Array] `.line` should type provided contents on the screen', () => {
     typer('#test', 1).line(['Hello', ' world!']);
-    return contents('Hello world!', 100);
+    return contents('Hello world!');
   });
 
   test('[Array] `.line` should type provided contents on the screen (with number speed)', () => {
     typer('#test').line(['Hello', ' world!'], 1);
-    return contents('Hello world!', 100);
+    return contents('Hello world!');
   });
 
   test('[Array] `.line` should type provided contents on the screen (with obj speed)', () => {
-    typer('#test').line(['Hello', ' world!'], {speed: 5});
-    return contents('Hello world!', 100);
+    typer('#test').line(['Hello', ' world!'], { speed: 5 });
+    return contents('Hello world!');
   });
 
   test('[Array] `.line` should type provided contents on the screen (with min/max speed)', () => {
-    typer('#test').line(['Hello', ' world!'], {min: 1, max: 5});
-    return contents('Hello world!', 100);
+    typer('#test').line(['Hello', ' world!'], { min: 1, max: 5 });
+    return contents('Hello world!', 200);
   });
 
   test('[Array] `.line` should type provided contents on the screen in specified element', () => {
-    typer('#test', 1).line(['Hello', ' world!'], {element: 'p'});
+    typer('#test', 1).line(['Hello', ' world!'], { element: 'p' });
 
-    return new Promise(resolve => {
-      setTimeout(() => resolve(document.querySelector('#test p')), 100);
-    }).then(p => {
-      expect(p.nodeName).toBe('P');
-      expect(document.querySelector('#test').children.length).toBe(1);
+    return promise().then(() => {
+      const el = document.querySelector('#test p');
+      expect(el.nodeName).toBe('P');
+      expect(el.parentElement.children.length).toBe(1);
     });
   });
 
@@ -95,24 +94,39 @@ describe('Testing the `.line` API', () => {
   test('Giving `.line` no arguments should create an empty div', () => {
     typer('#test', 1).line();
 
-    return new Promise(resolve => {
-      const element = document.querySelector('#test');
-      setTimeout(() => resolve(element), 100);
-    }).then(el => {
+    return promise().then(() => {
+      const el = document.querySelector('#test');
       expect(el.children.length).toBe(1);
       expect(el.children[0].nodeName).toBe('DIV');
+      expect(el.children[0].textContent).toBe('');
     });
   });
 
   test('Giving `.line` a single object with container should type those contents', () => {
-    typer('#test', 1).line({container: '#hidden'});
+    typer('#test', 1).line({ container: '#hidden' });
 
-    return new Promise(resolve => {
-      const element = document.querySelector('#test');
-      setTimeout(() => resolve(element), 100);
-    }).then(el => {
-      const hidden = document.querySelector('#hidden').textContent;
-      expect(el.textContent).toBe(hidden);
+    return promise().then(() => {
+      const el = document.querySelector('#test');
+      const hiddenText = document.querySelector('#hidden').textContent;
+      expect(el.textContent).toBe(hiddenText);
+    });
+  });
+
+  test('`.line` should add the `.typer` class to the element it\'s typing in', () => {
+    typer('#test', 1).line();
+
+    return promise().then(() => {
+      const test = document.querySelector('#test .typer');
+      expect(test).toBeTruthy();
+    });
+  });
+
+  test('`.line` should add the `data-typer-child` attribute to the element it\'s typing in', () => {
+    typer('#test', 1).line();
+
+    return promise().then(() => {
+      const test = document.querySelector('#test [data-typer-child]');
+      expect(test).toBeTruthy();
     });
   });
 });

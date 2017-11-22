@@ -85,12 +85,22 @@ gulp.task('styles', function() {
     .on('error', onError)
     .pipe(prefix({browsers: ['last 2 versions']}))
     .on('error', onError)
-    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest('./'));
+});
+
+gulp.task('demo-styles', function() {
+  return gulp
+    .src('less/demo.less')
+    .pipe(less())
+    .on('error', onError)
+    .pipe(prefix({browsers: ['last 2 versions']}))
+    .on('error', onError)
+    .pipe(gulp.dest('./demo'));
 });
 
 // WATCH
 gulp.task('default', function() {
-  gulp.watch('less/*.less', gulp.series('styles'));
+  gulp.watch('less/*.less', gulp.series('styles', 'demo-styles'));
 });
 
 // http://goo.gl/SboRZI

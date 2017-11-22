@@ -1,27 +1,29 @@
 const typer = require('../typer');
+const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time));
 
 describe('Testing the `.empty` API', () => {
   test('`.empty` should empty the container starting fresh with a single div', () => {
-    document.body.innerHTML = '<div id="test"></div>';
+    const body = document.body;
+    const content = 'Hello world!';
 
-    //                  1      2      3      4      5
-    typer('#test', 1).line().line().line().line().line();
+    body.innerHTML = '<div id="test"></div>';
+    typer('#test', 1).line([content]);
 
-    return new Promise(resolve => {
-      setTimeout(resolve, 100);
-    }).then(() => {
-      let lines = document.querySelectorAll('[data-typer-child]');
-      expect(lines.length).toBe(5);
+    return promise()
+      .then(() => expect(body.textContent).toBe(content))
+      .then(() => {
+        body.innerHTML = '<div id="test"></div>';
+        typer('#test', 1)
+          .line([content])
+          .line([content])
+          .empty();
+      })
+      .then(() => promise())
+      .then(() => {
+        const test = document.querySelector('#test');
 
-      document.body.innerHTML = '<div id="test"></div>';
-
-      //                  1      2      3      4      5
-      typer('#test', 1).line().line().line().line().line().empty();
-
-      return new Promise(resolve => setTimeout(resolve, 100));
-    }).then(() => {
-      let lines = document.querySelectorAll('[data-typer-child]');
-      expect(lines.length).toBe(1);
-    });
+        expect(body.textContent).toBe('');
+        expect(test.children.length).toBe(1);
+      });
   });
 });

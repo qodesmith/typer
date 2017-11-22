@@ -14,7 +14,7 @@
 
 Typer.js is an easy to use, choc-full-of-options, robust automated typing library. There are a number of [methods](#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
 
-Typer.js has **no library dependencies** so just slap it on your page and go. We still love you, [jQuery](https://cdnjs.com/libraries/jquery/). And the minified file is only 3k gzipped!
+Typer.js has **no library dependencies** so just slap it on your page and go. We still love you, [jQuery](https://cdnjs.com/libraries/jquery/). And the minified file is only 2.9k gzipped!
 
 In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/), whole words, half words, HTML elements, erase stuff, go fast, go slow, make new lines, fire events, listen to events, run functions, and make julienne fries in minutes.
 
@@ -34,7 +34,6 @@ In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/ht
 * [Empty](#empty)
 * [Run](#run)
 * [End](#end)
-* [Kill](#kill)
 * [Kill Switch](#kill-switch) (non-api feature)
 
 
@@ -43,7 +42,6 @@ In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/ht
 #### Manually
 
 Simply include `typer.css` in the `<head>`...
-
 ```html
 <head>
   ...
@@ -54,7 +52,6 @@ Simply include `typer.css` in the `<head>`...
 ```
 
 and include `typer.js` just above your closing `</body>` tag...
-
 ```html
 <body>
   ...
@@ -73,7 +70,7 @@ Files & locations:
 |     File     |          Location          |           Description               |
 | ------------ | -------------------------- | --------------------------------    |
 | typer.js     | node_modules/typer-js/     | our main file                       |
-| typer.min.js | node_modules/typer-js/     | minified main file (3k gzipped!)    |
+| typer.min.js | node_modules/typer-js/     | minified main file (2.9k gzipped!)  |
 | typer.css    | node_modules/typer-js/     | stylesheet necessary for the cursor |
 | typer.less   | node_modules/typer-js/less | less: use it for your own builds    |
 
@@ -308,7 +305,6 @@ Valid [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http:/
 #### HTML / Unicode examples:
 
 The following code...
-
 ```javascript
 typer('body')
   .line('<em>How will I look?</em>')
@@ -346,10 +342,9 @@ The 1st argument is mandatory and has three options. The 2nd argument is optiona
     * `string` (`'empty'`) - this will empty the entire line at once. The 2nd argument can have effects on this behavior (see below).
 2. Argument 2 - one type, two possibilities:
     * `number` (when arg 1 is **not** `'empty'`) - the speed at which the backspace will perform. If no number is specified, it will default to the user-supplied Typer speed or Typer's internal default of 70.
-    * `number` (when arg 1 _*is*_ `'empty'`) - if *positive* (i.e. `15`), the number of character to erase _at once_, else if *negative* (i.e. `-15`), the number of characters to *leave remaining*.
+    * `number` (when arg 1 _*is*_ `'empty'`) - the number of character to erase _at once_.
 
 Some examples to dispel confusion (hopefully):
-
 ```javascript
 .back(10) // Erase 10 characters at the default speed.
 .back(-10) // Erase *all-but* 10 characters at the default speed.
@@ -359,7 +354,6 @@ Some examples to dispel confusion (hopefully):
 .back('all', 5) // Erase all characters at a speed of 5 milliseconds per character.
 .back('empty') // Erase all the character *at once*.
 .back('empty', 15) // Erase 15 characters *at once*.
-.back('empty', -15) // Erase *all-but* 15 characters *at once*.
 ```
 
 
@@ -505,35 +499,13 @@ As with the `.run` method above, `.end` exposes the parent element that Typer is
 
 
 * * *
-
-## KILL
-
-```javascript
-.kill();
-```
-
-The `.kill` method will terminate an individual Typer instance. It takes no arguments. This feature is useful when you want to ensure a Typer instance is no longer running, perhaps in a single-page application when the view changes. You can also use the Kill Switch (below) to terminate *all* instances at once. This method also cleans up any and all event listeners that the instance produced.
-
-_* NOTE: Chaining any other methods after_ `.kill` _will produce no effect._
-
-```javascript
-const t1 = typer('#some-id-1').line('This is the first instance of Typer.');
-const t2 = typer('#some-id-2').line('This is the second instance of Typer that we want to kill.');
-
-// after some time...
-
-t2.kill(); // <-- This instance will stop while 't1' remains unaffected.
-```
-
-
-* * *
 END OF METHODS
 * * *
 
 
 ## Kill Switch
 
-Typer's kill switch feature let's you annihilate *all* Typer instances no matter *what* they're currently doing. This is particularly useful for single-page applications to prevent Typer from continuing in the background even after a view has been removed from the DOM. The kill switch will also remove any current listener any Typer instance has on a DOM element.
+Typer's kill switch feature let's you annihilate a Typer function no matter *what* it's currently doing. This is particularly useful for single-page applications to prevent Typer from continuing in the background even after a view has been removed from the DOM. The kill switch will also remove any current listener Typer has on a DOM element.
 
 _* NOTE: If you have multiple instances of Typer running on the page, this will **kill them all**._
 
@@ -541,7 +513,6 @@ _* NOTE: If you have multiple instances of Typer running on the page, this will 
 ### How to use:
 
 This is an example function you can use to flip the kill switch:
-
 ``` javascript
 function killTyper() {
   const kill = new Event('killTyper');
