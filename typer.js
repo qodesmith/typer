@@ -659,22 +659,23 @@ SOFTWARE. */
       return nullApi('kill');
     }
     function nullApi(method) { // Used after `.end` or `.kill` have been called.
+      const warning = `WARNING: you tried to call ".%s" after ".${method}" has already been called.\nThe public API has been nullified.`;
+
       // Replace our public API - `typerObj` - with the nullified version.
       Object.keys(typerObj).forEach(key => {
         // If `.end` is called, we still want `.kill` to be callable as well.
         if (key === 'kill' && method === 'end') return;
-        typerObj[key] = message;
+        typerObj[key] = message.bind(null, key);
       });
 
-      const warning = `WARNING: you tried to call a method after ".${method}" has already been called.\nThe public API has been nullified.`;
       if (method === 'kill') {
         if (q.killed) message();
         q.killed = true; // For `processListen`.
       }
 
       // Message used by the 'nullApiObj' object.
-      function message() {
-        console.warn(warning);
+      function message(key) {
+        console.warn(warning, key);
         return typerObj;
       }
 
