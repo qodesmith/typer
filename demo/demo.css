@@ -1,0 +1,247 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: sans-serif;
+  font-size: 1.2em;
+  margin: 0;
+  padding: 0;
+  color: white;
+  overflow: hidden;
+}
+.full-size {
+  width: 100vw;
+  height: 100vh;
+}
+.no-overflow {
+  overflow: hidden;
+}
+.fade-bg:after {
+  content: '';
+  background: rgba(0, 25, 25, 0.9);
+  z-index: -1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+.absolute {
+  position: absolute;
+}
+.top {
+  top: 0;
+}
+.left {
+  left: 0;
+}
+.mono {
+  font-family: 'Droid Mono', monospace;
+}
+.flex {
+  display: -ms-flexbox;
+  display: flex;
+}
+.flex.centered {
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: center;
+      justify-content: center;
+}
+.flex.col {
+  -ms-flex-direction: column;
+      flex-direction: column;
+}
+.flex.around {
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+.flex.between {
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+}
+.pointer {
+  cursor: pointer;
+}
+#typer-demo {
+  background: url(typer-demo.gif) repeat-y top left;
+  background-size: cover;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+@media (max-width: 767px) {
+  #typer-demo {
+    padding: 0;
+    font-size: .7rem;
+  }
+}
+#typer-demo:before {
+  content: '';
+  background: rgba(0, 0, 0, 0.8);
+  z-index: -1;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.matrix {
+  color: lime;
+  font-size: 1.5em;
+}
+.matrix span {
+  top: 0;
+  left: 0;
+  transform: rotate(0deg);
+  display: inline-block;
+  position: relative;
+}
+.typer-panes,
+.progress {
+  transition: opacity .5s;
+  opacity: 0;
+}
+.typer-panes.show,
+.progress.show {
+  opacity: 1;
+}
+.typer-panes {
+  -ms-flex-positive: 1;
+      flex-grow: 1;
+  max-width: 1024px;
+  width: 100%;
+  margin: 0 auto;
+}
+.pane {
+  margin: 10px 10px 0;
+  padding: 5px;
+  max-width: 100%;
+  background: rgba(39, 40, 34, 0.9);
+}
+.explanation {
+  -ms-flex-positive: 1;
+      flex-grow: 1;
+  -ms-flex-preferred-size: 0;
+      flex-basis: 0;
+}
+.explanation [data-typer-child] {
+  text-align: center;
+}
+.example {
+  -ms-flex-positive: 2;
+      flex-grow: 2;
+  -ms-flex-preferred-size: 0;
+      flex-basis: 0;
+}
+.progress {
+  padding: 10px 0;
+}
+@media (max-width: 767px) {
+  .progress {
+    -ms-flex-direction: row-reverse;
+        flex-direction: row-reverse;
+    -ms-flex-pack: end;
+        justify-content: flex-end;
+  }
+  .progress .controls {
+    padding: 0 20px;
+  }
+  .progress .progress-bar {
+    width: initial;
+  }
+}
+.progress-bar {
+  width: 100%;
+}
+.progress-item {
+  padding: 0 10px 4px;
+  border-radius: 6px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  color: gray;
+  transition: background .2s, color .2s;
+  cursor: pointer;
+}
+.progress-item.active {
+  background: lime;
+  color: black;
+  font-weight: bold;
+}
+@media (max-width: 767px) {
+  .progress-item:not(.active) {
+    display: none;
+  }
+}
+.controls {
+  padding-top: 10px;
+}
+.control {
+  margin: 0 1vmin;
+  width: 2.5em;
+  height: 2.5em;
+  border: 1px solid;
+  border-radius: 50%;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  transition: background .2s;
+  cursor: pointer;
+}
+@media (min-width: 1025px) {
+  .control:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+.stop-play.stop .play {
+  display: none;
+}
+.stop-play.play {
+  padding-left: 4px;
+}
+.stop-play.play .stop {
+  display: none;
+}
+.previous {
+  padding-right: .6em;
+}
+.next {
+  padding-left: .6em;
+}
+.fin {
+  opacity: 0;
+  transition: opacity 2s;
+  font-size: 12vmin;
+  font-weight: bold;
+  font-family: 'Droid Mono', monospace;
+}
+.fin.show {
+  opacity: 1;
+}
+.aqua {
+  color: aqua;
+}
+.lime {
+  color: lime;
+}
+.gray {
+  color: #75715e;
+}
+.yellow {
+  color: yellow;
+}
+.purple {
+  color: fuchsia;
+}
+.pink {
+  color: #f92772;
+}
+.orange {
+  color: #fd9720;
+}

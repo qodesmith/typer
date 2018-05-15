@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Typer.js Demo</title>
+  <link rel="stylesheet" href="demo.css">
+</head>
+<body class="full-size no-overflow fade-bg">
+  <div id="typer-demo">
+    <div class="matrix absolute top left mono full-size flex centered"></div>
+
+    <div class="typer-panes hide flex col">
+      <div class="pane explanation flex centered">
+        <div class="container"></div>
+      </div>
+      <div class="pane example flex centered mono">
+        <div class="container"></div>
+      </div>
+    </div>
+
+    <div class="progress hide flex col centered">
+      <div class="progress-bar flex centered around">
+        <div class="progress-item typer-js active" data-item="typerJs">typer</div>
+        <div class="progress-item cursor" data-item="cursor">cursor</div>
+        <div class="progress-item line" data-item="line">line</div>
+        <div class="progress-item back" data-item="back">back</div>
+        <div class="progress-item continue" data-item="continue">continue</div>
+        <div class="progress-item pause" data-item="pause">pause</div>
+        <div class="progress-item emit" data-item="emit">emit</div>
+        <div class="progress-item listen" data-item="listen">listen</div>
+        <div class="progress-item empty" data-item="empty">empty</div>
+        <div class="progress-item run" data-item="run">run</div>
+        <div class="progress-item end" data-item="end">end</div>
+      </div>
+      <div class="controls flex">
+        <div class="control previous flex centered">&#9001;</div>
+        <div class="control stop-play stop flex centered">
+          <div class="play">&#9654;</div>
+          <div class="stop">&#9724;</div>
+        </div>
+        <div class="control next flex centered">&#9002;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thanks to the Unpkg CDN! -->
+  <script src="https://unpkg.com/typer-js"></script>
+  <script src="demo.js"></script>
+</body>
+</html>
+
+
