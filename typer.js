@@ -1,6 +1,6 @@
 /* The MIT License (MIT)
 
-Copyright (c) 2017 Aaron Cordova
+Copyright (c) 2018 Aaron Cordova
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -180,7 +180,7 @@ SOFTWARE. */
         if (!hasMin && !hasMax && !hasSpeed) return speed; // `speed` in top scope.
       }
 
-      throw Error('You have provided an invalid value for speed.');
+      throw 'You have provided an invalid value for speed.';
     }
     function typerCleanup(fxn, e) {
       q.style && q.style.remove();
@@ -257,6 +257,7 @@ SOFTWARE. */
 
         return {
           [choice]: message || content,
+          totalTime: opts.totalTime,
           speed: checkSpeed(opts),
           html: opts.html === false ? false : true, // Default true.
           element: isLine ? opts.element : null
@@ -347,6 +348,7 @@ SOFTWARE. */
       // Executed if arrays of strings are provided.
       function typeArrays(html) {
         let counter = 0
+        const itemSpeed = item.totalTime ? (item.totalTime / msg.length) : item.speed;
 
         function doStuff() {
           const content = msg[counter++];
@@ -357,19 +359,21 @@ SOFTWARE. */
           if (counter === msg.length) {
             moveOn();
           } else {
-            qIterator(item.speed, doStuff);
+            qIterator(itemSpeed, doStuff);
           }
         }
 
-        qIterator(item.speed, doStuff);
+        qIterator(itemSpeed, doStuff);
       }
 
       // Executed if HTML content is provided.
+      // This is the default.
       function html() {
         let list = createTypingArray(div.childNodes, q.newDiv);
         let objCounter = 0;
         let textCounter = 0;
         let obj = list[objCounter++];
+        const itemSpeed = item.totalTime ? (item.totalTime / obj.content.length) : item.speed;
 
         function doStuff() {
           // Finished processing everything.
@@ -391,10 +395,10 @@ SOFTWARE. */
             obj = list[objCounter++];
           }
 
-          qIterator(item.speed, doStuff);
+          qIterator(itemSpeed, doStuff);
         }
 
-        qIterator(item.speed, doStuff);
+        qIterator(itemSpeed, doStuff);
       }
 
       // Called by the `html` function above.
@@ -440,8 +444,10 @@ SOFTWARE. */
       }
 
       // Executed if non-HTML content is provided.
+      // Only if `html: false` has been provided.
       function plain() {
         let counter = 0;
+        const itemSpeed = item.totalTime ? (item.totalTime / msg.length) : item.speed;
 
         function doStuff() {
           // End of message processing logic.
@@ -457,10 +463,10 @@ SOFTWARE. */
 
           q.newDiv.innerHTML += piece;
           counter++;
-          qIterator(item.speed, doStuff);
+          qIterator(itemSpeed, doStuff);
         }
 
-        qIterator(item.speed, doStuff);
+        qIterator(itemSpeed, doStuff);
       }
 
       // Stop the typing iteration & move on to our main iteration.

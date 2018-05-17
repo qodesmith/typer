@@ -280,6 +280,21 @@ When using an options object as the 2nd argument to `.line`, the speed property 
 
 _Note: the_ `speed` _option will take priority over_ `min` _and_ `max` _if they are all provided. For example, if your options look like_ `{speed: 50, min: 10, max: 300}`_, Typer will only process_ `speed`.
 
+#### total time
+
+*Value*: `number`
+
+```javascript
+.line('This should take 3 seconds to type', {totalTime: 3000});
+.line('This line is much longer but will also only take 3 seconds to type.', {totalTime: 3000});
+.line(['Works', ' with', ' arrays.'], {totalTime: 2000});
+.line('And <strong>HTML</strong> too!', {totalTime: 1500});
+```
+
+Instead of specifying how _fast_ you want things to type, with the `totalTime` option you specifiy how _long_ you want it to take.
+
+_Note: the_ `totalTime` _option will take priority over all other speed-related options. For example, if your options look like_ `{speed: 50, min: 10, max: 300, totalTime: 3000}`_, all the other options will be ignored and Typer will only process_ `totalTime`.
+
 #### html
 
 *Values*:
