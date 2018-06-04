@@ -224,21 +224,23 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 ```
 
 The `.line` method is at the heart of Typer. As the name suggests, it types out a single line.
-You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an options object containing at least a `container` property. `.line` defaults to parsing HTML, so you must explicitly tell it not to within the options ([see below](#options-1)).
+You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an [options object](#options-1) containing at least a `container` property. `.line` defaults to parsing HTML, so you must explicitly tell it not to within the [options object](#options-1).
 
 ### Arguments
 
 1. Argument 1 - three possibilities:
     * `string` - The message you want typed out, character by character (normal typing).
     * `array` - The message you want typed out, _item by item_ (word by word).
-    * `object` - An options object ([see below](#options-1)). If this is the _only_ argument passed to `.line`, it _must_ have the `container` property.
+    * `object` - An [options object](#options-1). If this is the _only_ argument passed to `.line`, it _must_ have the `container` property.
 2. Argument 2 (optional) - two possibilities:
     * `number` - A speed in milliseconds. Each line can optionally have its own typing speed. If no speed is given, it defaults to the number given to the `typer` function itself or Typer's internal default of 70.
-    * `object` - An options object ([see below](#options-1)).
+    * `object` - An [options object](#options-1). This object will be ignored if you provided an options object to argument 1. This object takes all the same options as the object used in argument 1 minus the `container` property. Don't provide `container` with this object, it will be ignored.
 
 _* TIP: If you supply no arguments, you will create a blank line._
 
 ### Options
+
+_* NOTE: If you're passing in an options object to argument 1, argument 2 will be ignored._
 
 #### container
 
@@ -253,38 +255,38 @@ _* TIP: If you supply no arguments, you will create a blank line._
 
 **SEO** in the house! You can tell `.line` to use the contents of a pre-existing element on the page. So, for instance, you can hide a paragraph of text with CSS (`display: none`) which will still be indexed by search engines and use it to feed Typer! Amazing.
 
-_* NOTE: If you're only passing `.line` a single options argument, you must specifiy the container property._
-
 #### min / max
 
 *Value*: `number`
 
 ```javascript
+.line({container: '.contents', min: 30, max: 350 });
 .line('Humanize the speed of typing stuff', {min: 30, max: 350});
 ```
 
-We all want our robot overlord's to be more, uh, human. And so Typer delivers! Typer has the ability to "humanize" the typing speed. Provide `min` and `max` properties which define a _range_ within which Typer will pick a random number for each character's typing speed. Voila. It's like a real person typing. Only not.
+We all want our robot overlord's to be more, uh, human. And so Typer delivers! Typer has the ability to _"humanize"_ the typing speed. Provide `min` and `max` properties which define a _range_ within which Typer will pick a random number for each character's typing speed. Voila. It's like a real person typing. Only not.
 
 #### speed
 
 *Value*: `number`
 
 ```javascript
+.line({container: '.content', speed: 50});
 .line('The speed property is usually specified with other options.', {speed: 100, html: false});
 .line("Just use a plain number if you're only specififying speed.", 100);
 .line('However, this will work just fine.', {speed: 100});
-.line({container: '.my-content', speed: 50});
 ```
 
 When using an options object as the 2nd argument to `.line`, the speed property is usually accompanied by other options, such as `html` or `element`.
 
 _Note: the_ `speed` _option will take priority over_ `min` _and_ `max` _if they are all provided. For example, if your options look like_ `{speed: 50, min: 10, max: 300}`_, Typer will only process_ `speed`.
 
-#### total time
+#### totalTime
 
 *Value*: `number`
 
 ```javascript
+.line({container: '.content', totalTime: 4500});
 .line('This should take 3 seconds to type', {totalTime: 3000});
 .line('This line is much longer but will also only take 3 seconds to type.', {totalTime: 3000});
 .line(['Works', ' with', ' arrays.'], {totalTime: 2000});
@@ -293,7 +295,7 @@ _Note: the_ `speed` _option will take priority over_ `min` _and_ `max` _if they 
 
 Instead of specifying how _fast_ you want things to type, with the `totalTime` option you specifiy how _long_ you want it to take.
 
-_Note: the_ `totalTime` _option will take priority over all other speed-related options. For example, if your options look like_ `{speed: 50, min: 10, max: 300, totalTime: 3000}`_, all the other options will be ignored and Typer will only process_ `totalTime`.
+_Note: the_ `totalTime` _option will take priority over all other speed-related options. For example, if your options look like_ `{speed: 50, min: 10, max: 300, totalTime: 3000}`_, all the other speed-related options will be ignored and Typer will only process_ `totalTime`.
 
 #### html
 
@@ -302,6 +304,7 @@ _Note: the_ `totalTime` _option will take priority over all other speed-related 
   * `false`
 
 ```javascript
+.line({container: '.content', html: false});
 .line('Do <em>not</em> process this as html.', {html: false});
 .line("No need to tell <strong>Typer</strong> to process html since that's the default.");
 ```
