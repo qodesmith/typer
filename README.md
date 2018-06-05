@@ -221,6 +221,11 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
   speed: 150,
   element: 'span'
 });
+.line({ // Grab content from a hidden div & type it. #SEO!!!
+  container: '.hidden-content',
+  element: 'span',
+  totalTime: 3500 // Take 3.5 seconds to type it all out.
+});
 ```
 
 The `.line` method is at the heart of Typer. As the name suggests, it types out a single line.
@@ -249,7 +254,7 @@ _* NOTE: If you're passing in an options object to argument 1, argument 2 will b
   * `element` - a DOM element
 
 ```javascript
-.line({container: '#some-id'}); // Valid CSS selector.
+.line({container: '.hidden-content'}); // Valid CSS selector.
 .line({container: document.body}); // Valid DOM element.
 ```
 
@@ -260,7 +265,7 @@ _* NOTE: If you're passing in an options object to argument 1, argument 2 will b
 *Value*: `number`
 
 ```javascript
-.line({container: '.contents', min: 30, max: 350 });
+.line({container: '.hidden-content', min: 30, max: 350 });
 .line('Humanize the speed of typing stuff', {min: 30, max: 350});
 ```
 
@@ -271,7 +276,7 @@ We all want our robot overlord's to be more, uh, human. And so Typer delivers! T
 *Value*: `number`
 
 ```javascript
-.line({container: '.content', speed: 50});
+.line({container: '.hidden-content', speed: 50});
 .line('The speed property is usually specified with other options.', {speed: 100, html: false});
 .line("Just use a plain number if you're only specififying speed.", 100);
 .line('However, this will work just fine.', {speed: 100});
@@ -286,7 +291,7 @@ _Note: the_ `speed` _option will take priority over_ `min` _and_ `max` _if they 
 *Value*: `number`
 
 ```javascript
-.line({container: '.content', totalTime: 4500});
+.line({container: '.hidden-content', totalTime: 4500});
 .line('This should take 3 seconds to type', {totalTime: 3000});
 .line('This line is much longer but will also only take 3 seconds to type.', {totalTime: 3000});
 .line(['Works', ' with', ' arrays.'], {totalTime: 2000});
@@ -304,7 +309,7 @@ _Note: the_ `totalTime` _option will take priority over all other speed-related 
   * `false`
 
 ```javascript
-.line({container: '.content', html: false});
+.line({container: '.hidden-content', html: false});
 .line('Do <em>not</em> process this as html.', {html: false});
 .line("No need to tell <strong>Typer</strong> to process html since that's the default.");
 ```
