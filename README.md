@@ -53,12 +53,12 @@ Simply include `typer.css` in the `<head>`...
 </head>
 ```
 
-and include `typer.js` just above your closing `</body>` tag...
+and include `typer.min.js` just above your closing `</body>` tag...
 
 ```html
 <body>
   ...
-  <script src="typer.js"></script>
+  <script src="typer.min.js"></script>
   <!-- Via Unpkg CDN -->
   <!-- <script src="https://unpkg.com/typer-js"></script> -->
 </body>
@@ -68,11 +68,16 @@ and include `typer.js` just above your closing `</body>` tag...
 From the CLI run:
 `npm install typer-js`
 
+In your project `require` this library:
+`const typer = require('typer-js')`
+
+Use fancy `import` for inclusion:
+`import typer from 'typer-js'`
+
 Files & locations:
 
 |     File     |          Location          |           Description               |
 | ------------ | -------------------------- | --------------------------------    |
-| typer.js     | node_modules/typer-js/     | our main file                       |
 | typer.min.js | node_modules/typer-js/     | minified main file (3k gzipped!)    |
 | typer.css    | node_modules/typer-js/     | stylesheet necessary for the cursor |
 | typer.less   | node_modules/typer-js/less | less: use it for your own builds    |
