@@ -8,9 +8,10 @@
     "automatic typing",
     "javascript typing"
   ],
-  "main": "typer.js",
+  "main": "typer.min.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "webpack"
   },
   "author": "Qodesmith",
   "email": "theqodesmith@gmail.com",
@@ -18,14 +19,23 @@
     "type": "git",
     "url": "https://github.com/qodesmith/typer"
   },
+  "browserslist": [
+    "last 2 versions"
+  ],
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.56",
     "@babel/preset-env": "^7.0.0-beta.56",
+    "autoprefixer": "^9.1.0",
     "babel-loader": "^8.0.0-beta.4",
+    "css-loader": "^1.0.0",
+    "cssnano": "^4.0.5",
     "jest": "^20.0.4",
+    "less": "^3.8.0",
     "less-loader": "^4.1.0",
+    "mini-css-extract-plugin": "^0.4.1",
     "postcss-loader": "^2.1.6",
+    "style-loader": "^0.21.0",
     "webpack": "^4.16.4",
     "webpack-cli": "^3.1.0"
   }

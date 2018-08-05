@@ -1,7 +1,10 @@
 const path = require('path')
+const GenerateLicense = require('./src/generate-license-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
+  // entry: path.resolve(__dirname, 'src/typer.js'),
   entry: path.resolve(__dirname, 'src/typer.js'),
   target: 'web', // Default.
   output: {
@@ -10,16 +13,10 @@ module.exports = {
     library: 'typer',
     libraryTarget: 'umd' // "Universal" export - Node, browser, amd, etc.
   },
-  resolve: {
-    alias: {
-      modules: path.resolve(__dirname, 'src/modules')
-    },
-    extensions: ['.js']
-  },
   module: {
     rules: [
       {
-        test: /typerz.js/,
+        test: /typer.js/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -32,11 +29,29 @@ module.exports = {
       {
         test: /typer.less/,
         use: [
-          'less-loader',
-          'postcss-loader'
+          'style-loader',
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          'css-loader',
+          'postcss-loader',
+          'less-loader'
         ]
       }
     ]
   },
-  plugins: []
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'typer.css'
+    }),
+    new GenerateLicense({
+      template: path.resolve(__dirname, 'src/LICENSE.txt'),
+      outputPath: path.resolve(),
+      outputName: 'LICENSE.txt',
+      placeholders: {
+        year: new Date().getFullYear(),
+        author: 'Aaron Cordova'
+      }
+    })
+  ]
 }
