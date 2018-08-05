@@ -1,4 +1,4 @@
-const typer = require('../typer');
+const typer = require('../typer.min');
 const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time));
 const text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos asperiores aspernatur rerum voluptate nemo iusto animi! Modi ipsa, soluta rem nulla esse quibusdam fugit odit libero atque, nam repellat iste.';
 

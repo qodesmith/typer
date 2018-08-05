@@ -1,4 +1,4 @@
-const typer = require('../typer');
+const typer = require('../typer.min');
 const content = 'Hello World!';
 const promise = (time = 20) => new Promise(resolve => setTimeout(resolve, time))
   .then(() => document.querySelector('#test'));

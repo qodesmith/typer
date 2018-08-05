@@ -1,4 +1,4 @@
-const typer = require('../typer');
+const typer = require('../typer.min');
 const promise = (time = 250) => new Promise(resolve => setTimeout(resolve, time));
 
 describe('Testing the `.pause` API', () => {
