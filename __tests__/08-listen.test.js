@@ -1,4 +1,4 @@
-const typer = require('../typer');
+const typer = require('../typer.min');
 const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time));
 const eventName = 'nonsense';
 const event = new Event(eventName);

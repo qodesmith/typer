@@ -1,6 +1,6 @@
 {
   "name": "typer-js",
-  "version": "3.2.3",
+  "version": "4.0.0",
   "description": "Use JavaScript to type things on the screen!",
   "keywords": [
     "typer",
@@ -8,9 +8,10 @@
     "automatic typing",
     "javascript typing"
   ],
-  "main": "typer.js",
+  "main": "typer.min.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "webpack"
   },
   "author": "Qodesmith",
   "email": "theqodesmith@gmail.com",
@@ -18,15 +19,24 @@
     "type": "git",
     "url": "https://github.com/qodesmith/typer"
   },
+  "browserslist": [
+    "last 2 versions"
+  ],
   "license": "ISC",
   "devDependencies": {
-    "babel-core": "^6.24.1",
-    "babel-preset-env": "^1.5.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "gulp": "^4.0.0",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-less": "^4.0.1",
+    "@babel/core": "^7.0.0-beta.56",
+    "@babel/preset-env": "^7.0.0-beta.56",
+    "autoprefixer": "^9.1.0",
+    "babel-loader": "^8.0.0-beta.4",
+    "css-loader": "^1.0.0",
+    "cssnano": "^4.0.5",
     "jest": "^20.0.4",
-    "uglify-es": "^3.0.14"
+    "less": "^3.8.0",
+    "less-loader": "^4.1.0",
+    "mini-css-extract-plugin": "^0.4.1",
+    "postcss-loader": "^2.1.6",
+    "style-loader": "^0.21.0",
+    "webpack": "^4.16.4",
+    "webpack-cli": "^3.1.0"
   }
 }
