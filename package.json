@@ -20,13 +20,13 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "babel-core": "^6.24.1",
-    "babel-preset-env": "^1.5.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "gulp": "^4.0.0",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-less": "^4.0.1",
+    "@babel/core": "^7.0.0-beta.56",
+    "@babel/preset-env": "^7.0.0-beta.56",
+    "babel-loader": "^8.0.0-beta.4",
     "jest": "^20.0.4",
-    "uglify-es": "^3.0.14"
+    "less-loader": "^4.1.0",
+    "postcss-loader": "^2.1.6",
+    "webpack": "^4.16.4",
+    "webpack-cli": "^3.1.0"
   }
 }
