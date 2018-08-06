@@ -122,7 +122,17 @@ function typer(el, speed) {
 
       return nullApi('end');
     },
-    kill: kill
+    hault: function() {
+      q.hault = true;
+    },
+    resume: function() {
+      q.hault = false;
+
+      // `q.resume` is defined in `qIterator`.
+      if (!q.resume) return console.warn('You called ".resume" before calling ".hault".');
+      q.resume();
+    },
+    kill
   };
 
   // Private functions.
@@ -213,7 +223,7 @@ function typer(el, speed) {
     } else if (!isNaN(options)) {
       q.push({[choice]: msg, speed: checkSpeed(options), html: true});
 
-    // Message with options passed.
+    // Message with or without options passed.
     } else {
       q.push(setOptions(options, msg));
     }
@@ -302,11 +312,20 @@ function typer(el, speed) {
     clearInterval(q.type); // Stop the main iterator.
     processMsg(item); // Message iterator.
   }
-  function qIterator(spd, func, data) {
+  function qIterator(spd, func) {
     const isObject = getType(spd) === 'Object';
     const time = isObject ? randomNum(spd.min, spd.max) : spd;
 
-    q.iterator = setTimeout(() => func(data), time);
+    if (q.hault) {
+      q.resume = () => {
+        q.resume = null;
+        q.iterator = setTimeout(func, time);
+      }
+
+      return;
+    }
+
+    q.iterator = setTimeout(func, time);
   }
   function processMsg(item) { // Used by 'processLine' & 'processContinue'.
     const msg = item.line || item.continue;
@@ -623,6 +642,7 @@ function typer(el, speed) {
     currentListener.el.removeEventListener(currentListener.type, currentListener.fxn);
 
     // Stop all iterations & pauses.
+    clearInterval(q.type); // `q.type` from various process[method] functions.
     clearInterval(q.iterator); // From processMsg.
     clearInterval(q.goBack); // From processBack.
     clearTimeout(q.pause); // From processPause.
