@@ -123,12 +123,18 @@ function typer(el, speed) {
       return nullApi('end');
     },
     halt: function() {
+      // Ignore this method if it's being called at runtime.
+      if (!q.typing) return this;
+
       const warning = `You can't call ".halt" while Typer is in %s mode.`;
       if (q.pause) return console.warn(warning, 'pause');
       if (q.listening) return console.warn(warning, 'listen');
       q.halt = true;
     },
     resume: function() {
+      // Ignore this method if it's being called at runtime.
+      if (!q.typing) return this;
+
       q.halt = false;
 
       // `q.resume` is defined in `qIterator`
