@@ -1,5 +1,5 @@
 const typer = require('../typer.min');
-const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time))
+const wait = require('../src/wait');
 
 describe('Testing the `.line` API', () => {
   beforeEach(() => {
@@ -9,8 +9,8 @@ describe('Testing the `.line` API', () => {
     `;
   });
 
-  function contents(value, wait = 100) {
-    return promise(wait).then(() => {
+  function contents(value, time = 100) {
+    return wait(time).then(() => {
       const el = document.querySelector('#test');
       expect(el.textContent).toBe(value);
     });
@@ -44,7 +44,7 @@ describe('Testing the `.line` API', () => {
   test('[String] `.line` should type provided contents on the screen in specified element', () => {
     typer('#test', 1).line('Hello world!', { element: 'p' });
 
-    return promise().then(() => {
+    return wait(100).then(() => {
       const el = document.querySelector('#test p');
       expect(el.nodeName).toBe('P');
       expect(el.parentElement.children.length).toBe(1);
@@ -79,7 +79,7 @@ describe('Testing the `.line` API', () => {
   test('[Array] `.line` should type provided contents on the screen in specified element', () => {
     typer('#test', 1).line(['Hello', ' world!'], { element: 'p' });
 
-    return promise().then(() => {
+    return wait(100).then(() => {
       const el = document.querySelector('#test p');
       expect(el.nodeName).toBe('P');
       expect(el.parentElement.children.length).toBe(1);
@@ -94,7 +94,7 @@ describe('Testing the `.line` API', () => {
   test('Giving `.line` no arguments should create an empty div', () => {
     typer('#test', 1).line();
 
-    return promise().then(() => {
+    return wait(100).then(() => {
       const el = document.querySelector('#test');
       expect(el.children.length).toBe(1);
       expect(el.children[0].nodeName).toBe('DIV');
@@ -105,7 +105,7 @@ describe('Testing the `.line` API', () => {
   test('Giving `.line` a single object with container should type those contents', () => {
     typer('#test', 1).line({ container: '#hidden' });
 
-    return promise().then(() => {
+    return wait(100).then(() => {
       const el = document.querySelector('#test');
       const hiddenText = document.querySelector('#hidden').textContent;
       expect(el.textContent).toBe(hiddenText);
@@ -115,7 +115,7 @@ describe('Testing the `.line` API', () => {
   test('`.line` should add the `.typer` class to the element it\'s typing in', () => {
     typer('#test', 1).line();
 
-    return promise().then(() => {
+    return wait(100).then(() => {
       const test = document.querySelector('#test .typer');
       expect(test).toBeTruthy();
     });
@@ -124,7 +124,7 @@ describe('Testing the `.line` API', () => {
   test('`.line` should add the `data-typer-child` attribute to the element it\'s typing in', () => {
     typer('#test', 1).line();
 
-    return promise().then(() => {
+    return wait(100).then(() => {
       const test = document.querySelector('#test [data-typer-child]');
       expect(test).toBeTruthy();
     });

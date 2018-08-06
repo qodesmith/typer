@@ -1,7 +1,7 @@
 const typer = require('../typer.min');
 const content = 'Hello World!';
-const promise = (time = 20) => new Promise(resolve => setTimeout(resolve, time))
-  .then(() => document.querySelector('#test'));
+const wait = require('../src/wait');
+const promise = (time = 20) => wait(time).then(() => document.querySelector('#test'));
 
 describe('Testing the `.back` API', () => {
   beforeEach(() => document.body.innerHTML = '<div id="test"></div>');

@@ -1,5 +1,5 @@
 const typer = require('../typer.min');
-const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time))
+const wait = require('../src/wait');
 
 describe('Testing the `.continue` API', () => {
   beforeEach(() => {
@@ -9,8 +9,8 @@ describe('Testing the `.continue` API', () => {
     `;
   });
 
-  function contents(value, wait = 100) {
-    return promise(wait).then(() => {
+  function contents(value, time = 100) {
+    return wait(time).then(() => {
       const el = document.querySelector('#test');
       expect(el.textContent).toBe(value);
     });
@@ -44,7 +44,7 @@ describe('Testing the `.continue` API', () => {
   test('[String] `.continue` should not be able to create a specified element', () => {
     typer('#test', 1).line().continue('Hello world!', { element: 'p' });
 
-    return promise().then(() => {
+    return wait(100).then(() => {
       const el = document.querySelector('#test p');
       expect(el).toBeNull();
     });
@@ -78,7 +78,7 @@ describe('Testing the `.continue` API', () => {
   test('[Array] `.continue` should not be able to create a specified element', () => {
     typer('#test', 1).line().continue(['Hello', ' world!'], { element: 'p' });
 
-    return promise().then(() => {
+    return wait(100).then(() => {
       const el = document.querySelector('#test p');
       expect(el).toBeNull();
     });
@@ -92,7 +92,7 @@ describe('Testing the `.continue` API', () => {
   test('Giving `.continue` a single object with container should type those contents', () => {
     typer('#test', 1).line().continue({ container: '#hidden' });
 
-    return promise().then(() => {
+    return wait(100).then(() => {
       const el = document.querySelector('#test');
       const hidden = document.querySelector('#hidden').textContent;
       expect(el.textContent).toBe(hidden);

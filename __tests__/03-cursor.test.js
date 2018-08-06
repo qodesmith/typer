@@ -1,6 +1,6 @@
 const typer = require('../typer.min');
-const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time))
-  .then(() => document.querySelector('.typer'))
+const wait = require('../src/wait');
+const promise = (time = 100) => wait(time).then(() => document.querySelector('.typer'))
 
 describe('Testing the `.cursor` API', () => {
   beforeEach(() => {

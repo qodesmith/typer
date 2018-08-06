@@ -1,5 +1,5 @@
 const typer = require('../typer.min');
-const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time));
+const wait = require('../src/wait');
 const text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos asperiores aspernatur rerum voluptate nemo iusto animi! Modi ipsa, soluta rem nulla esse quibusdam fugit odit libero atque, nam repellat iste.';
 
 describe('Testing the `.kill` API', () => {
@@ -18,7 +18,7 @@ describe('Testing the `.kill` API', () => {
 
   test('Should remove the `data-typer` attribute from the parent element', () => {
     const t1 = typer('#test', 1).line(text);
-    return promise().then(() => {
+    return wait(100).then(() => {
       expect(document.querySelector('[data-typer]')).toBeTruthy();
       t1.kill();
       expect(document.querySelector('[data-typer]')).toBeNull();
@@ -27,7 +27,7 @@ describe('Testing the `.kill` API', () => {
 
   test('Should remove the `.typer` class', () => {
     const t1 = typer('#test', 1).line(text);
-    return promise().then(() => {
+    return wait(100).then(() => {
       expect(document.querySelector('.typer')).toBeTruthy();
       t1.kill();
       expect(document.querySelector('.typer')).toBeNull();
@@ -36,7 +36,7 @@ describe('Testing the `.kill` API', () => {
 
   test('Should remove the `.cursor-block` class from the element it\'s typing in', () => {
     const t1 = typer('#test', 1).cursor({ block: true }).line();
-    return promise().then(() => {
+    return wait(100).then(() => {
       expect(document.querySelector('.cursor-block')).toBeTruthy();
       t1.kill();
       expect(document.querySelector('.cursor-block')).toBeNull();
@@ -45,7 +45,7 @@ describe('Testing the `.kill` API', () => {
 
   test('Should remove the `.cursor-soft` class from the element it\'s typing in', () => {
     const t1 = typer('#test', 1).cursor({ blink: 'soft' }).line();
-    return promise().then(() => {
+    return wait(100).then(() => {
       expect(document.querySelector('.cursor-soft')).toBeTruthy();
       t1.kill();
       expect(document.querySelector('.cursor-soft')).toBeNull();
@@ -54,7 +54,7 @@ describe('Testing the `.kill` API', () => {
 
   test('Should remove the `.cursor-hard` class from the element it\'s typing in', () => {
     const t1 = typer('#test', 1).cursor({ blink: 'hard' }).line();
-    return promise().then(() => {
+    return wait(100).then(() => {
       expect(document.querySelector('.cursor-hard')).toBeTruthy();
       t1.kill();
       expect(document.querySelector('.cursor-hard')).toBeNull();
@@ -63,7 +63,7 @@ describe('Testing the `.kill` API', () => {
 
   test('Should remove the `.no-cursor` class from the element it\'s typing in', () => {
     const t1 = typer('#test', 1).cursor(false).line();
-    return promise().then(() => {
+    return wait(100).then(() => {
       expect(document.querySelector('.no-cursor')).toBeTruthy();
       t1.kill();
       expect(document.querySelector('.no-cursor')).toBeNull();
@@ -79,13 +79,13 @@ describe('Testing the `.kill` API', () => {
       .listen(eventName, '#test')
       .line('Hello world!');
 
-    return promise()
+    return wait(100)
       .then(() => {
         expect(test.textContent).toBe('');
         t1.kill();
         test.dispatchEvent(event);
       })
-      .then(() => promise())
+      .then(() => wait(100))
       .then(() => {
         expect(test.textContent).toBe('');
       })
@@ -94,7 +94,7 @@ describe('Testing the `.kill` API', () => {
   test('Calling any API method after `.kill` should result in a console warning', () => {
     const t1 = typer('#test', 1).line(text);
 
-    return promise()
+    return wait(100)
       .then(() => {
         t1.kill();     // Initial kill call.
         t1.line();     // 1
@@ -106,7 +106,9 @@ describe('Testing the `.kill` API', () => {
         t1.run();      // 7
         t1.end();      // 8
         t1.kill();     // 9
-        expect(global.console.warn).toHaveBeenCalledTimes(9);
+        t1.halt();     // 10
+        t1.resume();   // 11
+        expect(global.console.warn).toHaveBeenCalledTimes(11);
         expect(document.body.textContent.length).toBeTruthy();
       });
   });

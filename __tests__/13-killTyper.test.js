@@ -1,5 +1,5 @@
 const typer = require('../typer.min');
-const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time));
+const wait = require('../src/wait');
 const content = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sint fuga ad dolorum numquam placeat corporis omnis temporibus ab eius iure molestiae, dolore dignissimos. Distinctio vero ducimus odio numquam esse assumenda?';
 
 describe('Testing the `killTyper` feature', () => {
@@ -18,9 +18,9 @@ describe('Testing the `killTyper` feature', () => {
   test('`killTyper` should stop a single Typer dead in its tracks', () => {
     typer('#test1', 1).line(content);
 
-    return promise()
+    return wait(100)
       .then(() => killTyper())
-      .then(() => promise())
+      .then(() => wait(100))
       .then(() => {
         const text = document.querySelector('#test1').textContent;
 
@@ -37,9 +37,9 @@ describe('Testing the `killTyper` feature', () => {
     typer('#test3', 1).line(content);
     typer('#test4', 1).line(content);
 
-    return promise()
+    return wait(100)
       .then(() => killTyper())
-      .then(() => promise())
+      .then(() => wait(100))
       .then(() => {
         const text1 = document.querySelector('#test1').textContent;
         const text2 = document.querySelector('#test2').textContent;
