@@ -128,9 +128,11 @@ function typer(el, speed) {
     resume: function() {
       q.hault = false;
 
-      // `q.resume` is defined in `qIterator`.
+      // `q.resume` is defined in `qIterator`
+      // as well as in `processBack` => `looper`.
       if (!q.resume) return console.warn('You called ".resume" before calling ".hault".');
       q.resume();
+      q.resume = null;
     },
     kill
   };
@@ -318,7 +320,6 @@ function typer(el, speed) {
 
     if (q.hault) {
       q.resume = () => {
-        q.resume = null;
         q.iterator = setTimeout(func, time);
       }
 
@@ -550,7 +551,14 @@ function typer(el, speed) {
       let counter = 0;
       let contents = flattenContents(tempDiv || q.newDiv).reverse();
 
-      return function() {
+      return function backIterator() {
+        if (q.hault) {
+          q.resume = () => {
+            q.goBack = setInterval(backIterator, spd || speed);
+          };
+          return clearInterval(q.goBack);
+        }
+
         const node = contents[0];
         const isVoid = q.voids.includes(node.nodeName);
 
