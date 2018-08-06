@@ -123,6 +123,9 @@ function typer(el, speed) {
       return nullApi('end');
     },
     hault: function() {
+      const warning = `You can't call ".hault" while Typer is in %s mode.`;
+      if (q.pause) return console.warn(warning, 'pause');
+      if (q.listening) return console.warn(warning, 'listen');
       q.hault = true;
     },
     resume: function() {
@@ -472,6 +475,7 @@ function typer(el, speed) {
     clearInterval(q.type); // Stop the main iterator.
 
     q.pause = setTimeout(() => {
+      q.pause = null; // Allows `.hault` to know it's safe to do it's thing.
       q.item++; // Increment our main item counter.
       processq(); // Restart the main iterator.
     }, item.pause);
@@ -485,10 +489,12 @@ function typer(el, speed) {
   }
   function processListen(item) {
     clearInterval(q.type); // Stop the main iterator.
+    q.listening = true; // Allows `.hault` to know it's NOT sage to do it's thing.
 
     // One-time event listener.
     item.el.addEventListener(item.listen, handler);
     function handler(e) {
+      q.listening = false;
       item.el.removeEventListener(e.type, handler);
       if (q.killed) return; // Prevent error if kill switch is engaged.
       q.item++;
