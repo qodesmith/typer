@@ -22,7 +22,7 @@ class GenerateLicense {
       }, template)
 
       fs.writeFileSync(`${this.outputPath}/${this.outputName}`, license, 'utf8')
-      console.log('Generation complete!\n');
+      console.log('Generation complete!\n')
     })
   }
 }

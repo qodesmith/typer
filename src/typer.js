@@ -330,7 +330,7 @@ function typer(el, speed) {
     if (q.halt) {
       q.resume = () => {
         q.iterator = setTimeout(func, time);
-      }
+      };
 
       return;
     }
@@ -495,7 +495,7 @@ function typer(el, speed) {
   }
   function processListen(item) {
     clearInterval(q.type); // Stop the main iterator.
-    q.listening = true; // Allows `.halt` to know it's NOT sage to do it's thing.
+    q.listening = true; // Allows `.halt` to know it's NOT safe to do it's thing.
 
     // One-time event listener.
     item.el.addEventListener(item.listen, handler);
