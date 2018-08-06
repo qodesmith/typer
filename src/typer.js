@@ -31,7 +31,7 @@ function typer(el, speed) {
 
   // Public API methods.
   const typerObj = {
-    cursor: function(cursorObj) {
+    cursor: function(cursorObj = {}) {
       // Prevent cursor from being run multiple times.
       if (q.cursorRan) {
         console.warn('You can only call ".cursor" once.');
@@ -39,9 +39,6 @@ function typer(el, speed) {
       }
 
       q.cursorRan = true;
-
-      // Prevent errors from no arguments.
-      if (cursorObj === undefined) cursorObj = true;
 
       // No cursor.
       if (cursorObj === false) {
