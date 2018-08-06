@@ -657,6 +657,9 @@ function typer(el, speed) {
   // Used for both killing all Typers with the `killTyper` event
   // as well as killing Typer instances with the `.kill` method.
   function kill() {
+    // Ignore this method if it's being called at runtime.
+    if (!q.typing) return typerObj;
+
     // Remove listener added in `processListen` if Typer is in a listener state.
     currentListener.el &&
     currentListener.el.removeEventListener(currentListener.type, currentListener.fxn);
@@ -666,11 +669,6 @@ function typer(el, speed) {
     clearInterval(q.iterator); // From processMsg.
     clearInterval(q.goBack); // From processBack.
     clearTimeout(q.pause); // From processPause.
-
-    // This is necessary in case `.kill` is used in the initial chain of API methods.
-    // It would be pointless to do so since this achieves nothing:
-    // typer('#some-id').line('yo').kill();
-    q.length = 0;
 
     typerCleanup();
 
