@@ -12,7 +12,8 @@ class GenerateLicense {
 
   apply(compiler) {
     compiler.hooks.run.tap(pluginName, compilation => {
-      if (!this.template) return
+      if (!this.template) return console.log('\nSkipping license generation...\n')
+      console.log(`\nGenerating ${this.outputName}...`)
 
       const template = fs.readFileSync(this.template, 'utf8')
       const license = Object.keys(this.placeholders).reduce((content, placeholder) => {
@@ -21,6 +22,7 @@ class GenerateLicense {
       }, template)
 
       fs.writeFileSync(`${this.outputPath}/${this.outputName}`, license, 'utf8')
+      console.log('Generation complete!\n')
     })
   }
 }

@@ -35,6 +35,8 @@ In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/ht
 * [Run](#run)
 * [End](#end)
 * [Kill](#kill)
+* [Halt](#halt)
+* [Resume](#resume)
 * [Kill Switch](#kill-switch) (non-api feature)
 
 
@@ -551,6 +553,55 @@ const t2 = typer('#some-id-2').line('This is the second instance of Typer that w
 // after some time...
 
 t2.kill(); // <-- This instance will stop while 't1' remains unaffected.
+```
+
+
+* * *
+
+## Halt
+```javascript
+.halt()''
+```
+
+This method is like having a remote control that can stop Typer whenever you want. It's different than the pause method because `pause` needs to be declared at runtime. Once you've started the Typer process you can't "pause" it again with the `pause` method at will - it would have to have already been declared.
+
+With `halt`, you can stop Typer at will. The only catch is that if Typer is in a "pause" or "listen" state, `halt` will do nothing. Other than that, feel free to have at it!
+
+```javascript
+const t1 = typer('.some-class').line(aReallyLongString);
+
+// Wait 1 second and halt Typer in the middle of typing:
+setTimeout(() => t1.halt(), 1000);
+```
+
+
+* * *
+
+## Resume
+```javascript
+.resume()
+```
+
+This method - wait for it - _resumes_ Typer from where `halt` left off! It's easy peezy. Here's an example:
+
+```javascript
+const t1 = typer('.some-class').line(aReallyLongString);
+
+// Wait 1 second and halt Typer in the middle of typing:
+setTimeout(() => t1.halt(), 1000);
+
+// Go get a sandwich, stretch, come back...
+setTimeout(() => t1.resume(), 5000);
+```
+
+Here's an example of using a button to toggle between halting & resuming Typer:
+
+```javascript
+let halted = false;
+document.querySelector('.my-button').addEventListener('click', () => {
+  halted ? t1.resume() : t1.halt();
+  halted = !halted;
+});
 ```
 
 
