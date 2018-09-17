@@ -1,8 +1,14 @@
-require('../less/typer.less')
+// require('../less/typer.less')
 
 // https://goo.gl/MrXVRS - micro UUID!
 const uuid = a=>a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuid)
 const CLASS_NAMES = ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor']
+const CHARACTERS = ('abcdefghijklmnopqrstuvwxyz')
+  .split('')
+  .reduce((arr, char) => {
+    return [...arr, char, char.toUpperCase()]
+  }, [])
+  .concat('1234567890!@$^*()'.split(''))
 
 function typer(el, speed) {
   const q = [] // The main array to contain all the methods called on typer.
@@ -79,6 +85,18 @@ function typer(el, speed) {
       lineOrContinue('continue', msg, options)
       return this
     },
+    military: function(msg, options) {
+      lineOrContinue('military', msg, options)
+
+      // Push the first dominoe on the typing iteration,
+      // ensuring public methods will only call 'processq()' once.
+      if (!q.typing) {
+        q.typing = true
+        processq()
+      }
+
+      return this
+    },
     pause: function(num) {
       // Default to 500ms.
       q.push({ pause: +num || 500 })
@@ -123,7 +141,7 @@ function typer(el, speed) {
       return nullApi('end')
     },
     halt: function() {
-      // Ignore this method if it's being called at runtime.
+      // Ignore this method if it's being called prior to typing.
       if (!q.typing) return this
 
       const warning = `You can't call ".halt" while Typer is in %s mode.`
@@ -132,7 +150,7 @@ function typer(el, speed) {
       q.halt = true
     },
     resume: function() {
-      // Ignore this method if it's being called at runtime.
+      // Ignore this method if it's being called prior to typing.
       if (!q.typing) return this
 
       q.halt = false
@@ -215,16 +233,20 @@ function typer(el, speed) {
   function lineOrContinue(choice, msg, options) {
     const isLine = choice === 'line'
     const isCont = choice === 'continue'
+    const isMilitary = choice === 'military'
 
-    // No arguments passed
-    // Line: user requesting a blank line.
-    // Continue: ignore.
+    /*
+      No arguments passed:
+        * line - process as a blank line.
+        * continue - catch it here but ignore it completely.
+        * military - catch it here but ignore it completely.
+    */
     if (!msg && !options) {
       if (isLine) q.push({ line: 1 })
 
     // A single options argument has been passed.
     } else if (getType(msg) === 'Object') {
-      if (isLine || (isCont && msg.container)) q.push(setOptions(msg))
+      if (isLine || isMilitary || (isCont && msg.container)) q.push(setOptions(msg))
 
     // Content and a number for speed have been passed.
     // .line('some content', 100)
@@ -276,7 +298,7 @@ function typer(el, speed) {
       const item = q[q.item]
 
       // Various processing functions.
-      item.line ? processLine(item) :
+      item.line || item.military ? processLine(item) :
       item.continue ? processContinue(item) :
       item.pause ? processPause(item) :
       item.emit ? processEmit(item) :
@@ -301,9 +323,7 @@ function typer(el, speed) {
     // Create new div (or specified element).
     const div = document.createElement(item.element || 'div')
     div.setAttribute('data-typer-child', q.uuid)
-    div.className = q.cursor
-    div.classList.add('typer')
-    div.classList.add('white-space')
+    div.className = `${q.cursor} typer white-space`
 
     el.appendChild(div)
     q.newDiv = div
@@ -333,24 +353,25 @@ function typer(el, speed) {
     q.iterator = setTimeout(func, time)
   }
   function processMsg(item) { // Used by 'processLine' & 'processContinue'.
-    const msg = item.line || item.continue
-    const div = document.createElement('div')
+    const msg = item.line || item.continue || item.military
+    const div = document.createElement('div') // Used as a temporary object to play with.
 
-    if (Array.isArray(msg)) return typeArrays(item.html)
+    if (Array.isArray(msg)) return typeArrays()
 
     div.innerHTML = msg
     item.html ? html() : plain()
 
     // Executed if arrays of strings are provided.
-    function typeArrays(html) {
+    // Military typing will not occur.
+    function typeArrays() {
       let counter = 0
       const itemSpeed = item.totalTime ? (item.totalTime / msg.length) : item.speed
 
       function doStuff() {
         const content = msg[counter++]
 
-        div.textContent = content
-        q.newDiv.innerHTML += html ? content : div.innerHTML
+        div.textContent = content // Use the div to possibly escape any HTML into pure text.
+        q.newDiv.innerHTML += item.html ? content : div.innerHTML
 
         if (counter === msg.length) {
           moveOn()
@@ -372,18 +393,26 @@ function typer(el, speed) {
       const itemSpeed = item.totalTime ? (item.totalTime / obj.content.length) : item.speed
 
       function doStuff() {
+        // Text node - finished typing.
+        if (obj.content && textCounter === obj.content.length) {
+          textCounter = 0
+          obj = list[objCounter++]
+        }
+
         // Finished processing everything.
         if (!obj) return moveOn()
 
         // Text node.
         if (obj.content) {
-          obj.parent.innerHTML += obj.content[textCounter++]
-
-          // Finished typing.
-          if (textCounter === obj.content.length) {
-            textCounter = 0
-            obj = list[objCounter++]
+          // Military.
+          if (item.military) {
+            return military(obj.parent, obj.content[textCounter++], () => {
+              qIterator(itemSpeed, doStuff)
+            })
           }
+
+          // Non-military.
+          obj.parent.innerHTML += obj.content[textCounter++]
 
         // Void & non-void element nodes.
         } else {
@@ -433,8 +462,7 @@ function typer(el, speed) {
       return arr
     }
 
-    // Executed if non-HTML content is provided.
-    // Only if `html: false` has been provided.
+    // Executed only if `html: false` has been provided, since html is the default.
     function plain() {
       let counter = 0
       const itemSpeed = item.totalTime ? (item.totalTime / msg.length) : item.speed
@@ -444,6 +472,13 @@ function typer(el, speed) {
         if (counter === msg.length) return moveOn()
 
         let piece = msg[counter]
+
+        if (item.military) {
+          return military(q.newDiv, piece, () => {
+            counter++
+            qIterator(itemSpeed, doStuff)
+          })
+        }
 
         // Avoid HTML parsing on supplied arrays.
         if (getType(msg) !== 'String') {
@@ -457,6 +492,32 @@ function typer(el, speed) {
       }
 
       qIterator(itemSpeed, doStuff)
+    }
+
+    function randomChar() {
+      return CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)]
+    }
+
+    function military(elem, content, cb) {
+      let counter = 0
+
+      // First run only.
+      elem.innerHTML += randomChar()
+
+      q.military = setInterval(() => {
+        // Last iteration only.
+        if (counter === 3) {
+          elem.innerHTML = elem.innerHTML.slice(0, -1) + content
+          clearInterval(q.military)
+          return cb()
+
+        // In-between iterations.
+        } else {
+          elem.innerHTML = elem.innerHTML.slice(0, -1) + randomChar()
+        }
+
+        counter++
+      }, 50)
     }
 
     // Stop the typing iteration & move on to our main iteration.
@@ -690,4 +751,4 @@ function typer(el, speed) {
   return typerObj
 }
 
-module.exports = typer
+// module.exports = typer
