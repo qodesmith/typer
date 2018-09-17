@@ -260,7 +260,7 @@ function typer(el, speed) {
     }
 
     function setOptions(opts = {}, message) {
-      const container = opts.container
+      const { container, totalTime, military } = opts
 
       // `content` is only used when the user has provided
       // a single options argument to `.line`.
@@ -270,10 +270,11 @@ function typer(el, speed) {
 
       return {
         [choice]: message || content,
-        totalTime: opts.totalTime,
         speed: checkSpeed(opts),
         html: opts.html === false ? false : true, // Default true.
-        element: isLine ? opts.element : null
+        element: isLine ? opts.element : null,
+        totalTime,
+        military
       }
     }
   }
@@ -298,8 +299,9 @@ function typer(el, speed) {
       const item = q[q.item]
 
       // Various processing functions.
-      item.line || item.military ? processLine(item) :
-      item.continue ? processContinue(item) :
+      item.line ? processLine(item) :
+      item.continue ? processContinue(item) : // Continue's may have a military option. That will be caught here.
+      item.military ? processLine(item) :
       item.pause ? processPause(item) :
       item.emit ? processEmit(item) :
       item.listen ? processListen(item) :
