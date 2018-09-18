@@ -193,6 +193,18 @@ function typer(el, speed) {
 
     throw 'You have provided an invalid value for speed.'
   }
+  function checkMilitary(thing) { // Military defaults set here as well.
+    if (!thing) return null
+    if (+thing) return { speed: +thing, chars: 3 }
+    if (getType(thing) === 'Object') {
+      return {
+        speed: +thing.speed || 50,
+        chars: +thing.chars || 3
+      }
+    }
+
+    throw 'You have provided an invalid value for military.'
+  }
   function typerCleanup(fxn, e) {
     q.style && q.style.remove()
     q.newDiv && classNameCleanup() // Finalize the div class names before ending.
@@ -233,20 +245,18 @@ function typer(el, speed) {
   function lineOrContinue(choice, msg, options) {
     const isLine = choice === 'line'
     const isCont = choice === 'continue'
-    const isMilitary = choice === 'military'
 
     /*
       No arguments passed:
         * line - process as a blank line.
         * continue - catch it here but ignore it completely.
-        * military - catch it here but ignore it completely.
     */
     if (!msg && !options) {
       if (isLine) q.push({ line: 1 })
 
     // A single options argument has been passed.
     } else if (getType(msg) === 'Object') {
-      if (isLine || isMilitary || (isCont && msg.container)) q.push(setOptions(msg))
+      if (isLine || (isCont && msg.container)) q.push(setOptions(msg))
 
     // Content and a number for speed have been passed.
     // .line('some content', 100)
@@ -273,8 +283,8 @@ function typer(el, speed) {
         speed: checkSpeed(opts),
         html: opts.html === false ? false : true, // Default true.
         element: isLine ? opts.element : null,
-        totalTime,
-        military
+        military: checkMilitary(military),
+        totalTime
       }
     }
   }
@@ -300,8 +310,7 @@ function typer(el, speed) {
 
       // Various processing functions.
       item.line ? processLine(item) :
-      item.continue ? processContinue(item) : // Continue's may have a military option. That will be caught here.
-      item.military ? processLine(item) :
+      item.continue ? processContinue(item) :
       item.pause ? processPause(item) :
       item.emit ? processEmit(item) :
       item.listen ? processListen(item) :
@@ -355,7 +364,7 @@ function typer(el, speed) {
     q.iterator = setTimeout(func, time)
   }
   function processMsg(item) { // Used by 'processLine' & 'processContinue'.
-    const msg = item.line || item.continue || item.military
+    const msg = item.line || item.continue
     const div = document.createElement('div') // Used as a temporary object to play with.
 
     if (Array.isArray(msg)) return typeArrays()
@@ -502,13 +511,14 @@ function typer(el, speed) {
 
     function military(elem, content, cb) {
       let counter = 0
+      const { speed, chars } = item.military
 
       // First run only.
       elem.innerHTML += randomChar()
 
       q.military = setInterval(() => {
         // Last iteration only.
-        if (counter === 3) {
+        if (counter === chars) {
           elem.innerHTML = elem.innerHTML.slice(0, -1) + content
           clearInterval(q.military)
           return cb()
@@ -519,7 +529,7 @@ function typer(el, speed) {
         }
 
         counter++
-      }, 50)
+      }, speed)
     }
 
     // Stop the typing iteration & move on to our main iteration.
