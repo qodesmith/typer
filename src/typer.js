@@ -153,6 +153,10 @@ function typer(el, speed) {
       // Ignore this method if it's being called prior to typing.
       if (!q.typing) return this
 
+      // Do nothing if Typer has finished typing.
+      // `q.complete` is defined in `processq`.
+      if (q.complete) return
+
       q.halt = false
 
       // `q.resume` is defined in `qIterator`
@@ -290,7 +294,10 @@ function typer(el, speed) {
   }
   function processq() { // Begin our main iterator.
     if (!(q.item >= 0)) q.item = 0
-    if (q.item === q.length) return body.removeEventListener('killTyper', kill)
+    if (q.item === q.length) { // We've reached the end without interruption.
+      q.complete = true
+      return body.removeEventListener('killTyper', kill)
+    }
     if (!q.ks) {
       q.ks = true
       body.addEventListener('killTyper', kill)
