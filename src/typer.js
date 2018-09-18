@@ -1,14 +1,9 @@
-// require('../less/typer.less')
+require('../less/typer.less')
 
 // https://goo.gl/MrXVRS - micro UUID!
 const uuid = a=>a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuid)
 const CLASS_NAMES = ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor']
-const CHARACTERS = ('abcdefghijklmnopqrstuvwxyz')
-  .split('')
-  .reduce((arr, char) => {
-    return [...arr, char, char.toUpperCase()]
-  }, [])
-  .concat('1234567890!@$^*()'.split(''))
+const CHARACTERS = ('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@$^*()').split('')
 
 function typer(el, speed) {
   const q = [] // The main array to contain all the methods called on typer.
@@ -771,4 +766,4 @@ function typer(el, speed) {
   return typerObj
 }
 
-// module.exports = typer
+module.exports = typer
