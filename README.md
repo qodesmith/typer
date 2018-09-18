@@ -14,7 +14,7 @@
 
 Typer.js is an easy to use, choc-full-of-options, robust automated typing library. There are a number of [methods](#methods) with various options for you to impress your friends, have a parade thrown in your name, and officially obtain "that guy" status ("that gal" for the ladies).
 
-Typer.js has **no library dependencies** so just slap it on your page and go. We still love you, [jQuery](https://cdnjs.com/libraries/jquery/). And the minified file is only 3k gzipped!
+Typer.js has **no library dependencies** so just slap it on your page and go. We still love you, [jQuery](https://cdnjs.com/libraries/jquery/). And the minified file is only 4k gzipped!
 
 In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/html5/html-author/charref) [characters](http://unicode-table.com/en/), whole words, half words, HTML elements, erase stuff, go fast, go slow, make new lines, fire events, listen to events, run functions, and make julienne fries in minutes.
 
@@ -80,7 +80,7 @@ Files & locations:
 
 |     File     |          Location          |           Description               |
 | ------------ | -------------------------- | --------------------------------    |
-| typer.min.js | node_modules/typer-js/     | minified main file (3k gzipped!)    |
+| typer.min.js | node_modules/typer-js/     | minified main file (4k gzipped!)    |
 | typer.css    | node_modules/typer-js/     | stylesheet necessary for the cursor |
 | typer.less   | node_modules/typer-js/less | less: use it for your own builds    |
 
@@ -233,10 +233,16 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
   element: 'span',
   totalTime: 3500 // Take 3.5 seconds to type it all out.
 });
+.line('MISSION ACCOMPLISHED', { // Military typing!
+  military: {
+    chars: 5,
+    speed: 50
+  }
+})
 ```
 
 The `.line` method is at the heart of Typer. As the name suggests, it types out a single line.
-You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an [options object](#options-1) containing at least a `container` property. `.line` defaults to parsing HTML, so you must explicitly tell it not to within the [options object](#options-1).
+You can feed it a `'single string'`, an `['array', 'of', 'strings']`, or an [options object](#options-1) containing at least a `container` property. `.line` defaults to parsing HTML, so you must explicitly tell it *not* to within the [options object](#options-1).
 
 ### Arguments
 
@@ -291,7 +297,7 @@ We all want our robot overlord's to be more, uh, human. And so Typer delivers! T
 
 When using an options object as the 2nd argument to `.line`, the speed property is usually accompanied by other options, such as `html` or `element`.
 
-_Note: the_ `speed` _option will take priority over_ `min` _and_ `max` _if they are all provided. For example, if your options look like_ `{speed: 50, min: 10, max: 300}`_, Typer will only process_ `speed`.
+_NOTE: the_ `speed` _option will take priority over_ `min` _and_ `max` _if they are all provided. For example, if your options look like_ `{speed: 50, min: 10, max: 300}`_, Typer will only process_ `speed`.
 
 #### totalTime
 
@@ -307,7 +313,29 @@ _Note: the_ `speed` _option will take priority over_ `min` _and_ `max` _if they 
 
 Instead of specifying how _fast_ you want things to type, with the `totalTime` option you specifiy how _long_ you want it to take.
 
-_Note: the_ `totalTime` _option will take priority over all other speed-related options. For example, if your options look like_ `{speed: 50, min: 10, max: 300, totalTime: 3000}`_, all the other speed-related options will be ignored and Typer will only process_ `totalTime`.
+_NOTE: the_ `totalTime` _option will take priority over all other speed-related options. For example, if your options look like_ `{speed: 50, min: 10, max: 300, totalTime: 3000}`_, all the other speed-related options will be ignored and Typer will only process_ `totalTime`.
+
+#### military
+
+*Values*:
+  * `number`
+  * `object`
+
+```javascript
+.line('A number representing speed of change', {military: 50});
+.line('Speed of change <strong>and</strong> # of characters:', {military: {speed: 50, chars: 5}});
+.line(["Doesn't", ' work', ' with', ' arrays.'], {military: 25}); // No effect.
+```
+
+Atteeeeeeeen-tion! I geek out about this one. What the military option does is for each character that needs to be typed it first scrolls through typing out a handful of random characters in its place.
+
+Passing a number represents the *scrolling speed* - how fast the random characters will change.
+
+Passing an object let's you specify the scrolling `speed` and how many random characters (`chars`) will be scrolled before typing the actual content you supplied and moving on.
+
+_NOTE: When supplying an array to be typed, the_ `military` _option will be ignored._
+
+_NOTE: Because it takes time to scroll through random characters before something is typed out, timing options such as_ `totalTime` _will be affected._
 
 #### html
 
@@ -416,7 +444,7 @@ Some examples to dispel confusion (hopefully):
 });
 ```
 
-The `.continue` method works just like `.line` in that it accepts the same arguments but it *continues* typing on the same line, whereas `.line` creates new lines. In conjunction with the `.pause` and `.line` methods, you can create eloborate schemes. You can feed `.continue` the same content (HTML, unicode, etc.) as `.line`.
+The `.continue` method works just like `.line` in that it accepts all the same arguments & options but it *continues* typing on the same line, whereas `.line` creates new lines. In conjunction with the `.pause` and `.line` methods, you can create eloborate schemes. You can feed `.continue` the same content (HTML, unicode, etc.) as `.line`.
 
 ### Arguments
 

@@ -4,7 +4,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   mode: 'production',
-  // entry: path.resolve(__dirname, 'src/typer.js'),
   entry: path.resolve(__dirname, 'src/typer.js'),
   target: 'web', // Default.
   output: {
@@ -29,7 +28,6 @@ module.exports = {
       {
         test: /typer.less/,
         use: [
-          'style-loader',
           {
             loader: MiniCssExtractPlugin.loader
           },
