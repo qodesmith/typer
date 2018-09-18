@@ -28,7 +28,6 @@ module.exports = {
       {
         test: /typer.less/,
         use: [
-          'style-loader',
           {
             loader: MiniCssExtractPlugin.loader
           },
