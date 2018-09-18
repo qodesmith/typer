@@ -729,6 +729,7 @@ function typer(el, speed) {
     clearInterval(q.type) // `q.type` from various process[method] functions.
     clearInterval(q.iterator) // From processMsg.
     clearInterval(q.goBack) // From processBack.
+    clearInterval(q.military) // From processMsg.
     clearTimeout(q.pause) // From processPause.
 
     typerCleanup()
