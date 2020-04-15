@@ -1,14 +1,15 @@
 require('../less/typer.less')
 
-// https://goo.gl/MrXVRS - micro UUID!
+// https://bit.ly/2Xmuwqf - micro UUID!
 const uuid = a=>a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuid)
 const CLASS_NAMES = ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor']
-const CHARACTERS = ('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@$^*()').split('')
+const CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@$^*()'
 
 function typer(el, speed) {
-  const q = [] // The main array to contain all the methods called on typer.
+  const q = [] // The main array to contain all the items from methods called on typer.
   const body = document.body // Cache the body.
   let currentListener = {} // Listeners provided by the `.listen` method.
+  let repeatId = 0 // Giving each call to `.repeat` a unique id. Used in `processRepeat`.
 
   // Throws an error if el isn't a string selector or HTML element.
   if (checkSelector(el) === 'String') el = document.querySelector(el)
@@ -20,7 +21,7 @@ function typer(el, speed) {
   speed = checkSpeed(speed)
   q.speedSet = true
 
-  // List of HTML void elements (https://goo.gl/h1WX8R),
+  // List of HTML void elements (https://bit.ly/3a76HZc),
   // used in 'processMsg' & 'processBack'.
   q.voids = ['AREA','BASE','BR','COL','COMMAND','EMBED','HR','IMG','INPUT','KEYGEN','LINK','META','PARAM','SOURCE','TRACK','WBR']
 
@@ -51,7 +52,7 @@ function typer(el, speed) {
       const { color, blink, block } = cursorObj
       const cursor = []
 
-      // Optional cursor color - https://goo.gl/b4Ckz9
+      // Optional cursor color - https://bit.ly/2K4tIRT
       if (color) addStyle(`[data-typer="${q.uuid}"] .typer::after`, `background-color:${color}`)
 
       // Cursor's blinking style - default to soft.
@@ -160,6 +161,10 @@ function typer(el, speed) {
       q.resume()
       q.resume = null
     },
+    repeat: function(num, empty) {
+      q.push({ repeat: true, num, empty, id: repeatId++ })
+      return this
+    },
     kill
   }
 
@@ -229,9 +234,9 @@ function typer(el, speed) {
   function randomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
-  function addStyle(selector, rules) { // https://goo.gl/b4Ckz9
+  function addStyle(selector, rules) { // https://bit.ly/2K4tIRT
     q.style = document.createElement('style') // Create the style element.
-    q.style.appendChild(document.createTextNode('')) // Webkit hack - https://goo.gl/b4Ckz9
+    q.style.appendChild(document.createTextNode('')) // Webkit hack - https://bit.ly/2K4tIRT
     document.head.appendChild(q.style) // Append the style element to the head.
     const sheet = document.styleSheets[document.styleSheets.length - 1]
 
@@ -319,6 +324,7 @@ function typer(el, speed) {
       item.back ? processBack(item) :
       item.empty ? processEmpty() :
       item.run ? processRun(item) :
+      item.repeat ? processRepeat(item) :
       item.end && processEnd(item)
     }, 0)
   }
@@ -708,6 +714,27 @@ function typer(el, speed) {
 
     run(el)
     q.item++
+    processq()
+  }
+  function processRepeat(item) {
+    // This function mutates the original object!
+    clearInterval(q.type)
+
+    if (item.empty) el.innerHTML = ''
+    if (item.num) {
+      // Decrement our repeat counter.
+      item.num--
+
+      const previousRepeatIndex = q.findIndex(({repeat, id}) => repeat && id === item.id - 1)
+
+      // Set our main counter back for the last found
+      q.item = previousRepeatIndex > -1 ? previousRepeatIndex : 0
+      console.log(q.item)
+    } else {
+      q.item++ // Repeating is over, continue to the next item.
+    }
+
+    // Continue the main iterator.
     processq()
   }
   function processEnd() {
