@@ -729,7 +729,6 @@ function typer(el, speed) {
 
       // Set our main counter back for the last found
       q.item = previousRepeatIndex > -1 ? previousRepeatIndex : 0
-      console.log(q.item)
     } else {
       q.item++ // Repeating is over, continue to the next item.
     }
