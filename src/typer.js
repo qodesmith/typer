@@ -725,10 +725,10 @@ function typer(el, speed) {
       // Decrement our repeat counter.
       item.num--
 
-      const previousRepeatIndex = q.findIndex(({repeat, id}) => repeat && id === item.id - 1)
+      const previousRepeatIndex = q.findIndex(({repeat, id}) => repeat && id === item.id - 1) + 1
 
-      // Set our main counter back for the last found
-      q.item = previousRepeatIndex > -1 ? previousRepeatIndex : 0
+      // Set our main counter back to the
+      q.item = previousRepeatIndex
     } else {
       q.item++ // Repeating is over, continue to the next item.
     }
