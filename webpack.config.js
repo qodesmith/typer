@@ -2,8 +2,8 @@ const path = require('path')
 const GenerateLicense = require('./src/generate-license-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-module.exports = {
-  mode: 'production',
+module.exports = (env, argv) => ({
+  mode: env.prod ? 'production' : 'development',
   entry: path.resolve(__dirname, 'src/typer.js'),
   target: 'web', // Default.
   output: {
@@ -52,4 +52,4 @@ module.exports = {
       }
     })
   ]
-}
+})
