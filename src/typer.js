@@ -725,6 +725,11 @@ function typer(el, speed) {
       // Decrement our repeat counter.
       item.num--
 
+      /*
+        Find the previous index. We should start "repeating" at the item *after* this index.
+        Since `findIndex` resolves to -1 when nothing is found, the `+ 1` at the end resolves
+        this to 0, allowing us to start from the very beginning.
+      */
       const previousRepeatIndex = q.findIndex(({repeat, id}) => repeat && id === item.id - 1) + 1
 
       // Set our main counter back to the
