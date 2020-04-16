@@ -37,6 +37,7 @@ In short... Typer.js can type regular characters, [unicode](http://dev.w3.org/ht
 * [Kill](#kill)
 * [Halt](#halt)
 * [Resume](#resume)
+* [Repeat](#repeat)
 * [Kill Switch](#kill-switch) (non-api feature)
 
 
@@ -111,14 +112,14 @@ Now you can begin calling Typer's various [methods](#methods) via simple & sexy 
 ```javascript
 // Type in the body element.
 typer('body')
-  .line('Typer.js is awesome!');
+  .line('Typer.js is awesome!')
 
 // Same example with a DOM element and humanized speed.
 typer(document.body, {min: 20, max: 350})
-  .line('Humanizing the speed will look more, uh, human.');
+  .line('Humanizing the speed will look more, uh, human.')
 
 // Providing a DOM element and speed.
-const element = document.querySelector('#some-id');
+const element = document.querySelector('#some-id')
 typer(element, 100)
   .line('Using a DOM element as the 1st argument works!')
 ```
@@ -129,7 +130,7 @@ typer(element, 100)
 typer('.some-class')
   .line('This function roolz.')
   .back(5)
-  .continue('ules!');
+  .continue('ules!')
 ```
 
 #### Type a list of frameworks with the help of pause & back:
@@ -142,17 +143,28 @@ typer('#some-id')
   .continue('Angular')
   .pause(1000)
   .back('all')
-  .continue('React!!');
+  .continue('React!!')
 ```
 
 #### Multi-line typing:
 
 ```javascript
-const element = document.querySelector('.my-element');
+const element = document.querySelector('.my-element')
 typer(element)
   .line('How cool is this?')
   .line('So very cool.')
-  .line('Agreed!');
+  .line('Agreed!')
+```
+
+#### Repeat automatically:
+
+```javascript
+// Repeat something forever.
+typer('.some-class')
+  .line('I love JavaScript.')
+  .pause(1000)
+  .back('all')
+  .repeat(Infinity)
 ```
 
 * * *
@@ -166,7 +178,7 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 ### No cursor
 
 ```javascript
-.cursor(false);
+.cursor(false)
 ```
 
 ### Options
@@ -174,7 +186,7 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 #### block
 
 ```javascript
-.cursor({block: true});
+.cursor({ block: true })
 ```
 
 *   `false` - (default) The cursor will be a standard vertical line.
@@ -183,7 +195,7 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 #### blink
 
 ```javascript
-.cursor({blink: 'hard'});
+.cursor({ blink: 'hard' });
 ```
 
 *   `'soft'` - (default) Smooth blinking animation.
@@ -193,10 +205,10 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 
 ```javascript
 // Examples.
-.cursor({color: 'red'});
-.cursor({color: '#ff0000'});
-.cursor({color: 'rgb(255,0,0)'});
-.cursor({color: 'rgba(255,0,0,0.7)'});
+.cursor({ color: 'red' })
+.cursor({ color: '#ff0000' })
+.cursor({ color: 'rgb(255,0,0)' })
+.cursor({ color: 'rgba(255,0,0,0.7)' })
 ```
 
 *   You can specify any css color you want via any method (i.e. name, rgb, hsla, etc.).
@@ -205,7 +217,7 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 #### _all options at once_
 
 ```javascript
-.cursor({block: true, blink: 'hard', color: 'red'});
+.cursor({ block: true, blink: 'hard', color: 'red' })
 ```
 
 * * *
@@ -215,24 +227,24 @@ The `.cursor` method takes a single argument: `false` _or_ `{an: object}`. You c
 ```javascript
 // Examples.
 .line() // Creates a blank line.
-.line('Typer.js is visual awesomeness!');
-.line('Typer.js is visual <em>awesomeness!</em>', 100);
-.line(['Type. ', 'Whole. ', '<span style="color: yellow;">Words.</span>'], 200);
+.line('Typer.js is visual awesomeness!')
+.line('Typer.js is visual <em>awesomeness!</em>', 100)
+.line(['Type. ', 'Whole. ', '<span style="color: yellow;">Words.</span>'], 200)
 .line('Typer can "humanize" the speed with min & max values.', {
   min: 30,
   max: 350,
   element: 'p',
   html: false
-});
+})
 .line('Typer.js is <span style="color: red">visual</span> awesomeness!', {
   speed: 150,
   element: 'span'
-});
+})
 .line({ // Grab content from a hidden div & type it. #SEO!!!
   container: '.hidden-content',
   element: 'span',
   totalTime: 3500 // Take 3.5 seconds to type it all out.
-});
+})
 .line('MISSION ACCOMPLISHED', { // Military typing!
   military: {
     chars: 5,
@@ -267,8 +279,8 @@ _* NOTE: If you're passing in an options object to argument 1, argument 2 will b
   * `element` - a DOM element
 
 ```javascript
-.line({container: '.hidden-content'}); // Valid CSS selector.
-.line({container: document.body}); // Valid DOM element.
+.line({ container: '.hidden-content' }) // Valid CSS selector.
+.line({ container: document.body }) // Valid DOM element.
 ```
 
 **SEO** in the house! You can tell `.line` to use the contents of a pre-existing element on the page. So, for instance, you can hide a paragraph of text with CSS (`display: none`) which will still be indexed by search engines and use it to feed Typer! Amazing.
@@ -278,8 +290,8 @@ _* NOTE: If you're passing in an options object to argument 1, argument 2 will b
 *Value*: `number`
 
 ```javascript
-.line({container: '.hidden-content', min: 30, max: 350 });
-.line('Humanize the speed of typing stuff', {min: 30, max: 350});
+.line({ container: '.hidden-content', min: 30, max: 350 })
+.line('Humanize the speed of typing stuff', { min: 30, max: 350 })
 ```
 
 We all want our robot overlord's to be more, uh, human. And so Typer delivers! Typer has the ability to _"humanize"_ the typing speed. Provide `min` and `max` properties which define a _range_ within which Typer will pick a random number for each character's typing speed. Voila. It's like a real person typing. Only not.
@@ -289,10 +301,10 @@ We all want our robot overlord's to be more, uh, human. And so Typer delivers! T
 *Value*: `number`
 
 ```javascript
-.line({container: '.hidden-content', speed: 50});
-.line('The speed property is usually specified with other options.', {speed: 100, html: false});
-.line("Just use a plain number if you're only specififying speed.", 100);
-.line('However, this will work just fine.', {speed: 100});
+.line({ container: '.hidden-content', speed: 50 })
+.line('The speed property is usually specified with other options.', { speed: 100, html: false })
+.line("Just use a plain number if you're only specififying speed.", 100)
+.line('However, this will work just fine.', { speed: 100 })
 ```
 
 When using an options object as the 2nd argument to `.line`, the speed property is usually accompanied by other options, such as `html` or `element`.
@@ -304,11 +316,11 @@ _NOTE: the_ `speed` _option will take priority over_ `min` _and_ `max` _if they 
 *Value*: `number`
 
 ```javascript
-.line({container: '.hidden-content', totalTime: 4500});
-.line('This should take 3 seconds to type', {totalTime: 3000});
-.line('This line is much longer but will also only take 3 seconds to type.', {totalTime: 3000});
-.line(['Works', ' with', ' arrays.'], {totalTime: 2000});
-.line('And <strong>HTML</strong> too!', {totalTime: 1500});
+.line({ container: '.hidden-content', totalTime: 4500 })
+.line('This should take 3 seconds to type', { totalTime: 3000 })
+.line('This line is much longer but will also only take 3 seconds to type.', { totalTime: 3000 })
+.line(['Works', ' with', ' arrays.'], { totalTime: 2000 })
+.line('And <strong>HTML</strong> too!', { totalTime: 1500 })
 ```
 
 Instead of specifying how _fast_ you want things to type, with the `totalTime` option you specifiy how _long_ you want it to take.
@@ -322,9 +334,9 @@ _NOTE: the_ `totalTime` _option will take priority over all other speed-related 
   * `object`
 
 ```javascript
-.line('A number representing speed of change', {military: 50});
-.line('Speed of change <strong>and</strong> # of characters:', {military: {speed: 50, chars: 5}});
-.line(["Doesn't", ' work', ' with', ' arrays.'], {military: 25}); // No effect.
+.line('A number representing speed of change', { military: 50 })
+.line('Speed of change <strong>and</strong> # of characters:', { military: { speed: 50, chars: 5 } })
+.line(["Doesn't", ' work', ' with', ' arrays.'], { military: 25 }) // No effect.
 ```
 
 Atteeeeeeeen-tion! I geek out about this one. What the military option does is for each character that needs to be typed it first scrolls through typing out a handful of random characters in its place.
@@ -344,9 +356,9 @@ _NOTE: Because it takes time to scroll through random characters before somethin
   * `false`
 
 ```javascript
-.line({container: '.hidden-content', html: false});
-.line('Do <em>not</em> process this as html.', {html: false});
-.line("No need to tell <strong>Typer</strong> to process html since that's the default.");
+.line({ container: '.hidden-content', html: false })
+.line('Do <em>not</em> process this as html.', { html: false })
+.line("No need to tell <strong>Typer</strong> to process html since that's the default.")
 ```
 
 Typer can handle html, unicode, and all sorts of craziness ([see below](#html--unicode)). It defaults to processing contents as html so you need to explicitly tell it _not_ to.
@@ -370,11 +382,11 @@ The following code...
 ```javascript
 typer('body')
   .line('<em>How will I look?</em>')
-  .line('<em>How will I look?</em>', {html: false})
+  .line('<em>How will I look?</em>', { html: false })
   .line('Cookies & milk')
   .line('Cookies &amp; milk')
-  .line('Cookies &amp; milk', {html: false})
-  .line('The &#9992; flies &#8593; in the sky.');
+  .line('Cookies &amp; milk', { html: false })
+  .line('The &#9992; flies &#8593; in the sky.')
 ```
 
 will result in this output on the screen:
@@ -427,21 +439,21 @@ Some examples to dispel confusion (hopefully):
 
 ```javascript
 // Examples.
-.continue("I'm on the same line!");
-.continue(' Same line, emphasis on <em>sloooow</em>.', 500);
-.continue(" Now let's <strong>ignore</strong> <em>html</em>", {html: false});
-.continue(' Type more like a human would!', {min: 30, max: 350});
-.continue([' Whole sentence at once.']);
+.continue("I'm on the same line!")
+.continue(' Same line, emphasis on <em>sloooow</em>.', 500)
+.continue(" Now let's <strong>ignore</strong> <em>html</em>", { html: false })
+.continue(' Type more like a human would!', { min: 30, max: 350 })
+.continue([' Whole sentence at once.'])
 .continue({
   container: '.hidden-div', // This property is mandatory when using a single options object.
   speed: 500,
   html: false
-});
+})
 .continue({
   container: document.querySelector('.hidden-div'),
   min: 30,
   max: 350
-});
+})
 ```
 
 The `.continue` method works just like `.line` in that it accepts all the same arguments & options but it *continues* typing on the same line, whereas `.line` creates new lines. In conjunction with the `.pause` and `.line` methods, you can create eloborate schemes. You can feed `.continue` the same content (HTML, unicode, etc.) as `.line`.
@@ -461,8 +473,8 @@ _* NOTE:_ `.continue` _will ignore the_ `container` _property._
 
 ```javascript
 // Examples.
-.pause(); // 500ms default time.
-.pause(1000);
+.pause() // 500ms default time.
+.pause(1000)
 ```
 
 The `.pause` method takes a single argument, a number in milliseconds. Typer will wait that long before proceeding to the next called method. If no argument is provided, the default is 500.
@@ -474,10 +486,10 @@ The `.pause` method takes a single argument, a number in milliseconds. Typer wil
 
 ```javascript
 // Examples.
-let element = document.querySelector('#some-id');
-.emit('boom'); // Fires off the body.
-.emit('boom', '.some-class'); // Fires off a specific element (string selector).
-.emit('boom', element); // Fires off a specific element (element provided).
+let element = document.querySelector('#some-id')
+.emit('boom') // Fires off the body.
+.emit('boom', '.some-class') // Fires off a specific element (string selector).
+.emit('boom', element) // Fires off a specific element (element provided).
 ```
 
 Emits an event on a specified DOM element or defaults to the `body`. This is useful for setting up complex automation scenarios where multiple Typer functions (or other functions on your page) are time-dependant on eachother. DOM event explosions causing mass automated awesomeness. What could be better?
@@ -494,10 +506,10 @@ Emits an event on a specified DOM element or defaults to the `body`. This is use
 
 ```javascript
 // Examples.
-let element = document.querySelector('#some-id');
-.listen('boom'); // Listens on the body.
-.listen('boom', '.some-class'); // Listens on a specific element (string selector).
-.listen('boom', element); // Listens on a specific element (element provided).
+let element = document.querySelector('#some-id')
+.listen('boom') // Listens on the body.
+.listen('boom', '.some-class') // Listens on a specific element (string selector).
+.listen('boom', element) // Listens on a specific element (element provided).
 ```
 
 Typer has the ability (read: super-power) to listen for events as well. The `.listen` method will stop Typer in its tracks until the specified event is fired. Once fired, Typer will proceed from where it last left off. More automation goodness.
@@ -515,7 +527,7 @@ _* NOTE: Typer uses **one-time event** listeners. Once the event is fired the li
 ## EMPTY
 
 ```javascript
-.empty();
+.empty()
 ```
 
 The `.empty` method empties the parent element (specified as the 1st argument to `typer`) and *starts over with a fresh line*.
@@ -528,8 +540,8 @@ The parent element could contain multiple lines and HTML elements, the likes of 
 ## RUN
 
 ```javascript
-.run(function() { /* do stuff */ });
-.run(function(el) { /* do stuff with access to parent element */ });
+.run(function() { /* do stuff */ })
+.run(function(el) { /* do stuff with access to parent element */ })
 ```
 
 To round out our automation tools, the `.run` method will do just that: run a function before proceeding with any additional methods. Feed it a function and let it fly.
@@ -543,12 +555,12 @@ The `.run` method exposes the parent element that Typer is currently typing in t
 ## END
 
 ```javascript
-.end();
-.end(true); // Fire off the `typerFinished` event.
-.end(true, function() { /* do stuff */ }); // Event fired.
-.end(function() { /* do stuff */ });
-.end(function() { /* do stuff */ }, true); // Event fired.
-.end(function(el) { /* do stuff with access to parent element */ }, true); // Event fired.
+.end()
+.end(true) // Fire off the `typerFinished` event.
+.end(true, function() { /* do stuff */ }) // Event fired.
+.end(function() { /* do stuff */ })
+.end(function() { /* do stuff */ }, true) // Event fired.
+.end(function(el) { /* do stuff with access to parent element */ }, true) // Event fired.
 ```
 
 ### Arguments
@@ -567,7 +579,7 @@ As with the `.run` method above, `.end` exposes the parent element that Typer is
 ## KILL
 
 ```javascript
-.kill();
+.kill()
 ```
 
 The `.kill` method will terminate an individual Typer instance. It takes no arguments. This feature is useful when you want to ensure a Typer instance is no longer running, perhaps in a single-page application when the view changes. You can also use the Kill Switch (below) to terminate *all* instances at once. This method also cleans up any and all event listeners that the instance produced.
@@ -575,20 +587,20 @@ The `.kill` method will terminate an individual Typer instance. It takes no argu
 _* NOTE: Chaining any other methods after_ `.kill` _will produce no effect._
 
 ```javascript
-const t1 = typer('#some-id-1').line('This is the first instance of Typer.');
-const t2 = typer('#some-id-2').line('This is the second instance of Typer that we want to kill.');
+const t1 = typer('#some-id-1').line('This is the first instance of Typer.')
+const t2 = typer('#some-id-2').line('This is the second instance of Typer that we want to kill.')
 
 // after some time...
 
-t2.kill(); // <-- This instance will stop while 't1' remains unaffected.
+t2.kill() // <-- This instance will stop while 't1' remains unaffected.
 ```
 
 
 * * *
 
-## Halt
+## HALT
 ```javascript
-.halt()''
+.halt()
 ```
 
 This method is like having a remote control that can stop Typer whenever you want. It's different than the pause method because `pause` needs to be declared at runtime. Once you've started the Typer process you can't "pause" it again with the `pause` method at will - it would have to have already been declared.
@@ -596,16 +608,16 @@ This method is like having a remote control that can stop Typer whenever you wan
 With `halt`, you can stop Typer at will. The only catch is that if Typer is in a "pause" or "listen" state, `halt` will do nothing. Other than that, feel free to have at it!
 
 ```javascript
-const t1 = typer('.some-class').line(aReallyLongString);
+const t1 = typer('.some-class').line(aReallyLongString)
 
 // Wait 1 second and halt Typer in the middle of typing:
-setTimeout(() => t1.halt(), 1000);
+setTimeout(() => t1.halt(), 1000)
 ```
 
 
 * * *
 
-## Resume
+## RESUME
 ```javascript
 .resume()
 ```
@@ -613,13 +625,13 @@ setTimeout(() => t1.halt(), 1000);
 This method - wait for it - _resumes_ Typer from where `halt` left off! It's easy peezy. Here's an example:
 
 ```javascript
-const t1 = typer('.some-class').line(aReallyLongString);
+const t1 = typer('.some-class').line(aReallyLongString)
 
 // Wait 1 second and halt Typer in the middle of typing:
-setTimeout(() => t1.halt(), 1000);
+setTimeout(() => t1.halt(), 1000)
 
 // Go get a sandwich, stretch, come back...
-setTimeout(() => t1.resume(), 5000);
+setTimeout(() => t1.resume(), 5000)
 ```
 
 Here's an example of using a button to toggle between halting & resuming Typer:
@@ -627,10 +639,30 @@ Here's an example of using a button to toggle between halting & resuming Typer:
 ```javascript
 let halted = false;
 document.querySelector('.my-button').addEventListener('click', () => {
-  halted ? t1.resume() : t1.halt();
-  halted = !halted;
-});
+  halted ? t1.resume() : t1.halt()
+  halted = !halted
+})
 ```
+
+
+* * *
+
+## REPEAT
+
+```javascript
+.repeat(Infinity) // Repeat forever.
+.repeat(3) // Repeat 3 times.
+.repeat(3, true) // Repeat 3 times, clearing the contents each time.
+```
+
+There are times where you want to continuously repeat a set of instructions. While you could [achieve this](https://github.com/qodesmith/typer/issues/16#issuecomment-343333356) on your own, Typer includes the `.repeat` method to allow you to do this programmatically.
+
+_* NOTE: Repeat is really meant to be called last. If you call it more than once in your setup, each repeat will start repeating instructions from the last repeat or the beginning - whichever comes first._
+
+### Arguments
+
+1. Argument 1: `number` - how many times you want to repeat the prior commands.
+2. Argument 2: `boolean` - (optional) indicates wether to clear the contents before repeating or not.
 
 
 * * *
@@ -651,8 +683,8 @@ This is an example function you can use to flip the kill switch:
 
 ``` javascript
 function killTyper() {
-  const kill = new Event('killTyper');
-  document.body.dispatchEvent(kill);
+  const kill = new Event('killTyper')
+  document.body.dispatchEvent(kill)
 }
 ```
 
