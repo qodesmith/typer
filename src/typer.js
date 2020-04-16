@@ -161,8 +161,8 @@ function typer(el, speed) {
       q.resume()
       q.resume = null
     },
-    repeat: function(num, empty) {
-      q.push({ repeat: true, num, empty, id: repeatId++ })
+    repeat: function(num, shouldEmpty) {
+      q.push({ repeat: true, num, shouldEmpty, id: repeatId++ })
       return this
     },
     kill
@@ -720,7 +720,7 @@ function typer(el, speed) {
     // This function mutates the original object!
     clearInterval(q.type)
 
-    if (item.empty) el.innerHTML = ''
+    if (item.shouldEmpty) el.innerHTML = ''
     if (item.num) {
       // Decrement our repeat counter.
       item.num--
@@ -732,7 +732,7 @@ function typer(el, speed) {
       */
       const previousRepeatIndex = q.findIndex(({repeat, id}) => repeat && id === item.id - 1) + 1
 
-      // Set our main counter back to the
+      // Reset our main counter.
       q.item = previousRepeatIndex
     } else {
       q.item++ // Repeating is over, continue to the next item.
