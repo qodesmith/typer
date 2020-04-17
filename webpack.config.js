@@ -56,12 +56,11 @@ module.exports = (env, argv) => ({
         }
       },
       {
-        test: /typer.less/,
+        test: /typer.css/,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
-          'postcss-loader',
-          'less-loader'
+          'postcss-loader'
         ]
       }
     ]

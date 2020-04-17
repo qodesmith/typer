@@ -1,16 +1,16 @@
 .typer {
   position: relative;
   min-height: 2ex;
+}
 
-  &::after {
-    content: '';
-    position: absolute;
-    display: inline-block;
-    width: 0.1em;
-    height: 1.1em;
-    background-color: currentColor;
-    margin-left: 0.1em;
-  }
+.typer::after {
+  content: '';
+  position: absolute;
+  display: inline-block;
+  width: 0.1em;
+  height: 1.1em;
+  background-color: currentColor;
+  margin-left: 0.1em;
 }
 
 .cursor-block::after {
