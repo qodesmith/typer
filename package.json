@@ -11,7 +11,7 @@
   "main": "typer.min.js",
   "scripts": {
     "test": "jest",
-    "build": "webpack",
+    "build": "webpack --mode production --env.prod",
     "start": "webpack-dev-server --mode development --env.dev --progress"
   },
   "author": "Qodesmith",
