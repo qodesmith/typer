@@ -1,5 +1,6 @@
 window.x = typer('section', 5)
   .cursor({block: true})
   .line('JavaScript')
+  .line('JavaScript')
   .pause(1000)
-  .repeat(1)
+  // .repeat(1)
