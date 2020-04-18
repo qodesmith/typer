@@ -38,7 +38,7 @@ function typer(el, speed) {
 
       // Optional cursor color - https://bit.ly/2K4tIRT
       if (color) {
-        cursorStylesheet = addStyle(`[data-typer="${q.uuid}"] .typer::after`, `background-color:${color}`)
+        cursorStylesheet = addStyle(`[data-typer="${q.uuid}"] .qs-typer::after`, `background-color:${color}`)
       }
 
       // Cursor's blinking style - default to soft.

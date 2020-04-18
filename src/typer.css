@@ -1,9 +1,9 @@
-.typer {
+.qs-typer {
   position: relative;
   min-height: 2ex;
 }
 
-.typer::after {
+.qs-typer::after {
   content: '';
   position: absolute;
   display: inline-block;
@@ -13,33 +13,33 @@
   margin-left: 0.1em;
 }
 
-.cursor-block::after {
+.qs-cursor-block::after {
   width: 0.9ex;
 }
 
-.cursor-soft::after {
-  animation: softblink 0.7s infinite;
+.qs-cursor-soft::after {
+  animation: qs-softblink 0.7s infinite;
 }
 
-.cursor-hard::after {
-  animation: hardblink 0.7s infinite;
+.qs-cursor-hard::after {
+  animation: qs-hardblink 0.7s infinite;
 }
 
-.no-cursor::after {
+.qs-no-cursor::after {
   content: none;
 }
 
-.white-space {
+.qs-white-space {
   white-space: pre-wrap;
 }
 
-@keyframes softblink {
+@keyframes qs-softblink {
   0% { opacity: 1; }
   50% { opacity: 0; }
   100% { opacity: 1; }
 }
 
-@keyframes hardblink {
+@keyframes qs-hardblink {
   0% { opacity: 1; }
   49% { opacity: 1; }
   50% { opacity: 0; }
