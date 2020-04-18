@@ -21,7 +21,21 @@ function typer(el, speed) {
   ////////////////
 
   const typerObj = {
-    cursor(options) {
+    line(msg, options) {
+      addToQueue(lineOrContinue('line', msg, options))
+      return this
+    },
+    continue(msg, options) {
+      addToQueue(lineOrContinue('line', msg, options))
+      return this
+    },
+
+
+    //////////////////////////////////////////
+    // Methods that don't add to the queue. //
+    //////////////////////////////////////////
+
+    cursor(options = {}) {
       // The .line & .continue methods will always use the current q.cursor value.
 
       // Reset any previous cursor styles set.
@@ -58,8 +72,122 @@ function typer(el, speed) {
   // HELPER FUNCTIONS //
   //////////////////////
 
+  /*
+    Removes any stylehseets appended to the <head>.
+    Used in the .cursor method.
+  */
   function removeCursorStylesheet() {
     if (cursorStylesheet) cursorStylesheet.remove()
+  }
+
+  function addToQueue(item) {
+    // Add item to the queue.
+    if (item != null) q.push(item)
+
+    // Trigger the iterator.
+  }
+
+  // Called by `.line` and `.continue`.
+  function lineOrContinue(type, msg, options) {
+    const isLine = type === 'line'
+    const isContinue = type === 'continue'
+
+    /*
+      No arguments passed:
+        * line - process as a blank line.
+        * continue - catch it here but ignore it completely.
+    */
+    if (!msg && !options)  return isLine ? { line: 1 } : null
+
+    // A single options argument has been passed.
+    if (getType(msg) === 'Object') {
+      return (isLine || (isCont && msg.container)) ? setOptions(msg) : null
+    }
+
+    /*
+      Content and a number for speed have been passed.
+        * .line('some content', 100)
+        * .continue('some content', 100)
+    */
+    if (!isNaN(options)) {
+      return {
+        [choice]: msg,
+        speed: sanitizeSpeed(options),
+        html: true
+      }
+    }
+
+    // Message, with or without options.
+    return setOptions(options, msg)
+
+
+    function setOptions(opts = {}, message) {
+      const { container, totalTime, military } = opts
+
+      /*
+        `content` is only used when the user has provided
+        a single options argument to `.line`.
+      */
+      const content = !message && (
+        getType(container) === 'String'
+          ? document.querySelector(container).textContent // A selector was provided.
+          : container.textContent // A DOM element was provided.
+      )
+
+      return {
+        [choice]: message || content,
+        speed: sanitizeSpeed(opts),
+        html: opts.html === false ? false : true, // Default true.
+        element: isLine ? opts.element : null,
+        military: sanitizeMilitary(military),
+        totalTime
+      }
+    }
+  }
+
+  /*
+    Returns the type of a value as a string.
+    getType([]) => '[object Array]' => 'Array'
+  */
+  function getType(value) {
+    return ({}).toString.call(value).slice(8, -1)
+  }
+
+  // Checks the possible values concerning speed & returns it.
+  function sanitizeSpeed(spd) {
+    const type = getType(spd)
+
+    if (spd === undefined) return q.speedSet ? speed : 70 // Default `speed` (in top scope).
+    if (type === 'Number' && !isNaN(spd)) return spd
+    if (type === 'Object') {
+      const hasMin = spd.hasOwnProperty('min')
+      const hasMax = spd.hasOwnProperty('max')
+      const hasSpeed = spd.hasOwnProperty('speed')
+
+      if (hasSpeed && !isNaN(spd.speed)) return spd.speed
+      if (hasMin && hasMax && spd.min < spd.max) return spd
+      if (!Object.keys(spd).length && q.speedSet) return speed // `speed` in top scope.
+      if (!hasMin && !hasMax && !hasSpeed) return speed // `speed` in top scope.
+    }
+
+    throw 'You have provided an invalid value for speed.'
+  }
+
+  /*
+    Checks for valid military values and returns it.
+    Military defaults set here as well.
+  */
+  function sanitizeMilitary(value) {
+    if (!value) return null
+    if (+value) return { speed: +value, chars: 3 }
+    if (getType(value) === 'Object') {
+      return {
+        speed: +value.speed || 50,
+        chars: +value.chars || 3
+      }
+    }
+
+    throw 'You have provided an invalid value for military.'
   }
 }
 
