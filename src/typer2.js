@@ -10,10 +10,20 @@ function typer(el, speed) {
   const q = []
 
   // Assign this instance of Typer a unique id.
-  q.uuid = uuid()
+  const uid = uuid()
 
   // Cursor stylesheet added to the head. Used in .cursor method and removeCursorStylesheet.
   let cursorStylesheet
+
+
+  ///////////////////
+  // VARIOUS FLAGS //
+  ///////////////////
+
+  let cursor = '' // The class name used for the cursor.
+  let speedHasBeenSet = false // Indicates wether we've set the speed for Typer or not.
+  let qIterating // Indicates wether Typer is currently busy or not.
+  let qIndex = 0 // What position in the queue we're currently at.
 
 
   ////////////////
@@ -36,32 +46,32 @@ function typer(el, speed) {
     //////////////////////////////////////////
 
     cursor(options = {}) {
-      // The .line & .continue methods will always use the current q.cursor value.
+      // The .line & .continue methods will always use the current cursor value.
 
       // Reset any previous cursor styles set.
       removeCursorStylesheet()
 
       // The user specified they don't want a cursor.
       if (options === false) {
-        q.cursor = 'qs-no-cursor' // Used as a class name.
+        cursor = 'qs-no-cursor' // Used as a class name.
         return this
       }
 
       const { color, blink, block } = options
-      const cursor = []
+      const newCursor = []
 
       // Optional cursor color - https://bit.ly/2K4tIRT
       if (color) {
-        cursorStylesheet = addStyle(`[data-typer="${q.uuid}"] .qs-typer::after`, `background-color:${color}`)
+        cursorStylesheet = addStyle(`[data-typer="${uid}"] .qs-typer::after`, `background-color:${color}`)
       }
 
       // Cursor's blinking style - default to soft.
-      cursor.push(`qs-cursor-${blink === 'hard' ? 'hard' : 'soft'}`)
+      newCursor.push(`qs-cursor-${blink === 'hard' ? 'hard' : 'soft'}`)
 
       // Cursor: block or line.
       if (block === true) cursor.push('qs-cursor-block')
 
-      q.cursor = cursor.join(' ') // Used as a class.
+      cursor = newCursor.join(' ') // Used as a class.
 
       return this
     }
@@ -80,11 +90,16 @@ function typer(el, speed) {
     if (cursorStylesheet) cursorStylesheet.remove()
   }
 
+  // Adds items to the queue and starts the iterator.
   function addToQueue(item) {
+    // If this is the first time adding to the queue, set the starting item to 0.
+    if (qIndex == null) qIndex = 0
+
     // Add item to the queue.
     if (item != null) q.push(item)
 
     // Trigger the iterator.
+    typerIterator()
   }
 
   // Called by `.line` and `.continue`.
@@ -101,7 +116,7 @@ function typer(el, speed) {
 
     // A single options argument has been passed.
     if (getType(msg) === 'Object') {
-      return (isLine || (isCont && msg.container)) ? setOptions(msg) : null
+      return (isLine || (isContinue && msg.container)) ? setOptions(msg) : null
     }
 
     /*
@@ -157,7 +172,7 @@ function typer(el, speed) {
   function sanitizeSpeed(spd) {
     const type = getType(spd)
 
-    if (spd === undefined) return q.speedSet ? speed : 70 // Default `speed` (in top scope).
+    if (spd === undefined) return speedHasBeenSet ? speed : 70 // Default `speed` (in top scope).
     if (type === 'Number' && !isNaN(spd)) return spd
     if (type === 'Object') {
       const hasMin = spd.hasOwnProperty('min')
@@ -166,7 +181,7 @@ function typer(el, speed) {
 
       if (hasSpeed && !isNaN(spd.speed)) return spd.speed
       if (hasMin && hasMax && spd.min < spd.max) return spd
-      if (!Object.keys(spd).length && q.speedSet) return speed // `speed` in top scope.
+      if (!Object.keys(spd).length && speedHasBeenSet) return speed // `speed` in top scope.
       if (!hasMin && !hasMax && !hasSpeed) return speed // `speed` in top scope.
     }
 
@@ -188,6 +203,21 @@ function typer(el, speed) {
     }
 
     throw 'You have provided an invalid value for military.'
+  }
+
+
+  ///////////////////
+  // MAIN ITERATOR //
+  ///////////////////
+
+  function typerIterator() {
+    // Don't do anything if Typer is in the middle of something.
+    if (qIterating) return
+
+    // Set a flag indicating Typer is busy.
+    qIterating = true
+
+    const itemToProcess = q[qIndex]
   }
 }
 
