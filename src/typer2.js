@@ -268,6 +268,12 @@ function typer(el, speed) {
   /*
     Recursive iteration via `.line` and `.continue`.
     Handles the speed given as an object or number.
+    This is a generic helper function that any part of the code can use to recusively "doStuff".
+    The provided callback function (`func`) is responsible for recursively calling `qIterator`.
+    `qIterator` is responsible for storing the setTimeout fxn in the `timeout` variable
+    to allow Typer to `.halt` progress and `.resume` exactly where it left off.
+    At any given point in time there should only be one iteration happening which
+    allows us to confidently use the `timeout` variable as described.
   */
   function qIterator(func, spd) {
     const isObject = getType(spd) === 'Object'
@@ -287,6 +293,10 @@ function typer(el, speed) {
   // MAIN ITERATOR //
   ///////////////////
 
+  /*
+    This function doesn't explicitly use setTimeout or setInterval.
+    Iteration is done by recursion within `qIterator`, called by all the process functions.
+  */
   function typerIterator() {
     // Don't do anything if Typer is in the middle of something.
     if (qIterating) return
