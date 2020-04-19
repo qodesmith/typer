@@ -1,3 +1,5 @@
+require('./typer.css')
+
 // https://bit.ly/2Xmuwqf - micro UUID!
 const uuid = a=>a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuid)
 const CLASS_NAMES = ['qs-typer', 'qs-cursor-block', 'qs-cursor-soft', 'qs-cursor-hard', 'qs-no-cursor']
@@ -19,7 +21,7 @@ function typer(el, speed) {
 
   let speedSet = false // Indicates wether speed was already set for this Typer.
   let cursorStylesheet // Cursor stylesheet added to the head. Used in .cursor method and removeCursorStylesheet.
-  let cursor = '' // The class name used for the cursor.
+  let cursor = 'qs-cursor-soft' // The class name used for the cursor.
   let speedHasBeenSet = false // Indicates wether we've set the speed for Typer or not.
   let qIterating = false // Indicates wether Typer is currently busy or not.
   let qIndex = 0 // What position in the queue we're currently at.
@@ -90,7 +92,7 @@ function typer(el, speed) {
       newCursor.push(`qs-cursor-${blink === 'hard' ? 'hard' : 'soft'}`)
 
       // Cursor: block or line.
-      if (block === true) cursor.push('qs-cursor-block')
+      if (block === true) newCursor.push('qs-cursor-block')
 
       cursor = newCursor.join(' ') // Used as a class.
 
@@ -179,7 +181,7 @@ function typer(el, speed) {
     */
     if (!isNaN(options)) {
       return {
-        [choice]: msg,
+        [type]: msg,
         speed: sanitizeSpeed(options),
         html: true
       }
@@ -203,7 +205,7 @@ function typer(el, speed) {
       )
 
       return {
-        [choice]: message || content,
+        [type]: message || content,
         speed: sanitizeSpeed(opts),
         html: opts.html === false ? false : true, // Default true.
         element: isLine ? opts.element : null,
@@ -321,14 +323,14 @@ function typer(el, speed) {
     // Process the previous line if there was one.
     if (newElem) {
       classNameCleanup()
-      newElem.classList.add('white-space')
+      newElem.classList.add('qs-white-space')
       if (!newElem.innerHTML) newElem.innerHTML = ' ' // Retains the height of a single line.
     }
 
     // Create new div (or specified element).
     newElem = document.createElement(item.element || 'div')
-    newElem.setAttribute('data-typer-child', q.uuid)
-    newElem.className = `${q.cursor} typer white-space`
+    newElem.setAttribute('data-typer-child', uid)
+    newElem.className = `${cursor} qs-typer qs-white-space`
 
     // Append this new element to Typer's container.
     el.appendChild(newElem)
@@ -336,7 +338,8 @@ function typer(el, speed) {
     // The user requested an empty line.
     if (item.line === 1) {
       qIndex++
-      return processq()
+      qIterating = false
+      return typerIterator()
     }
 
     // Message iterator - used by `processContinue` as well.
@@ -362,6 +365,7 @@ function typer(el, speed) {
       let counter = 0
       const itemSpeed = item.totalTime ? (item.totalTime / msg.length) : item.speed
 
+      // Encapsulate functionality so `qIterator` can call it recusively.
       function doStuff() {
         const content = msg[counter++]
 
@@ -375,7 +379,7 @@ function typer(el, speed) {
         }
       }
 
-      qIterator(doStuff, itemSpeed)
+      doStuff()
     }
 
     /*
@@ -389,6 +393,7 @@ function typer(el, speed) {
       let obj = list[objCounter++]
       const itemSpeed = item.totalTime ? (item.totalTime / obj.content.length) : item.speed
 
+      // Encapsulate functionality so `qIterator` can call it recusively.
       function doStuff() {
         // Text node - finished typing.
         if (obj.content && textCounter === obj.content.length) {
@@ -420,7 +425,7 @@ function typer(el, speed) {
         qIterator(doStuff, itemSpeed)
       }
 
-      qIterator(doStuff, itemSpeed)
+      doStuff()
     }
 
     // Called by the `html` function above.
@@ -464,6 +469,7 @@ function typer(el, speed) {
       let counter = 0
       const itemSpeed = item.totalTime ? (item.totalTime / msg.length) : item.speed
 
+      // Encapsulate functionality so `qIterator` can call it recusively.
       function doStuff() {
         // End of message processing logic.
         if (counter === msg.length) return moveOn()
@@ -488,7 +494,7 @@ function typer(el, speed) {
         qIterator(doStuff, itemSpeed)
       }
 
-      qIterator(doStuff, itemSpeed)
+      doStuff()
     }
 
     function randomChar() {
@@ -502,6 +508,7 @@ function typer(el, speed) {
       // First run only.
       elem.innerHTML += randomChar()
 
+      // Encapsulate functionality so `qIterator` can call it recusively.
       function doStuff() {
         // Last iteration only.
         if (counter === chars) {
@@ -517,13 +524,13 @@ function typer(el, speed) {
         qIterator(doStuff, speed)
       }
 
-      qIterator(doStuff, speed)
+      doStuff()
     }
 
     // Stop the typing iteration & move on to our main iteration.
     function moveOn() {
-      // clearTimeout(timeout) // TODO: DO WE NEED THIS???
       qIndex++ // Increment our main item counter.
+      qIterating = false // Tell `typerIterator` we're done processing this set of instructions.
       return typerIterator() // Restart the main iterator.
     }
   }
