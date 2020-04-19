@@ -26,10 +26,12 @@ function typer(el, speed) {
   let qIterating = false // Indicates wether Typer can process the next set of instructions or not.
   let qIndex = 0 // What position in the queue we're currently at.
   let newElem // The element that Typer will use to type contents in.
-  let isHalted = false // Interupts any iteration.
+  let halted = false // Interupts any iteration.
   let resumeFromHalt // A fxn that resumes Typer from where it was last halted.
   let timeout // Used to store the current timeout function running from Typer's iteration.
   let processingQueue = false // Indicates wether Typer is processing the queue as a whole. This is `true` from beginning to end.
+  let paused = false // Indicates Typer is in a paused state. Prevents `.halt` from being called.
+  let listening = false // Indicated Typer is in a listening state. Prevents `.halt` from being called.
 
 
   ////////////////////
@@ -61,6 +63,10 @@ function typer(el, speed) {
     },
     continue(msg, options) {
       addToQueue(lineOrContinue('continue', msg, options))
+      return this
+    },
+    pause(num) {
+      addToQueue({ pause: +num || 500 }) // `.pause()` defaults to 500ms.
       return this
     },
 
@@ -109,16 +115,16 @@ function typer(el, speed) {
       // Ignore this method if it's being called prior to typing.
       if (!processingQueue) return
 
-      // const warning = `You can't call ".halt" while Typer is in %s mode.`
-      // if (q.pause) return console.warn(warning, 'pause')
-      // if (q.listening) return console.warn(warning, 'listen')
-      isHalted = true
+      const warning = `You can't call ".halt" while Typer is in %s mode.`
+      if (paused) return console.warn(warning, 'pause')
+      if (listening) return console.warn(warning, 'listen')
+      halted = true
     },
     resume() {
       // Ignore this method if it's being called prior to typing or before `.halt`.
       if (!processingQueue || !resumeFromHalt) return
 
-      isHalted = false
+      halted = false
 
       // `resumeFromHalt` is set in `qIterator`.
       resumeFromHalt()
@@ -307,7 +313,7 @@ function typer(el, speed) {
     const time = isObject ? randomNum(spd.min, spd.max) : spd
     const runTimeout = () => timeout = setTimeout(func, time)
 
-    if (isHalted) {
+    if (halted) {
       resumeFromHalt = runTimeout
     } else {
       runTimeout()
@@ -361,7 +367,8 @@ function typer(el, speed) {
 
     // Decide which type of item we need to process and call the relevant function.
     item.line ? processLine(item) :
-    item.continue && processContinue(item)
+    item.continue ? processContinue(item) :
+    item.pause && processPause(item)
   }
 
 
@@ -587,6 +594,15 @@ function typer(el, speed) {
       qIterating = false // Tell `typerIterator` we're done processing this set of instructions.
       typerIterator() // Restart the main iterator.
     }
+  }
+
+  function processPause(item) {
+    paused = true
+
+    qIterator(() => {
+      paused = false // Allows `.halt` to know it's safe to do it's thing.
+      moveOn() // Continue with processing Typer's queue.
+    }, item.pause)
   }
 
 
