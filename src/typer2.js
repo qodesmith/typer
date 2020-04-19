@@ -59,7 +59,7 @@ function typer(el, speed) {
       return this
     },
     continue(msg, options) {
-      addToQueue(lineOrContinue('line', msg, options))
+      addToQueue(lineOrContinue('continue', msg, options))
       return this
     },
 
@@ -296,6 +296,7 @@ function typer(el, speed) {
   /*
     This function doesn't explicitly use setTimeout or setInterval.
     Iteration is done by recursion within `qIterator`, called by all the process functions.
+    The process functions are responsible for recursively calling `qIterator`.
   */
   function typerIterator() {
     // Don't do anything if Typer is in the middle of something.
@@ -356,7 +357,9 @@ function typer(el, speed) {
     processMessage(item)
   }
 
-  function processContinue(item) {}
+  function processContinue(item) {
+    processMessage(item)
+  }
 
   function processMessage(item) { // Used by 'processLine' & 'processContinue'.
     const msg = item.line || item.continue
@@ -541,7 +544,7 @@ function typer(el, speed) {
     function moveOn() {
       qIndex++ // Increment our main item counter.
       qIterating = false // Tell `typerIterator` we're done processing this set of instructions.
-      return typerIterator() // Restart the main iterator.
+      typerIterator() // Restart the main iterator.
     }
   }
 
