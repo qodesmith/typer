@@ -23,12 +23,13 @@ function typer(el, speed) {
   let cursorStylesheet // Cursor stylesheet added to the head. Used in .cursor method and removeCursorStylesheet.
   let cursor = 'qs-cursor-soft' // The class name used for the cursor.
   let speedHasBeenSet = false // Indicates wether we've set the speed for Typer or not.
-  let qIterating = false // Indicates wether Typer is currently busy or not.
+  let qIterating = false // Indicates wether Typer can process the next set of instructions or not.
   let qIndex = 0 // What position in the queue we're currently at.
   let newElem // The element that Typer will use to type contents in.
   let isHalted = false // Interupts any iteration.
   let resumeFromHalt // A fxn that resumes Typer from where it was last halted.
   let timeout // Used to store the current timeout function running from Typer's iteration.
+  let processingQueue = false // Indicates wether Typer is processing the queue as a whole. This is `true` from beginning to end.
 
 
   ////////////////////
@@ -97,6 +98,31 @@ function typer(el, speed) {
       cursor = newCursor.join(' ') // Used as a class.
 
       return this
+    },
+
+
+    ////////////////////////////////////
+    // Methods that aren't chainable. //
+    ////////////////////////////////////
+
+    halt() {
+      // Ignore this method if it's being called prior to typing.
+      if (!processingQueue) return
+
+      // const warning = `You can't call ".halt" while Typer is in %s mode.`
+      // if (q.pause) return console.warn(warning, 'pause')
+      // if (q.listening) return console.warn(warning, 'listen')
+      isHalted = true
+    },
+    resume() {
+      // Ignore this method if it's being called prior to typing or before `.halt`.
+      if (!processingQueue || !resumeFromHalt) return
+
+      isHalted = false
+
+      // `resumeFromHalt` is set in `qIterator`.
+      resumeFromHalt()
+      resumeFromHalt = null
     }
   }
 
@@ -288,6 +314,18 @@ function typer(el, speed) {
     }
   }
 
+  /*
+    Helper function to move the iteration process of processing instructions along.
+    Increments the item index.
+    Tells `typerIterator` we're done with the current set of instructions.
+    Calls `typerIterator` again.
+  */
+ function moveOn() {
+  qIndex++ // Increment our main item counter.
+  qIterating = false // Tell `typerIterator` we're done processing this set of instructions.
+  typerIterator() // Restart the main iterator.
+}
+
 
   ///////////////////
   // MAIN ITERATOR //
@@ -299,7 +337,13 @@ function typer(el, speed) {
     The process functions are responsible for recursively calling `qIterator`.
   */
   function typerIterator() {
-    // Don't do anything if Typer is in the middle of something.
+    /*
+      Set a flag indicating we're processing a set of instructions.
+      We'll only set this to false once we've processed the entire queue.
+    */
+    if (!processingQueue) processingQueue = true
+
+    // Don't do anything if Typer is in the middle of processing an item in the queue.
     if (qIterating) return
 
     // Set a flag indicating Typer is busy.
@@ -310,7 +354,8 @@ function typer(el, speed) {
 
     // If there's no item to process, exit.
     if (!item) {
-      qIterating = false
+      qIterating = false // We're NOT processing a particular item in the queue.
+      processingQueue = false // We're NOT processing the queue - i.e., we're done!
       return
     }
 
@@ -347,11 +392,7 @@ function typer(el, speed) {
     el.appendChild(newElem)
 
     // The user requested an empty line.
-    if (item.line === 1) {
-      qIndex++
-      qIterating = false
-      return typerIterator()
-    }
+    if (item.line === 1) return moveOn()
 
     // Message iterator - used by `processContinue` as well.
     processMessage(item)
