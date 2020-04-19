@@ -6,8 +6,10 @@ window.go = () => {
   window.x = t('section', 10)
     .line(text.slice(0, 20))
     .line('Pause after this line')
-    .pause(2000)
-    .line('test')
+    .pause()
+    .line('Next, listen for an event before proceeding.')
+    .listen('test')
+    .line(`Successfully listened to event!`)
 }
 
 window.go2 = () => {

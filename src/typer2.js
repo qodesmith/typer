@@ -19,6 +19,11 @@ function typer(el, speed) {
   // VARIOUS FLAGS & CONTAINERS //
   ////////////////////////////////
 
+  /*
+    It's easier to reason about Typer's internals by getting a birds eye view
+    of all the flags / containers that the library uses.
+  */
+
   let speedSet = false // Indicates wether speed was already set for this Typer.
   let cursorStylesheet // Cursor stylesheet added to the head. Used in .cursor method and removeCursorStylesheet.
   let cursor = 'qs-cursor-soft' // The class name used for the cursor.
@@ -31,7 +36,9 @@ function typer(el, speed) {
   let timeout // Used to store the current timeout function running from Typer's iteration.
   let processingQueue = false // Indicates wether Typer is processing the queue as a whole. This is `true` from beginning to end.
   let paused = false // Indicates Typer is in a paused state. Prevents `.halt` from being called.
-  let listening = false // Indicated Typer is in a listening state. Prevents `.halt` from being called.
+  let listening = false // Indicates Typer is in a listening state. Prevents `.halt` from being called.
+  let currentListener // Used to store info about the event listener associated with a `.listen()` call. `.kill()` uses this for clean up.
+  let killed = false // Indicates wether this Typer instance has been killed or not.
 
 
   ////////////////////
@@ -67,6 +74,16 @@ function typer(el, speed) {
     },
     pause(num) {
       addToQueue({ pause: +num || 500 }) // `.pause()` defaults to 500ms.
+      return this
+    },
+    listen(eventName, element) {
+      if (!element) {
+        element = document.body
+      } else if (checkSelector(element) === 'String') {
+        element = document.querySelector(element)
+      }
+
+      q.push({ listen: eventName, el: element })
       return this
     },
 
@@ -138,8 +155,14 @@ function typer(el, speed) {
   //////////////////////
 
   // Checks for a valid selector.
-  function checkSelector(thing) {
-    const type = getType(thing)
+  function checkSelector(value) {
+    const type = getType(value)
+
+    /*
+      E.x.:
+        const div = document.createElement('div')
+        getType(div) => '[object HTMLDivElement]' => 'HTMLDivElement'
+    */
     if (type.slice(0, 4).toLowerCase() !== 'html' && type !== 'String') {
       throw "You need to provide a string selector, such as '.some-class', or an html element."
     }
@@ -311,7 +334,9 @@ function typer(el, speed) {
     const isObject = getType(spd) === 'Object'
     const randomNum = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
     const time = isObject ? randomNum(spd.min, spd.max) : spd
-    const runTimeout = () => timeout = setTimeout(func, time)
+    const runTimeout = () => {
+      timeout = setTimeout(func, time)
+    }
 
     if (halted) {
       resumeFromHalt = runTimeout
@@ -326,11 +351,11 @@ function typer(el, speed) {
     Tells `typerIterator` we're done with the current set of instructions.
     Calls `typerIterator` again.
   */
- function moveOn() {
-  qIndex++ // Increment our main item counter.
-  qIterating = false // Tell `typerIterator` we're done processing this set of instructions.
-  typerIterator() // Restart the main iterator.
-}
+  function moveOn() {
+    qIndex++ // Increment our main item counter.
+    qIterating = false // Tell `typerIterator` we're done processing this set of instructions.
+    typerIterator() // Restart the main iterator.
+  }
 
 
   ///////////////////
@@ -368,7 +393,8 @@ function typer(el, speed) {
     // Decide which type of item we need to process and call the relevant function.
     item.line ? processLine(item) :
     item.continue ? processContinue(item) :
-    item.pause && processPause(item)
+    item.pause ? processPause(item) :
+    item.listen && processListen(item)
   }
 
 
@@ -603,6 +629,31 @@ function typer(el, speed) {
       paused = false // Allows `.halt` to know it's safe to do it's thing.
       moveOn() // Continue with processing Typer's queue.
     }, item.pause)
+  }
+
+  function processListen(item) {
+    const { el, listen } = item
+    listening = true // Allows `.halt` to know it's NOT safe to do it's thing.
+
+    // One-time event listener.
+    el.addEventListener(listen, handler)
+    function handler(e) {
+      // Reset flags.
+      listening = false
+      currentListener = null
+
+      // Remove the listener.
+      el.removeEventListener(e.type, handler)
+
+      // Continue processing the queue so long as the kill switch wasn't engaged.
+      if (!killed) moveOn()
+    }
+
+    /*
+      Keep a reference to the listener so we can esure its removal
+      if we kill this instance or all typers.
+    */
+    currentListener = { el, type: listen, fxn: handler }
   }
 
 
