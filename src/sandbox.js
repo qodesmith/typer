@@ -1,6 +1,8 @@
-window.x = typer('section', 5)
-  .cursor({block: true})
-  .line('JavaScript')
-  .line('JavaScript')
-  .pause(1000)
-  // .repeat(1)
+const t = typer
+window.go = () => {
+  window.x = t('section')
+    .line(['JavaScript.', ' React.', ' SCSS.', ' Webpack.'], 500)
+    .line('React!')
+}
+
+document.querySelector('button').addEventListener('click', go)

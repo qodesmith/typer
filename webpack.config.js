@@ -19,7 +19,7 @@ module.exports = (env, argv) => ({
       * plugins => HtmlWebpackPlugin => chunks & chunksSortMode
   */
   entry: env.prod ? path.resolve(__dirname, 'src/typer.js') : {
-    typer: path.resolve(__dirname, 'src/typer.js'),
+    typer: path.resolve(__dirname, 'src/typer2.js'),
     sandbox: path.resolve(__dirname, 'src/sandbox.js')
   },
   target: 'web', // Default.
