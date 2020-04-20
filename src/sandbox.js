@@ -13,7 +13,8 @@ window.go = () => {
 }
 
 window.go2 = () => {
-  x.line('This is a 2nd set of instructions for typer.', 70)
+  x.cursor({ block: true, color: 'red' })
+    .line('This is a 2nd set of instructions for typer.', 70)
 }
 
 document.querySelector('.go').addEventListener('click', () => {
@@ -25,3 +26,7 @@ document.querySelector('.go').addEventListener('click', () => {
 
 document.querySelector('.halt').addEventListener('click', () => x.halt())
 document.querySelector('.resume').addEventListener('click', () => x.resume())
+document.querySelector('.listen').addEventListener('click', () => {
+  document.body.dispatchEvent(new Event('test'))
+})
+document.querySelector('.kill').addEventListener('click', () => x.kill())

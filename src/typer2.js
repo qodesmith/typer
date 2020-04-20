@@ -14,6 +14,11 @@ function typer(el, speed) {
   // Assign this instance of Typer a unique id.
   const uid = uuid()
 
+  // Create a style tag and append it to the head. We'll later use this to update cursor styles.
+  const style = document.createElement('style')
+  style.type = 'text/css'
+  document.head.appendChild(style)
+
 
   ////////////////////////////////
   // VARIOUS FLAGS & CONTAINERS //
@@ -25,7 +30,6 @@ function typer(el, speed) {
   */
 
   let speedSet = false // Indicates wether speed was already set for this Typer.
-  let cursorStylesheet // Cursor stylesheet added to the head. Used in .cursor method and removeCursorStylesheet.
   let cursor = 'qs-cursor-soft' // The class name used for the cursor.
   let speedHasBeenSet = false // Indicates wether we've set the speed for Typer or not.
   let qIterating = false // Indicates wether Typer can process the next set of instructions or not.
@@ -37,8 +41,9 @@ function typer(el, speed) {
   let processingQueue = false // Indicates wether Typer is processing the queue as a whole. This is `true` from beginning to end.
   let paused = false // Indicates Typer is in a paused state. Prevents `.halt` from being called.
   let listening = false // Indicates Typer is in a listening state. Prevents `.halt` from being called.
-  let currentListener // Used to store info about the event listener associated with a `.listen()` call. `.kill()` uses this for clean up.
+  let currentListener = {} // Used to store info about the event listener associated with a `.listen()` call. `.kill()` uses this for clean up.
   let killed = false // Indicates wether this Typer instance has been killed or not.
+  let killListenerApplied = false // Indicates if we've set a listener for the `killTyper` event on the body or not.
 
 
   ////////////////////
@@ -83,7 +88,7 @@ function typer(el, speed) {
         element = document.querySelector(element)
       }
 
-      q.push({ listen: eventName, el: element })
+      addToQueue({ listen: eventName, el: element })
       return this
     },
 
@@ -93,11 +98,6 @@ function typer(el, speed) {
     //////////////////////////////////////////
 
     cursor(options = {}) {
-      // The .line & .continue methods will always use the current cursor value.
-
-      // Reset any previous cursor styles set.
-      removeCursorStylesheet()
-
       // The user specified they don't want a cursor.
       if (options === false) {
         cursor = 'qs-no-cursor' // Used as a class name.
@@ -109,7 +109,7 @@ function typer(el, speed) {
 
       // Optional cursor color - https://bit.ly/2K4tIRT
       if (color) {
-        cursorStylesheet = addStyle(`[data-typer="${uid}"] .qs-typer::after`, `background-color:${color}`)
+        style.textContent = `[data-typer="${uid}"] .qs-typer::after{background:${color}}`
       }
 
       // Cursor's blinking style - default to soft.
@@ -146,6 +146,21 @@ function typer(el, speed) {
       // `resumeFromHalt` is set in `qIterator`.
       resumeFromHalt()
       resumeFromHalt = null
+    },
+    kill() {
+      // Prevent this Typer instance from responding to any future calls.
+      killed = true
+
+      // Remove listener added in `processListen` if Typer is in a listener state.
+      if (currentListener.el) {
+        currentListener.el.removeEventListener(currentListener.type, currentListener.fxn)
+      }
+
+      // Stop any iteration currently happening.
+      clearTimeout(timeout)
+
+      // ???
+      typerCleanup()
     }
   }
 
@@ -189,16 +204,11 @@ function typer(el, speed) {
     throw 'You have provided an invalid value for speed.'
   }
 
-  /*
-    Removes any stylehseets appended to the <head>.
-    Used in the .cursor method.
-  */
-  function removeCursorStylesheet() {
-    if (cursorStylesheet) cursorStylesheet.remove()
-  }
-
   // Adds items to the queue and starts the iterator.
   function addToQueue(item) {
+    // Prevent any more instructions being added if the instance has been killed already.
+    if (killed) return console.warn('This instance of Typer has already been killed:', uid)
+
     // If this is the first time adding to the queue, set the starting item to 0.
     if (qIndex == null) qIndex = 0
 
@@ -317,7 +327,7 @@ function typer(el, speed) {
 
   // Removes all Typer-related class names from the last line Typer typed out.
   function classNameCleanup() {
-    CLASS_NAMES.forEach(name => newElem.classList.remove(name))
+    CLASS_NAMES.forEach(name => newElem && newElem.classList.remove(name))
   }
 
   /*
@@ -357,6 +367,34 @@ function typer(el, speed) {
     typerIterator() // Restart the main iterator.
   }
 
+  function typerCleanup(fxn, e) {
+    // Remove the <style> from the head.
+    style.remove()
+
+    // Finalize the div class names before ending.
+    classNameCleanup()
+
+    // Remove the `data-typer` attribute.
+    el.removeAttribute('data-typer')
+
+    // Remove event listener.
+    document.body.removeEventListener('killTyper', typerObj.kill)
+
+    // Leave the last line in proper shape.
+    newElem && newElem.classList.add('white-space')
+    newElem = null
+
+    if (getType(fxn) === 'Function') {
+      fxn(el)
+    } else if (getType(e) === 'Function') {
+      e(el)
+    }
+
+    if (fxn === true || e === true) {
+      document.body.dispatchEvent(new Event('typerFinished'))
+    }
+  }
+
 
   ///////////////////
   // MAIN ITERATOR //
@@ -368,14 +406,20 @@ function typer(el, speed) {
     The process functions are responsible for recursively calling `qIterator`.
   */
   function typerIterator() {
+    // Add the killTyper listener only once we've started to process the queue.
+    if (!killListenerApplied) {
+      killListenerApplied = true
+      document.body.addEventListener('killTyper', typerObj.kill)
+    }
+
+    // Don't do anything if Typer is in the middle of processing an item in the queue or it's been killed.
+    if (qIterating || killed) return
+
     /*
       Set a flag indicating we're processing a set of instructions.
       We'll only set this to false once we've processed the entire queue.
     */
     if (!processingQueue) processingQueue = true
-
-    // Don't do anything if Typer is in the middle of processing an item in the queue.
-    if (qIterating) return
 
     // Set a flag indicating Typer is busy.
     qIterating = true
@@ -640,7 +684,7 @@ function typer(el, speed) {
     function handler(e) {
       // Reset flags.
       listening = false
-      currentListener = null
+      currentListener = {}
 
       // Remove the listener.
       el.removeEventListener(e.type, handler)
