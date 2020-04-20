@@ -1,6 +1,6 @@
 require('./typer.css')
 
-let uid = 0
+let uuid = 0
 const CLASS_NAMES = ['qs-typer', 'qs-cursor-block', 'qs-cursor-soft', 'qs-cursor-hard', 'qs-no-cursor']
 const CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@$^*()'
 const VOIDS = ['AREA','BASE','BR','COL','COMMAND','EMBED','HR','IMG','INPUT','KEYGEN','LINK','META','PARAM','SOURCE','TRACK','WBR']
@@ -52,8 +52,9 @@ function typer(el, speed) {
   // Prevent calling Typer on the same element twice if this instance hasn't been killed or `.end` hasn't been called.
   if (el.getAttribute('data-typer')) throw new Error("You've already called Typer on this element.")
 
-  // Assign a unique id to the parent el's data attribute - we also increment the uid here.
-  el.setAttribute('data-typer', uid++)
+  // Assign a unique id to the parent el's data attribute - we also increment the uuid here.
+  const uid = uuid++
+  el.setAttribute('data-typer', uid)
 
   // Speed check.
   speed = checkSpeed(speed)
@@ -91,6 +92,7 @@ function typer(el, speed) {
     end(fxn, e) {
       addToQueue({ end: () => typerCleanup(fxn, e) })
       endCalled = true
+      return this
     },
 
 

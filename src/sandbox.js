@@ -16,12 +16,14 @@ window.go = () => {
     .cursor({ block: true, blink: 'hard' })
     .line(text)
     .end(el => console.log('THIS IS THE END:', el))
+    .line('123')
 
 }
 
 window.go2 = () => {
   x.cursor({ block: true, color: 'red' })
     .line('This is a 2nd set of instructions for typer.', 70)
+    .end()
 }
 
 document.querySelector('.go').addEventListener('click', () => {
