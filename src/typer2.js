@@ -1,7 +1,6 @@
 require('./typer.css')
 
-// https://bit.ly/2Xmuwqf - micro UUID!
-const uuid = a=>a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuid)
+let uid = 0
 const CLASS_NAMES = ['qs-typer', 'qs-cursor-block', 'qs-cursor-soft', 'qs-cursor-hard', 'qs-no-cursor']
 const CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@$^*()'
 const VOIDS = ['AREA','BASE','BR','COL','COMMAND','EMBED','HR','IMG','INPUT','KEYGEN','LINK','META','PARAM','SOURCE','TRACK','WBR']
@@ -10,9 +9,6 @@ const VOIDS = ['AREA','BASE','BR','COL','COMMAND','EMBED','HR','IMG','INPUT','KE
 function typer(el, speed) {
     // Our queue which will contain all the instructions (method calls) for Typer to type.
   const q = []
-
-  // Assign this instance of Typer a unique id.
-  const uid = uuid()
 
   // Create a style tag and append it to the head. We'll later use this to update cursor styles.
   const style = document.createElement('style')
@@ -31,7 +27,6 @@ function typer(el, speed) {
 
   let speedSet = false // Indicates wether speed was already set for this Typer.
   let cursor = 'qs-cursor-soft' // The class name used for the cursor.
-  let speedHasBeenSet = false // Indicates wether we've set the speed for Typer or not.
   let qIterating = false // Indicates wether Typer can process the next set of instructions or not.
   let qIndex = 0 // What position in the queue we're currently at.
   let newElem // The element that Typer will use to type contents in.
@@ -44,6 +39,7 @@ function typer(el, speed) {
   let currentListener = {} // Used to store info about the event listener associated with a `.listen()` call. `.kill()` uses this for clean up.
   let killed = false // Indicates wether this Typer instance has been killed or not.
   let killListenerApplied = false // Indicates if we've set a listener for the `killTyper` event on the body or not.
+  let endCalled = false // Indicates if the `.end` method was called so Typer can throw errors on subsequent calls.
 
 
   ////////////////////
@@ -53,11 +49,11 @@ function typer(el, speed) {
   // Throws an error if el isn't a string selector or HTML element.
   if (checkSelector(el) === 'String') el = document.querySelector(el)
 
-  // Prevent calling Typer on the same element twice.
-  if (el.getAttribute('data-typer')) throw `You've already called Typer on this element.`
+  // Prevent calling Typer on the same element twice if this instance hasn't been killed or `.end` hasn't been called.
+  if (el.getAttribute('data-typer')) throw new Error("You've already called Typer on this element.")
 
-  // Assign a unique id to the parent el's data attribute.
-  el.setAttribute('data-typer', uid)
+  // Assign a unique id to the parent el's data attribute - we also increment the uid here.
+  el.setAttribute('data-typer', uid++)
 
   // Speed check.
   speed = checkSpeed(speed)
@@ -69,6 +65,7 @@ function typer(el, speed) {
   ////////////////
 
   const typerObj = {
+    id: uid, // Provide the internal ID as a convenience.
     line(msg, options) {
       addToQueue(lineOrContinue('line', msg, options))
       return this
@@ -91,6 +88,10 @@ function typer(el, speed) {
       addToQueue({ listen: eventName, el: element })
       return this
     },
+    end(fxn, e) {
+      addToQueue({ end: () => typerCleanup(fxn, e) })
+      endCalled = true
+    },
 
 
     //////////////////////////////////////////
@@ -98,6 +99,8 @@ function typer(el, speed) {
     //////////////////////////////////////////
 
     cursor(options = {}) {
+      checkForDeadTyper()
+
       // The user specified they don't want a cursor.
       if (options === false) {
         cursor = 'qs-no-cursor' // Used as a class name.
@@ -129,6 +132,8 @@ function typer(el, speed) {
     ////////////////////////////////////
 
     halt() {
+      checkForDeadTyper()
+
       // Ignore this method if it's being called prior to typing.
       if (!processingQueue) return
 
@@ -138,6 +143,8 @@ function typer(el, speed) {
       halted = true
     },
     resume() {
+      checkForDeadTyper()
+
       // Ignore this method if it's being called prior to typing or before `.halt`.
       if (!processingQueue || !resumeFromHalt) return
 
@@ -148,6 +155,8 @@ function typer(el, speed) {
       resumeFromHalt = null
     },
     kill() {
+      checkForDeadTyper()
+
       // Prevent this Typer instance from responding to any future calls.
       killed = true
 
@@ -159,7 +168,7 @@ function typer(el, speed) {
       // Stop any iteration currently happening.
       clearTimeout(timeout)
 
-      // ???
+      // Finalize things before exiting.
       typerCleanup()
     }
   }
@@ -179,12 +188,12 @@ function typer(el, speed) {
         getType(div) => '[object HTMLDivElement]' => 'HTMLDivElement'
     */
     if (type.slice(0, 4).toLowerCase() !== 'html' && type !== 'String') {
-      throw "You need to provide a string selector, such as '.some-class', or an html element."
+      throw new Error("You need to provide a string selector, such as '.some-class', or an html element.")
     }
     return type
   }
 
-  // Checks for a valid speed value - from number or object.
+  // Checks the possible values concerning speed & returns it.
   function checkSpeed(spd) {
     const type = getType(spd)
 
@@ -201,13 +210,20 @@ function typer(el, speed) {
       if (!hasMin && !hasMax && !hasSpeed) return speed // `speed` in top scope.
     }
 
-    throw 'You have provided an invalid value for speed.'
+    throw new Error('You have provided an invalid value for speed.')
+  }
+
+  // Throws error if Typer has been killed or `.end` was called.
+  function checkForDeadTyper() {
+    if (killed || endCalled) {
+      throw new Error(`This instance of Typer has either been killed or a method was called *after* ".end" was called: ${uid}`)
+    }
   }
 
   // Adds items to the queue and starts the iterator.
   function addToQueue(item) {
-    // Prevent any more instructions being added if the instance has been killed already.
-    if (killed) return console.warn('This instance of Typer has already been killed:', uid)
+    // Prevent any more instructions being added if the instance has been killed or `.end` was called.
+    checkForDeadTyper()
 
     // If this is the first time adding to the queue, set the starting item to 0.
     if (qIndex == null) qIndex = 0
@@ -247,7 +263,7 @@ function typer(el, speed) {
     if (!isNaN(options)) {
       return {
         [type]: msg,
-        speed: sanitizeSpeed(options),
+        speed: checkSpeed(options),
         html: true
       }
     }
@@ -271,7 +287,7 @@ function typer(el, speed) {
 
       return {
         [type]: message || content,
-        speed: sanitizeSpeed(opts),
+        speed: checkSpeed(opts),
         html: opts.html === false ? false : true, // Default true.
         element: isLine ? opts.element : null,
         military: sanitizeMilitary(military),
@@ -288,26 +304,6 @@ function typer(el, speed) {
     return ({}).toString.call(value).slice(8, -1)
   }
 
-  // Checks the possible values concerning speed & returns it.
-  function sanitizeSpeed(spd) {
-    const type = getType(spd)
-
-    if (spd === undefined) return speedHasBeenSet ? speed : 70 // Default `speed` (in top scope).
-    if (type === 'Number' && !isNaN(spd)) return spd
-    if (type === 'Object') {
-      const hasMin = spd.hasOwnProperty('min')
-      const hasMax = spd.hasOwnProperty('max')
-      const hasSpeed = spd.hasOwnProperty('speed')
-
-      if (hasSpeed && !isNaN(spd.speed)) return spd.speed
-      if (hasMin && hasMax && spd.min < spd.max) return spd
-      if (!Object.keys(spd).length && speedHasBeenSet) return speed // `speed` in top scope.
-      if (!hasMin && !hasMax && !hasSpeed) return speed // `speed` in top scope.
-    }
-
-    throw 'You have provided an invalid value for speed.'
-  }
-
   /*
     Checks for valid military values and returns it.
     Military defaults set here as well.
@@ -322,7 +318,7 @@ function typer(el, speed) {
       }
     }
 
-    throw 'You have provided an invalid value for military.'
+    throw new Error('You have provided an invalid value for military.')
   }
 
   // Removes all Typer-related class names from the last line Typer typed out.
@@ -367,7 +363,22 @@ function typer(el, speed) {
     typerIterator() // Restart the main iterator.
   }
 
+  /*
+    Cleans up artifacts created by Typer:
+      * Removes the <style> tag that was appended to the <head>.
+      * Removes all Typer-related class names from the last line Typer typed out.
+      * Removes the [data-typer] attribute that was placed on `el`.
+      * Removes the `killTyper` listener.
+      * If called by the `.end` method:
+        * Calls the callback function provided to `.end`.
+        * Dispatches the `typerFinished` event.
+  */
   function typerCleanup(fxn, e) {
+    /*
+      This function will be called with
+      arguments only via the `.end` method.
+    */
+
     // Remove the <style> from the head.
     style.remove()
 
@@ -376,6 +387,7 @@ function typer(el, speed) {
 
     // Remove the `data-typer` attribute.
     el.removeAttribute('data-typer')
+    Array.from(el.querySelectorAll('[data-typer-child]')).forEach(node => node.removeAttribute('data-typer-child'))
 
     // Remove event listener.
     document.body.removeEventListener('killTyper', typerObj.kill)
@@ -438,7 +450,8 @@ function typer(el, speed) {
     item.line ? processLine(item) :
     item.continue ? processContinue(item) :
     item.pause ? processPause(item) :
-    item.listen && processListen(item)
+    item.listen ? processListen(item) :
+    item.end && item.end()
   }
 
 
