@@ -1,6 +1,7 @@
-window.x = typer('section', 5)
-  .cursor({block: true})
-  .line('JavaScript')
-  .line('JavaScript')
-  .pause(1000)
-  // .repeat(1)
+Array.from(document.querySelectorAll('section')).forEach(section => {
+  Array.from(section.querySelectorAll('div')).forEach((div, i) => {
+    typer(div, 5)
+      .cursor({block: i === 0})
+      .line('JavaScript')
+  })
+})

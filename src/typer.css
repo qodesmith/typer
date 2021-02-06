@@ -1,20 +1,15 @@
-.typer {
-  position: relative;
-  min-height: 2ex;
-}
-
 .typer::after {
   content: '';
-  position: absolute;
   display: inline-block;
+  vertical-align: middle;
   width: 0.1em;
-  height: 1.1em;
+  height: 1em;
   background-color: currentColor;
   margin-left: 0.1em;
 }
 
 .cursor-block::after {
-  width: 0.9ex;
+  width: 0.5em;
 }
 
 .cursor-soft::after {
@@ -34,14 +29,20 @@
 }
 
 @keyframes softblink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes hardblink {
-  0% { opacity: 1; }
-  49% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 0; }
+  50%,
+  100% {
+    visibility: hidden;
+  }
 }

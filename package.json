@@ -11,7 +11,8 @@
   "main": "typer.min.js",
   "scripts": {
     "test": "jest",
-    "build": "webpack --mode production --env.prod",
+    "build": "webpack --mode production --env.prod && npm run build-styles-helper",
+    "build-styles-helper": "node buildStylesHelper.js",
     "start": "webpack-dev-server --mode development --env.dev --progress"
   },
   "author": "Qodesmith",
