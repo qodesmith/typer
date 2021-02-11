@@ -1,7 +1,11 @@
 const typer = require('../typer.min')
 
 describe('Testing the uuid of individual Typers', () => {
-  beforeEach(() => document.body.innerHTML = '<div id="test1"></div><div id="test2"></div>')
+  beforeEach(
+    () =>
+      (document.body.innerHTML =
+        '<div id="test1"></div><div id="test2"></div>'),
+  )
 
   test('Each Typer instance should have a unique identifier', () => {
     typer('#test1', 1).line('test')

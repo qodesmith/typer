@@ -16,7 +16,6 @@ describe('Testing the `.line` API', () => {
     })
   }
 
-
   /////////////
   // STRINGS //
   /////////////
@@ -32,17 +31,17 @@ describe('Testing the `.line` API', () => {
   })
 
   test('[String] `.line` should type provided contents on the screen (with obj speed)', () => {
-    typer('#test').line('Hello world!', { speed: 1 })
+    typer('#test').line('Hello world!', {speed: 1})
     return contents('Hello world!')
   })
 
   test('[String] `.line` should type provided contents on the screen (with min/max speed)', () => {
-    typer('#test').line('Hello world!', { min: 1, max: 5 })
+    typer('#test').line('Hello world!', {min: 1, max: 5})
     return contents('Hello world!', 200)
   })
 
   test('[String] `.line` should type provided contents on the screen in specified element', () => {
-    typer('#test', 1).line('Hello world!', { element: 'p' })
+    typer('#test', 1).line('Hello world!', {element: 'p'})
 
     return wait(100).then(() => {
       const el = document.querySelector('#test p')
@@ -50,7 +49,6 @@ describe('Testing the `.line` API', () => {
       expect(el.parentElement.children.length).toBe(1)
     })
   })
-
 
   ////////////
   // ARRAYS //
@@ -67,17 +65,17 @@ describe('Testing the `.line` API', () => {
   })
 
   test('[Array] `.line` should type provided contents on the screen (with obj speed)', () => {
-    typer('#test').line(['Hello', ' world!'], { speed: 5 })
+    typer('#test').line(['Hello', ' world!'], {speed: 5})
     return contents('Hello world!')
   })
 
   test('[Array] `.line` should type provided contents on the screen (with min/max speed)', () => {
-    typer('#test').line(['Hello', ' world!'], { min: 1, max: 5 })
+    typer('#test').line(['Hello', ' world!'], {min: 1, max: 5})
     return contents('Hello world!', 200)
   })
 
   test('[Array] `.line` should type provided contents on the screen in specified element', () => {
-    typer('#test', 1).line(['Hello', ' world!'], { element: 'p' })
+    typer('#test', 1).line(['Hello', ' world!'], {element: 'p'})
 
     return wait(100).then(() => {
       const el = document.querySelector('#test p')
@@ -85,7 +83,6 @@ describe('Testing the `.line` API', () => {
       expect(el.parentElement.children.length).toBe(1)
     })
   })
-
 
   ///////////
   // OTHER //
@@ -103,7 +100,7 @@ describe('Testing the `.line` API', () => {
   })
 
   test('Giving `.line` a single object with container should type those contents', () => {
-    typer('#test', 1).line({ container: '#hidden' })
+    typer('#test', 1).line({container: '#hidden'})
 
     return wait(100).then(() => {
       const el = document.querySelector('#test')
@@ -112,7 +109,7 @@ describe('Testing the `.line` API', () => {
     })
   })
 
-  test('`.line` should add the `.typer` class to the element it\'s typing in', () => {
+  test("`.line` should add the `.typer` class to the element it's typing in", () => {
     typer('#test', 1).line()
 
     return wait(100).then(() => {
@@ -121,7 +118,7 @@ describe('Testing the `.line` API', () => {
     })
   })
 
-  test('`.line` should add the `data-typer-child` attribute to the element it\'s typing in', () => {
+  test("`.line` should add the `data-typer-child` attribute to the element it's typing in", () => {
     typer('#test', 1).line()
 
     return wait(100).then(() => {

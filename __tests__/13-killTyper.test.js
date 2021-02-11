@@ -1,14 +1,18 @@
 const typer = require('../typer.min')
 const wait = require('../src/wait')
-const content = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sint fuga ad dolorum numquam placeat corporis omnis temporibus ab eius iure molestiae, dolore dignissimos. Distinctio vero ducimus odio numquam esse assumenda?'
+const content =
+  'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sint fuga ad dolorum numquam placeat corporis omnis temporibus ab eius iure molestiae, dolore dignissimos. Distinctio vero ducimus odio numquam esse assumenda?'
 
 describe('Testing the `killTyper` feature', () => {
-  beforeEach(() => document.body.innerHTML = `
+  beforeEach(
+    () =>
+      (document.body.innerHTML = `
     <div id="test1"></div>
     <div id="test2"></div>
     <div id="test3"></div>
     <div id="test4"></div>
-  `)
+  `),
+  )
 
   function killTyper() {
     var kill = new Event('killTyper')
