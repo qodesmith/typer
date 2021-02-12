@@ -1,5 +1,5 @@
 const typer = require('../typer.min')
-const wait = require('../wait')
+const wait = require('../src/wait')
 
 describe('Testing the `.run` API', () => {
   beforeEach(() => (document.body.innerHTML = '<div id="test"></div>'))

@@ -82,7 +82,7 @@ describe('Testing the `.kill` API', () => {
         t1.kill()
         test.dispatchEvent(event)
       })
-      .then(() => wait())
+      .then(wait)
       .then(() => {
         expect(test.textContent).toBe('')
       })

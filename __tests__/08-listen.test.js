@@ -1,4 +1,5 @@
 const typer = require('../typer.min')
+const wait = require('../src/wait')
 const eventName = 'nonsense'
 const event = new Event(eventName)
 const content = 'Hello world!'
