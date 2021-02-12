@@ -1,6 +1,5 @@
 const typer = require('../typer.min')
-const wait = require('../src/wait')
-const methods = require('../src/methods')
+const {wait, methodNames} = require('../src/testUtils')
 const text =
   'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos asperiores aspernatur rerum voluptate nemo iusto animi! Modi ipsa, soluta rem nulla esse quibusdam fugit odit libero atque, nam repellat iste.'
 
@@ -94,7 +93,7 @@ describe('Testing the `.kill` API', () => {
     return wait().then(() => {
       t1.kill() // Initial kill call.
 
-      methods.forEach(method => {
+      methodNames.forEach(method => {
         const methodResults = t1[method]()
         expect(methodResults).toBe(t1)
       })

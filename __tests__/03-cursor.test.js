@@ -1,5 +1,5 @@
 const typer = require('../typer.min')
-const wait = require('../src/wait')
+const {wait} = require('../src/testUtils')
 const promise = (time = 100) =>
   wait(time).then(() => document.querySelector('.typer'))
 

@@ -1,5 +1,5 @@
 const typer = require('../typer.min')
-const wait = require('../src/wait')
+const {wait} = require('../src/testUtils')
 
 describe('Testing the `.empty` API', () => {
   test('`.empty` should empty the container starting fresh with a single div', () => {

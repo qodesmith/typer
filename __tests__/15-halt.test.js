@@ -1,5 +1,5 @@
 const typer = require('../typer.min')
-const wait = require('../src/wait')
+const {wait} = require('../src/testUtils')
 const text =
   'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit temporibus deserunt illum facere hic eius totam cupiditate aut expedita necessitatibus neque aperiam quos obcaecati ipsa, accusamus tempora doloremque! Modi, molestiae.'
 

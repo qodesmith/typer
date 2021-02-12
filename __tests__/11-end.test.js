@@ -1,6 +1,5 @@
 const typer = require('../typer.min')
-const wait = require('../src/wait')
-const methods = require('../src/methods')
+const {wait, methodNames} = require('../src/testUtils')
 
 describe('Testing the `.end` API', () => {
   beforeEach(() => (document.body.innerHTML = '<div id="test"></div>'))
@@ -103,7 +102,7 @@ describe('Testing the `.end` API', () => {
     const instance = typer('#test').line().end()
 
     return wait().then(() => {
-      methods.forEach(method => {
+      methodNames.forEach(method => {
         const methodResults = instance[method]()
         expect(methodResults).toBe(instance)
       })

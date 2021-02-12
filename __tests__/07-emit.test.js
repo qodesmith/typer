@@ -1,5 +1,5 @@
 const typer = require('../typer.min')
-const wait = require('../src/wait')
+const {wait} = require('../src/testUtils')
 const event = 'event'
 const bodyCallback = jest.fn()
 const elCallback = jest.fn()
