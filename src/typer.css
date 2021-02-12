@@ -1,17 +1,11 @@
-[data-typer-child] {
-  position: relative;
-}
-
 .typer::after {
   content: '';
   display: inline-block;
+  vertical-align: sub;
   width: 0.1em;
-  height: 2ch;
+  height: 1.2em;
   background-color: currentColor;
   margin-left: 0.1em;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 .cursor-block::after {
