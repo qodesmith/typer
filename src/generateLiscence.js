@@ -1,6 +1,9 @@
-/* The MIT License (MIT)
+const fs = require('fs')
+const path = require('path')
+const destination = path.resolve(__dirname, '../LICENSE.txt')
+const content = `/* The MIT License (MIT)
 
-Copyright (c) {{year}} {{author}}
+Copyright (c) ${new Date().getFullYear()} Aaron Cordova
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +22,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
+`
+
+fs.writeFileSync(destination, content, 'utf8')
+console.log('Created LICENSE.txt')

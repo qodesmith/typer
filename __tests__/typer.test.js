@@ -1,4 +1,4 @@
-const typer = require('../typer.min')
+const typer = require('../dist/typer.min')
 
 describe(`Testing Typer itself (not the api)`, () => {
   beforeEach(() => (document.body.innerHTML = '<div id="test"></div>'))

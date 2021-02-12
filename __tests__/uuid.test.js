@@ -1,4 +1,4 @@
-const typer = require('../typer.min')
+const typer = require('../dist/typer.min')
 
 describe('Testing the uuid of individual Typers', () => {
   beforeEach(

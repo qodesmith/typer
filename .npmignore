@@ -1,0 +1,3 @@
+# Un-ignore things from `.gitignore`
+!dist
+!dist/**/*

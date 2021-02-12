@@ -1,4 +1,4 @@
-const typer = require('../typer.min')
+const typer = require('../dist/typer.min')
 const {wait, methodNames} = require('../src/testUtils')
 const text =
   'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos asperiores aspernatur rerum voluptate nemo iusto animi! Modi ipsa, soluta rem nulla esse quibusdam fugit odit libero atque, nam repellat iste.'

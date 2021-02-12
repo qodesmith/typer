@@ -1,4 +1,4 @@
-const typer = require('../typer.min')
+const typer = require('../dist/typer.min')
 const {wait} = require('../src/testUtils')
 
 describe('Testing the `.line` API', () => {

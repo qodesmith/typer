@@ -26,7 +26,7 @@ export default function typer(el, speed) {
 
   // Prevent calling Typer on the same element twice.
   if (el.getAttribute('data-typer'))
-    throw `You've already called Typer on this element.`
+    throw new Error(`You've already called Typer on this element.`)
 
   // Speed check.
   speed = checkSpeed(speed)
@@ -57,18 +57,14 @@ export default function typer(el, speed) {
   q.classNames = CLASS_NAMES
 
   // Assign a unique id to the parent el's data attribute.
-  q.uuid = uuid()
-  el.setAttribute('data-typer', q.uuid)
+  q.id = uuid()
+  el.setAttribute('data-typer', q.id)
 
   // Public API methods.
   const typerObj = {
-    cursor: function (cursorObj = {}) {
+    cursor(cursorObj = {}) {
       // Prevent cursor from being run multiple times.
-      if (q.cursorRan) {
-        console.warn('You can only call ".cursor" once.')
-        return this
-      }
-
+      if (q.cursorRan) return this
       q.cursorRan = true
 
       // No cursor.
@@ -83,12 +79,12 @@ export default function typer(el, speed) {
       // Optional cursor color - https://bit.ly/2K4tIRT
       if (color)
         addStyle(
-          `[data-typer="${q.uuid}"] .typer::after`,
+          `[data-typer="${q.id}"] .typer::after`,
           `background-color:${color}`,
         )
 
       // Cursor's blinking style - default to soft.
-      cursor.push(`cursor-${blink === 'hard' ? 'hard' : 'soft'}`)
+      cursor.push(blink === 'hard' ? 'cursor-hard' : 'cursor-soft')
 
       // Cursor: block or line.
       if (block === true) cursor.push('cursor-block')
@@ -97,7 +93,7 @@ export default function typer(el, speed) {
 
       return this
     },
-    line: function (msg, options) {
+    line(msg, options) {
       lineOrContinue('line', msg, options)
 
       // Push the first dominoe on the typing iteration,
@@ -109,11 +105,11 @@ export default function typer(el, speed) {
 
       return this
     },
-    continue: function (msg, options) {
+    continue(msg, options) {
       lineOrContinue('continue', msg, options)
       return this
     },
-    military: function (msg, options) {
+    military(msg, options) {
       lineOrContinue('military', msg, options)
 
       // Push the first dominoe on the typing iteration,
@@ -125,12 +121,12 @@ export default function typer(el, speed) {
 
       return this
     },
-    pause: function (num) {
+    pause(num) {
       // Default to 500ms.
       q.push({pause: +num || 500})
       return this
     },
-    emit: function (event, el) {
+    emit(event, el) {
       if (!el) {
         el = body
       } else if (checkSelector(el) === 'String') {
@@ -140,7 +136,7 @@ export default function typer(el, speed) {
       q.push({emit: event, el})
       return this
     },
-    listen: function (event, el) {
+    listen(event, el) {
       if (!el) {
         el = body
       } else if (checkSelector(el) === 'String') {
@@ -150,34 +146,30 @@ export default function typer(el, speed) {
       q.push({listen: event, el})
       return this
     },
-    back: function (chars, spd) {
-      q.push({back: chars, speed: spd})
+    back(chars, speed) {
+      q.push({back: chars, speed})
       return this
     },
-    empty: function () {
+    empty() {
       q.push({empty: true})
       return this
     },
-    run: function (fxn) {
+    run(fxn) {
       q.push({run: fxn})
       return this
     },
-    end: function (fxn, e) {
+    end(fxn, e) {
       q.push({end: true})
       q.cb = () => typerCleanup(fxn, e)
 
       return nullApi('end')
     },
-    halt: function () {
+    halt() {
       // Ignore this method if it's being called prior to typing.
       if (!q.typing) return this
-
-      const warning = `You can't call ".halt" while Typer is in %s mode.`
-      if (q.pause) return console.warn(warning, 'pause')
-      if (q.listening) return console.warn(warning, 'listen')
       q.halt = true
     },
-    resume: function () {
+    resume() {
       // Ignore this method if it's being called prior to typing.
       if (!q.typing) return this
 
@@ -189,12 +181,10 @@ export default function typer(el, speed) {
 
       // `q.resume` is defined in `qIterator`
       // as well as in `processBack` => `looper`.
-      if (!q.resume)
-        return console.warn('You called ".resume" before calling ".halt".')
       q.resume()
       q.resume = null
     },
-    repeat: function (num, shouldEmpty) {
+    repeat(num, shouldEmpty) {
       q.push({repeat: true, num, shouldEmpty, id: repeatId++})
       return this
     },
@@ -228,7 +218,7 @@ export default function typer(el, speed) {
       if (!hasMin && !hasMax && !hasSpeed) return speed // `speed` in top scope.
     }
 
-    throw 'You have provided an invalid value for speed.'
+    throw new Error('You have provided an invalid value for speed.')
   }
   function checkMilitary(thing) {
     // Military defaults set here as well.
@@ -241,7 +231,7 @@ export default function typer(el, speed) {
       }
     }
 
-    throw 'You have provided an invalid value for military.'
+    throw new Error('You have provided an invalid value for military.')
   }
   function typerCleanup(fxn, e) {
     q.style && q.style.remove()
@@ -389,7 +379,7 @@ export default function typer(el, speed) {
 
     // Create new div (or specified element).
     const div = document.createElement(item.element || 'div')
-    div.setAttribute('data-typer-child', q.uuid)
+    div.setAttribute('data-typer-child', q.id)
     div.className = `${q.cursor} typer white-space`
 
     el.appendChild(div)
@@ -828,26 +818,17 @@ export default function typer(el, speed) {
     return nullApi('kill')
   }
   function nullApi(method) {
-    // Used after `.end` or `.kill` have been called.
-    const warning = `WARNING: you tried to call ".%s" after ".${method}" has already been called.\nThe public API has been nullified.`
+    const emptyMethod = () => typerObj
 
     // Replace our public API - `typerObj` - with the nullified version.
+    // Replace all methods except 'kill' and 'end'.
     Object.keys(typerObj).forEach(key => {
       // If `.end` is called, we still want `.kill` to be callable as well.
-      if (key === 'kill' && method === 'end') return
-      typerObj[key] = message.bind(null, key)
+      if (method === 'end' && key === 'kill') return
+      typerObj[key] = emptyMethod
     })
 
-    if (method === 'kill') {
-      if (q.killed) message()
-      q.killed = true // For `processListen`.
-    }
-
-    // Message used by the 'nullApiObj' object.
-    function message(key) {
-      console.warn(warning, key)
-      return typerObj
-    }
+    if (method === 'kill') q.killed = true // For `processListen`.
 
     return typerObj
   }
