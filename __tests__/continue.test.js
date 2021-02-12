@@ -1,5 +1,5 @@
-const typer = require('../typer.min')
-const wait = require('../src/wait')
+const typer = require('../dist/typer.min')
+const {wait} = require('../src/testUtils')
 
 describe('Testing the `.continue` API', () => {
   beforeEach(() => {
@@ -16,7 +16,6 @@ describe('Testing the `.continue` API', () => {
     })
   }
 
-
   /////////////
   // STRINGS //
   /////////////
@@ -32,24 +31,23 @@ describe('Testing the `.continue` API', () => {
   })
 
   test('[String] `.continue` should type provided contents on the screen (with obj speed)', () => {
-    typer('#test').line().continue('Hello world!', { speed: 1 })
+    typer('#test').line().continue('Hello world!', {speed: 1})
     return contents('Hello world!')
   })
 
   test('[String] `.continue` should type provided contents on the screen (with min/max speed)', () => {
-    typer('#test').line().continue('Hello world!', { min: 1, max: 5 })
+    typer('#test').line().continue('Hello world!', {min: 1, max: 5})
     return contents('Hello world!', 200)
   })
 
   test('[String] `.continue` should not be able to create a specified element', () => {
-    typer('#test', 1).line().continue('Hello world!', { element: 'p' })
+    typer('#test', 1).line().continue('Hello world!', {element: 'p'})
 
     return wait(100).then(() => {
       const el = document.querySelector('#test p')
       expect(el).toBeNull()
     })
   })
-
 
   ////////////
   // ARRAYS //
@@ -66,17 +64,17 @@ describe('Testing the `.continue` API', () => {
   })
 
   test('[Array] `.continue` should type provided contents on the screen (with obj speed)', () => {
-    typer('#test').line().continue(['Hello', ' world!'], { speed: 5 })
+    typer('#test').line().continue(['Hello', ' world!'], {speed: 5})
     return contents('Hello world!')
   })
 
   test('[Array] `.continue` should type provided contents on the screen (with min/max speed)', () => {
-    typer('#test').line().continue(['Hello', ' world!'], { min: 1, max: 5 })
+    typer('#test').line().continue(['Hello', ' world!'], {min: 1, max: 5})
     return contents('Hello world!', 200)
   })
 
   test('[Array] `.continue` should not be able to create a specified element', () => {
-    typer('#test', 1).line().continue(['Hello', ' world!'], { element: 'p' })
+    typer('#test', 1).line().continue(['Hello', ' world!'], {element: 'p'})
 
     return wait(100).then(() => {
       const el = document.querySelector('#test p')
@@ -84,13 +82,12 @@ describe('Testing the `.continue` API', () => {
     })
   })
 
-
   ///////////
   // OTHER //
   ///////////
 
   test('Giving `.continue` a single object with container should type those contents', () => {
-    typer('#test', 1).line().continue({ container: '#hidden' })
+    typer('#test', 1).line().continue({container: '#hidden'})
 
     return wait(100).then(() => {
       const el = document.querySelector('#test')

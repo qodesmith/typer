@@ -1,5 +1,5 @@
-const typer = require('../typer.min')
-const promise = (time = 100) => new Promise(resolve => setTimeout(resolve, time))
+const typer = require('../dist/typer.min')
+const {wait} = require('../src/testUtils')
 
 describe('Testing the `.empty` API', () => {
   test('`.empty` should empty the container starting fresh with a single div', () => {
@@ -9,16 +9,13 @@ describe('Testing the `.empty` API', () => {
     body.innerHTML = '<div id="test"></div>'
     typer('#test', 1).line([content])
 
-    return promise()
+    return wait()
       .then(() => expect(body.textContent).toBe(content))
       .then(() => {
         body.innerHTML = '<div id="test"></div>'
-        typer('#test', 1)
-          .line([content])
-          .line([content])
-          .empty()
+        typer('#test', 1).line([content]).line([content]).empty()
       })
-      .then(() => promise())
+      .then(wait)
       .then(() => {
         const test = document.querySelector('#test')
 

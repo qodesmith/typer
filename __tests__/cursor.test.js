@@ -1,17 +1,13 @@
-const typer = require('../typer.min')
-const wait = require('../src/wait')
-const promise = (time = 100) => wait(time).then(() => document.querySelector('.typer'))
+const typer = require('../dist/typer.min')
+const {wait} = require('../src/testUtils')
+const promise = (time = 100) =>
+  wait(time).then(() => document.querySelector('.typer'))
 
 describe('Testing the `.cursor` API', () => {
   beforeEach(() => {
     document.body.innerHTML = '<div id="test"></div>'
     document.head.innerHTML = ''
   })
-
-  // https://goo.gl/3c1a8h
-  global.console = {
-    warn: jest.fn()
-  }
 
   test('Not calling `.cursor` should result in default settings', () => {
     typer('#test').line()
@@ -38,7 +34,7 @@ describe('Testing the `.cursor` API', () => {
 
   test('Passing a color to `.cursor` should color the cursor', () => {
     const color = 'blue'
-    typer('#test').line().cursor({ color })
+    typer('#test').line().cursor({color})
 
     return promise().then(el => {
       const num = el.getAttribute('data-typer-child')
@@ -62,7 +58,7 @@ describe('Testing the `.cursor` API', () => {
   })
 
   test('Passing a color to `.cursor` should create a <style> tag', () => {
-    typer('#test').line().cursor({ color: 'cornflowerblue' })
+    typer('#test').line().cursor({color: 'cornflowerblue'})
 
     return promise(50).then(() => {
       const styleTags = document.querySelectorAll('style')
@@ -71,7 +67,7 @@ describe('Testing the `.cursor` API', () => {
   })
 
   test('Declaring cursor block and hard blinking should have associated classes', () => {
-    typer('#test').line().cursor({ block: true, blink: 'hard' })
+    typer('#test').line().cursor({block: true, blink: 'hard'})
 
     return promise().then(el => {
       const classes = el.classList
@@ -79,10 +75,5 @@ describe('Testing the `.cursor` API', () => {
       expect(classes.contains('cursor-hard')).toBe(true)
       expect(classes.contains('cursor-soft')).toBe(false)
     })
-  })
-
-  test('Calling `.cursor` more than once should result in a console warning', () => {
-    typer('#test').cursor().cursor()
-    return promise().then(() => expect(global.console.warn).toHaveBeenCalled())
   })
 })

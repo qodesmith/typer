@@ -1,5 +1,6 @@
 # FOLDERS
-/node_modules
+dist
+node_modules
 
 # FILES
 .DS_Store

@@ -1,11 +1,21 @@
-require('./typer.css')
+import './typer.css'
 
 // https://bit.ly/2Xmuwqf - micro UUID!
-const uuid = a=>a?(a^Math.random()*16>>a/4).toString(16):([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,uuid)
-const CLASS_NAMES = ['typer', 'cursor-block', 'cursor-soft', 'cursor-hard', 'no-cursor']
-const CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@$^*()'
+const uuid = a =>
+  a
+    ? (a ^ ((Math.random() * 16) >> (a / 4))).toString(16)
+    : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, uuid)
+const CLASS_NAMES = [
+  'typer',
+  'cursor-block',
+  'cursor-soft',
+  'cursor-hard',
+  'no-cursor',
+]
+const CHARACTERS =
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@$^*()'
 
-function typer(el, speed) {
+export default function typer(el, speed) {
   const q = [] // The main array to contain all the items from methods called on typer.
   const body = document.body // Cache the body.
   let currentListener = {} // Listeners provided by the `.listen` method.
@@ -15,7 +25,8 @@ function typer(el, speed) {
   if (checkSelector(el) === 'String') el = document.querySelector(el)
 
   // Prevent calling Typer on the same element twice.
-  if (el.getAttribute('data-typer')) throw `You've already called Typer on this element.`
+  if (el.getAttribute('data-typer'))
+    throw new Error(`You've already called Typer on this element.`)
 
   // Speed check.
   speed = checkSpeed(speed)
@@ -23,24 +34,37 @@ function typer(el, speed) {
 
   // List of HTML void elements (https://bit.ly/3a76HZc),
   // used in 'processMsg' & 'processBack'.
-  q.voids = ['AREA','BASE','BR','COL','COMMAND','EMBED','HR','IMG','INPUT','KEYGEN','LINK','META','PARAM','SOURCE','TRACK','WBR']
+  q.voids = [
+    'AREA',
+    'BASE',
+    'BR',
+    'COL',
+    'COMMAND',
+    'EMBED',
+    'HR',
+    'IMG',
+    'INPUT',
+    'KEYGEN',
+    'LINK',
+    'META',
+    'PARAM',
+    'SOURCE',
+    'TRACK',
+    'WBR',
+  ]
 
   // List of class names for cleanup later on.
   q.classNames = CLASS_NAMES
 
   // Assign a unique id to the parent el's data attribute.
-  q.uuid = uuid()
-  el.setAttribute('data-typer', q.uuid)
+  q.id = uuid()
+  el.setAttribute('data-typer', q.id)
 
   // Public API methods.
   const typerObj = {
-    cursor: function(cursorObj = {}) {
+    cursor(cursorObj = {}) {
       // Prevent cursor from being run multiple times.
-      if (q.cursorRan) {
-        console.warn('You can only call ".cursor" once.')
-        return this
-      }
-
+      if (q.cursorRan) return this
       q.cursorRan = true
 
       // No cursor.
@@ -49,14 +73,18 @@ function typer(el, speed) {
         return this
       }
 
-      const { color, blink, block } = cursorObj
+      const {color, blink, block} = cursorObj
       const cursor = []
 
       // Optional cursor color - https://bit.ly/2K4tIRT
-      if (color) addStyle(`[data-typer="${q.uuid}"] .typer::after`, `background-color:${color}`)
+      if (color)
+        addStyle(
+          `[data-typer="${q.id}"] .typer::after`,
+          `background-color:${color}`,
+        )
 
       // Cursor's blinking style - default to soft.
-      cursor.push(`cursor-${blink === 'hard' ? 'hard' : 'soft'}`)
+      cursor.push(blink === 'hard' ? 'cursor-hard' : 'cursor-soft')
 
       // Cursor: block or line.
       if (block === true) cursor.push('cursor-block')
@@ -65,7 +93,7 @@ function typer(el, speed) {
 
       return this
     },
-    line: function(msg, options) {
+    line(msg, options) {
       lineOrContinue('line', msg, options)
 
       // Push the first dominoe on the typing iteration,
@@ -77,11 +105,11 @@ function typer(el, speed) {
 
       return this
     },
-    continue: function(msg, options) {
+    continue(msg, options) {
       lineOrContinue('continue', msg, options)
       return this
     },
-    military: function(msg, options) {
+    military(msg, options) {
       lineOrContinue('military', msg, options)
 
       // Push the first dominoe on the typing iteration,
@@ -93,59 +121,55 @@ function typer(el, speed) {
 
       return this
     },
-    pause: function(num) {
+    pause(num) {
       // Default to 500ms.
-      q.push({ pause: +num || 500 })
+      q.push({pause: +num || 500})
       return this
     },
-    emit: function(event, el) {
+    emit(event, el) {
       if (!el) {
         el = body
       } else if (checkSelector(el) === 'String') {
         el = document.querySelector(el)
       }
 
-      q.push({ emit: event, el })
+      q.push({emit: event, el})
       return this
     },
-    listen: function(event, el) {
+    listen(event, el) {
       if (!el) {
         el = body
       } else if (checkSelector(el) === 'String') {
         el = document.querySelector(el)
       }
 
-      q.push({ listen: event, el })
+      q.push({listen: event, el})
       return this
     },
-    back: function(chars, spd) {
-      q.push({ back: chars, speed: spd })
+    back(chars, speed) {
+      q.push({back: chars, speed})
       return this
     },
-    empty: function() {
-      q.push({ empty: true })
+    empty() {
+      q.push({empty: true})
       return this
     },
-    run: function(fxn) {
-      q.push({ run: fxn })
+    run(fxn) {
+      q.push({run: fxn})
       return this
     },
-    end: function(fxn, e) {
-      q.push({ end: true })
+    end(fxn, e) {
+      q.push({end: true})
       q.cb = () => typerCleanup(fxn, e)
 
       return nullApi('end')
     },
-    halt: function() {
+    halt() {
       // Ignore this method if it's being called prior to typing.
       if (!q.typing) return this
-
-      const warning = `You can't call ".halt" while Typer is in %s mode.`
-      if (q.pause) return console.warn(warning, 'pause')
-      if (q.listening) return console.warn(warning, 'listen')
       q.halt = true
     },
-    resume: function() {
+    resume() {
       // Ignore this method if it's being called prior to typing.
       if (!q.typing) return this
 
@@ -157,20 +181,19 @@ function typer(el, speed) {
 
       // `q.resume` is defined in `qIterator`
       // as well as in `processBack` => `looper`.
-      if (!q.resume) return console.warn('You called ".resume" before calling ".halt".')
       q.resume()
       q.resume = null
     },
-    repeat: function(num, shouldEmpty) {
-      q.push({ repeat: true, num, shouldEmpty, id: repeatId++ })
+    repeat(num, shouldEmpty) {
+      q.push({repeat: true, num, shouldEmpty, id: repeatId++})
       return this
     },
-    kill
+    kill,
   }
 
   // Private functions.
   function getType(thing) {
-    return ({}).toString.call(thing).slice(8, -1)
+    return {}.toString.call(thing).slice(8, -1)
   }
   function checkSelector(thing) {
     const type = getType(thing)
@@ -195,19 +218,20 @@ function typer(el, speed) {
       if (!hasMin && !hasMax && !hasSpeed) return speed // `speed` in top scope.
     }
 
-    throw 'You have provided an invalid value for speed.'
+    throw new Error('You have provided an invalid value for speed.')
   }
-  function checkMilitary(thing) { // Military defaults set here as well.
+  function checkMilitary(thing) {
+    // Military defaults set here as well.
     if (!thing) return null
-    if (+thing) return { speed: +thing, chars: 3 }
+    if (+thing) return {speed: +thing, chars: 3}
     if (getType(thing) === 'Object') {
       return {
         speed: +thing.speed || 50,
-        chars: +thing.chars || 3
+        chars: +thing.chars || 3,
       }
     }
 
-    throw 'You have provided an invalid value for military.'
+    throw new Error('You have provided an invalid value for military.')
   }
   function typerCleanup(fxn, e) {
     q.style && q.style.remove()
@@ -234,7 +258,8 @@ function typer(el, speed) {
   function randomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
   }
-  function addStyle(selector, rules) { // https://bit.ly/2K4tIRT
+  function addStyle(selector, rules) {
+    // https://bit.ly/2K4tIRT
     q.style = document.createElement('style') // Create the style element.
     q.style.appendChild(document.createTextNode('')) // Webkit hack - https://bit.ly/2K4tIRT
     document.head.appendChild(q.style) // Append the style element to the head.
@@ -256,31 +281,33 @@ function typer(el, speed) {
         * continue - catch it here but ignore it completely.
     */
     if (!msg && !options) {
-      if (isLine) q.push({ line: 1 })
+      if (isLine) q.push({line: 1})
 
-    // A single options argument has been passed.
+      // A single options argument has been passed.
     } else if (getType(msg) === 'Object') {
       if (isLine || (isCont && msg.container)) q.push(setOptions(msg))
 
-    // Content and a number for speed have been passed.
-    // .line('some content', 100)
-    // .continue('some content', 100)
+      // Content and a number for speed have been passed.
+      // .line('some content', 100)
+      // .continue('some content', 100)
     } else if (!isNaN(options)) {
-      q.push({ [choice]: msg, speed: checkSpeed(options), html: true })
+      q.push({[choice]: msg, speed: checkSpeed(options), html: true})
 
-    // Message with or without options passed.
+      // Message with or without options passed.
     } else {
       q.push(setOptions(options, msg))
     }
 
     function setOptions(opts = {}, message) {
-      const { container, totalTime, military } = opts
+      const {container, totalTime, military} = opts
 
       // `content` is only used when the user has provided
       // a single options argument to `.line`.
-      const content = !message && (getType(container) === 'String'
-        ? document.querySelector(container).textContent // A selector was provided.
-        : container.textContent) // A DOM element was provided.
+      const content =
+        !message &&
+        (getType(container) === 'String'
+          ? document.querySelector(container).textContent // A selector was provided.
+          : container.textContent) // A DOM element was provided.
 
       return {
         [choice]: message || content,
@@ -288,13 +315,15 @@ function typer(el, speed) {
         html: opts.html === false ? false : true, // Default true.
         element: isLine ? opts.element : null,
         military: checkMilitary(military),
-        totalTime
+        totalTime,
       }
     }
   }
-  function processq() { // Begin our main iterator.
+  function processq() {
+    // Begin our main iterator.
     if (!(q.item >= 0)) q.item = 0
-    if (q.item === q.length) { // We've reached the end without interruption.
+    if (q.item === q.length) {
+      // We've reached the end without interruption.
       q.complete = true
       return body.removeEventListener('killTyper', kill)
     }
@@ -316,16 +345,25 @@ function typer(el, speed) {
       const item = q[q.item]
 
       // Various processing functions.
-      item.line ? processLine(item) :
-      item.continue ? processContinue(item) :
-      item.pause ? processPause(item) :
-      item.emit ? processEmit(item) :
-      item.listen ? processListen(item) :
-      item.back ? processBack(item) :
-      item.empty ? processEmpty() :
-      item.run ? processRun(item) :
-      item.repeat ? processRepeat(item) :
-      item.end && processEnd(item)
+      item.line
+        ? processLine(item)
+        : item.continue
+        ? processContinue(item)
+        : item.pause
+        ? processPause(item)
+        : item.emit
+        ? processEmit(item)
+        : item.listen
+        ? processListen(item)
+        : item.back
+        ? processBack(item)
+        : item.empty
+        ? processEmpty()
+        : item.run
+        ? processRun(item)
+        : item.repeat
+        ? processRepeat(item)
+        : item.end && processEnd(item)
     }, 0)
   }
   function processLine(item) {
@@ -341,7 +379,7 @@ function typer(el, speed) {
 
     // Create new div (or specified element).
     const div = document.createElement(item.element || 'div')
-    div.setAttribute('data-typer-child', q.uuid)
+    div.setAttribute('data-typer-child', q.id)
     div.className = `${q.cursor} typer white-space`
 
     el.appendChild(div)
@@ -371,7 +409,8 @@ function typer(el, speed) {
 
     q.iterator = setTimeout(func, time)
   }
-  function processMsg(item) { // Used by 'processLine' & 'processContinue'.
+  function processMsg(item) {
+    // Used by 'processLine' & 'processContinue'.
     const msg = item.line || item.continue
     const div = document.createElement('div') // Used as a temporary object to play with.
 
@@ -384,7 +423,9 @@ function typer(el, speed) {
     // Military typing will not occur.
     function typeArrays() {
       let counter = 0
-      const itemSpeed = item.totalTime ? (item.totalTime / msg.length) : item.speed
+      const itemSpeed = item.totalTime
+        ? item.totalTime / msg.length
+        : item.speed
 
       function doStuff() {
         const content = msg[counter++]
@@ -409,7 +450,9 @@ function typer(el, speed) {
       let objCounter = 0
       let textCounter = 0
       let obj = list[objCounter++]
-      const itemSpeed = item.totalTime ? (item.totalTime / obj.content.length) : item.speed
+      const itemSpeed = item.totalTime
+        ? item.totalTime / obj.content.length
+        : item.speed
 
       function doStuff() {
         // Text node - finished typing.
@@ -433,7 +476,7 @@ function typer(el, speed) {
           // Non-military.
           obj.parent.innerHTML += obj.content[textCounter++]
 
-        // Void & non-void element nodes.
+          // Void & non-void element nodes.
         } else {
           obj.parent.appendChild(obj.voidNode || obj.newNode)
           obj = list[objCounter++]
@@ -457,9 +500,9 @@ function typer(el, speed) {
         // Text nodes.
         if (name === '#text') {
           // Only text nodes will get the content property.
-          arr.push({ parent, content: node.textContent })
+          arr.push({parent, content: node.textContent})
 
-        // Non-void elements.
+          // Non-void elements.
         } else if (node.childNodes.length) {
           // 1. Clone to an empty node.
           let newNode = document.createElement(name)
@@ -469,12 +512,12 @@ function typer(el, speed) {
             newNode.setAttribute(attr.name, attr.value)
           })
 
-          arr.push({ parent, newNode })
+          arr.push({parent, newNode})
           arr = arr.concat(createTypingArray(node.childNodes, newNode))
 
-        // Void elements.
+          // Void elements.
         } else if (q.voids.includes(name)) {
-          arr.push({ parent, voidNode: node })
+          arr.push({parent, voidNode: node})
         }
       }
 
@@ -484,7 +527,9 @@ function typer(el, speed) {
     // Executed only if `html: false` has been provided, since html is the default.
     function plain() {
       let counter = 0
-      const itemSpeed = item.totalTime ? (item.totalTime / msg.length) : item.speed
+      const itemSpeed = item.totalTime
+        ? item.totalTime / msg.length
+        : item.speed
 
       function doStuff() {
         // End of message processing logic.
@@ -519,7 +564,7 @@ function typer(el, speed) {
 
     function military(elem, content, cb) {
       let counter = 0
-      const { speed, chars } = item.military
+      const {speed, chars} = item.military
 
       // First run only.
       elem.innerHTML += randomChar()
@@ -531,7 +576,7 @@ function typer(el, speed) {
           clearInterval(q.military)
           return cb()
 
-        // In-between iterations.
+          // In-between iterations.
         } else {
           elem.innerHTML = elem.innerHTML.slice(0, -1) + randomChar()
         }
@@ -564,7 +609,7 @@ function typer(el, speed) {
     processq()
   }
   function processListen(item) {
-    const { el, listen } = item
+    const {el, listen} = item
     clearInterval(q.type) // Stop the main iterator.
     q.listening = true // Allows `.halt` to know it's NOT safe to do it's thing.
 
@@ -580,9 +625,9 @@ function typer(el, speed) {
 
     // Keep a reference to the listener so we can esure its removal
     // if we kill this instance or all typers.
-    currentListener = { el, type: listen, fxn: handler }
+    currentListener = {el, type: listen, fxn: handler}
   }
-  function processBack({ back, speed: spd }) {
+  function processBack({back, speed: spd}) {
     // Stop the main iterator.
     clearInterval(q.type)
 
@@ -597,7 +642,6 @@ function typer(el, speed) {
 
     // Empty the line all at once or a portion of it at once.
     if (back === 'empty') {
-
       // `spd` here is a quantity -
       // how many characters we want to erase *at once*.
 
@@ -626,7 +670,7 @@ function typer(el, speed) {
     if (back === 'all') back = totalLength + totalVoids
 
     // Negative #'s are an easy way to say "erase all BUT X-amount of characters."
-    if (back < 0) back = totalLength + totalVoids - (back * -1)
+    if (back < 0) back = totalLength + totalVoids - back * -1
 
     q.goBack = setInterval(looper(), spd || speed)
 
@@ -689,7 +733,8 @@ function typer(el, speed) {
       Array.from(el.childNodes).forEach(child => {
         if (q.voids.includes(child.nodeName)) return // Do not remove void tags.
         if (child.childNodes.length) removeEmpties(child)
-        if (child.nodeName !== '#text' && !child.innerHTML.length) child.remove()
+        if (child.nodeName !== '#text' && !child.innerHTML.length)
+          child.remove()
         if (child.nodeName === '#text' && !child.length) child.remove()
       })
     }
@@ -707,9 +752,9 @@ function typer(el, speed) {
   }
   function processEmpty() {
     el.innerHTML = ''
-    processLine({ line: 1 }) // This will stop the main iterator & run 'processq'.
+    processLine({line: 1}) // This will stop the main iterator & run 'processq'.
   }
-  function processRun({ run }) {
+  function processRun({run}) {
     clearInterval(q.type) // Stop the main iterator.
 
     run(el)
@@ -730,7 +775,8 @@ function typer(el, speed) {
         Since `findIndex` resolves to -1 when nothing is found, the `+ 1` at the end resolves
         this to 0, allowing us to start from the very beginning.
       */
-      const previousRepeatIndex = q.findIndex(({repeat, id}) => repeat && id === item.id - 1) + 1
+      const previousRepeatIndex =
+        q.findIndex(({repeat, id}) => repeat && id === item.id - 1) + 1
 
       // Reset our main counter.
       q.item = previousRepeatIndex
@@ -746,7 +792,6 @@ function typer(el, speed) {
     q.cb() // Run the callback provided.
   }
 
-
   // The kill switch.
   // Used for both killing all Typers with the `killTyper` event
   // as well as killing Typer instances with the `.kill` method.
@@ -756,7 +801,10 @@ function typer(el, speed) {
 
     // Remove listener added in `processListen` if Typer is in a listener state.
     currentListener.el &&
-    currentListener.el.removeEventListener(currentListener.type, currentListener.fxn)
+      currentListener.el.removeEventListener(
+        currentListener.type,
+        currentListener.fxn,
+      )
 
     // Stop all iterations & pauses.
     clearInterval(q.type) // `q.type` from various process[method] functions.
@@ -769,26 +817,18 @@ function typer(el, speed) {
 
     return nullApi('kill')
   }
-  function nullApi(method) { // Used after `.end` or `.kill` have been called.
-    const warning = `WARNING: you tried to call ".%s" after ".${method}" has already been called.\nThe public API has been nullified.`
+  function nullApi(method) {
+    const emptyMethod = () => typerObj
 
     // Replace our public API - `typerObj` - with the nullified version.
+    // Replace all methods except 'kill' and 'end'.
     Object.keys(typerObj).forEach(key => {
       // If `.end` is called, we still want `.kill` to be callable as well.
-      if (key === 'kill' && method === 'end') return
-      typerObj[key] = message.bind(null, key)
+      if (method === 'end' && key === 'kill') return
+      typerObj[key] = emptyMethod
     })
 
-    if (method === 'kill') {
-      if (q.killed) message()
-      q.killed = true // For `processListen`.
-    }
-
-    // Message used by the 'nullApiObj' object.
-    function message(key) {
-      console.warn(warning, key)
-      return typerObj
-    }
+    if (method === 'kill') q.killed = true // For `processListen`.
 
     return typerObj
   }
@@ -796,5 +836,3 @@ function typer(el, speed) {
   // Return `typerObj` to be able to expose our public API.
   return typerObj
 }
-
-module.exports = typer
