@@ -1,5 +1,6 @@
 import postcss from 'rollup-plugin-postcss'
 import {terser} from 'rollup-plugin-terser'
+import {getBabelOutputPlugin} from '@rollup/plugin-babel'
 
 export default {
   input: './src/typer.js',
@@ -7,7 +8,13 @@ export default {
     file: './dist/typer.min.js',
     format: 'umd',
     name: 'typer',
-    plugins: [terser({compress: {passes: 3}, mangle: {toplevel: true}})],
+    plugins: [
+      getBabelOutputPlugin({
+        presets: ['@babel/preset-env'],
+        allowAllFormats: true,
+      }),
+      terser({compress: {passes: 3}, mangle: {toplevel: true}}),
+    ],
   },
   plugins: [postcss({extract: true})],
 }
