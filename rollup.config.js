@@ -9,10 +9,13 @@ export default {
     format: 'umd',
     name: 'typer',
     plugins: [
+      // https://bit.ly/3u3fuq7
       getBabelOutputPlugin({
         presets: ['@babel/preset-env'],
         allowAllFormats: true,
       }),
+
+      // https://bit.ly/3b2Wwr4
       terser({compress: {passes: 3}, mangle: {toplevel: true}}),
     ],
   },
